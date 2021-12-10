@@ -170,7 +170,7 @@ public class CallBackQueryHandler implements RequestHandler {
                         .chatId(String.valueOf(message.getChatId()))
                         .text(textMessage)
                         .replyMarkup(InlineKeyboardMarkup.builder()
-                                .keyboard(keyboardService.getAgreeButtons(message, "location"))
+                                .keyboard(keyboardService.getAgreeButtons("location"))
                                 .build())
                         .build()))
                 .editMessageReplyMarkup(List.of(keyboardService.getCorrectReplyMarkup(message,

@@ -108,7 +108,7 @@ public class MessageHandler implements RequestHandler {
                               + ", ID:" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
                               "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
                         .replyMarkup(InlineKeyboardMarkup.builder()
-                                .keyboard(keyboardService.getAgreeButtons(message, dataStartText))
+                                .keyboard(keyboardService.getAgreeButtons(dataStartText))
                                 .build())
                         .build()))
                 .build();

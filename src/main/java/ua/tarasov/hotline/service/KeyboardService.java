@@ -67,8 +67,7 @@ public class KeyboardService {
         return buttons;
     }
 
-    public List<List<InlineKeyboardButton>> getAgreeButtons(Message message, String dataStartText) {
-        Integer messageId = message.getMessageId();
+    public List<List<InlineKeyboardButton>> getAgreeButtons(String dataStartText) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(
                 InlineKeyboardButton.builder()
