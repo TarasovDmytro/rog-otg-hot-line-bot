@@ -17,10 +17,10 @@ import java.net.URL;
 @Getter
 @Setter
 public class PingTask {
-    @Value("${pingtask.url}")
+    @Value("${pings.url}")
     private String url;
 
-    @Scheduled(fixedRateString = "${pingtask.period}")
+    @Scheduled(fixedRateString = "60000")
     public void pingMe() {
         Logger log = null;
         try {
