@@ -22,7 +22,6 @@ public class PingTask {
 
     @Scheduled(fixedRateString = "600000")
     public void pingMe() {
-        Logger log = null;
         try {
             URL url = new URL(getUrl());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
