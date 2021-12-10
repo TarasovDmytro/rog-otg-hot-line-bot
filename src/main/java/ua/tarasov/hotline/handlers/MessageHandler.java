@@ -38,7 +38,7 @@ public class MessageHandler implements RequestHandler {
     private final AtomicReference<Location> location = new AtomicReference<>(null);
     private final AtomicReference<ResponseContext> responseContext = new AtomicReference<>(null);
 
-    private UserRequest userRequest = new UserRequest();
+    private final UserRequest userRequest = new UserRequest();
     private BotUser botUser = new BotUser();
 
     public MessageHandler(UserRequestService requestService, BotUserService botUserService,
@@ -91,7 +91,7 @@ public class MessageHandler implements RequestHandler {
         }
         if (message.getContact() != null) return setBotUserPhone(message);
         if (message.getLocation() != null) return setLocation(message);
-        return getResponseToRequest(message, "Something wrong...");
+        return getSimpleResponseToRequest(message, "Something wrong...");
     }
 
     private ResponseContext requestAdminRole(Message message) {
@@ -114,7 +114,7 @@ public class MessageHandler implements RequestHandler {
                 .build();
     }
 
-    private ResponseContext getResponseToRequest(Message message, String textMessage) {
+    private ResponseContext getSimpleResponseToRequest(Message message, String textMessage) {
         return ResponseContext.builder()
                 .sendMessage(Collections.singletonList(SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
@@ -128,19 +128,14 @@ public class MessageHandler implements RequestHandler {
             Location location = message.getLocation();
             this.location.set(location);
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE);
-            return getResponseToRequest(message, "Локацію установлено" +
-                                                 "\nВведіть, будьласка, текст заявки");
-        } else return ResponseContext.builder()
-                .sendMessage(Collections.singletonList(SendMessage.builder()
-                        .chatId(String.valueOf(message.getChatId()))
-                        .text("Вибачте, але локацію має сенс додавати тільки при створенні заявки.")
-                        .build()))
-                .build();
-
+            return getSimpleResponseToRequest(message, "Локацію установлено" +
+                                                       "\nВведіть, будьласка, текст заявки");
+        } else return getSimpleResponseToRequest(message,
+                "Вибачте, але локацію має сенс додавати тільки при створенні заявки.");
     }
 
     private ResponseContext setBotUserPhone(Message message) {
-        ResponseContext responseContext = getResponseToRequest(message, "Something wrong...");
+        ResponseContext responseContext = getSimpleResponseToRequest(message, "Something wrong...");
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             botUser.setPhone(message.getContact().getPhoneNumber());
@@ -181,7 +176,7 @@ public class MessageHandler implements RequestHandler {
                 botUser.getDepartments().addAll(Arrays.stream(Departments.values()).toList());
             } else {
                 botUser.setRole(Role.USER);
-                botUser.getDepartments().add(Departments.USER);
+                botUser.setDepartments(Collections.singleton(Departments.USER));
             }
         }
         botUserService.saveBotUser(botUser);
@@ -311,7 +306,7 @@ public class MessageHandler implements RequestHandler {
     private ResponseContext setMessageToAll(Message message) {
         if (adminService.checkIsAdmin(message)) {
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
-            return getResponseToRequest(message, """
+            return getSimpleResponseToRequest(message, """
                     Введіть, будьласка, повідомлення
                     для всіх користувачів в форматі:
 
@@ -343,14 +338,14 @@ public class MessageHandler implements RequestHandler {
 
     private ResponseContext createRequestMessageHandler(Message message) {
         if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
-            return getResponseToRequest(message, """
+            return getSimpleResponseToRequest(message, """
                     Невірний формат повідомлення.
                     Введіть повідомлення в форматі:
 
                     @@'Ваше повідомлення'""");
         }
         if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
-            userRequest = createNewUserRequest(message);
+            UserRequest userRequest = createNewUserRequest(message);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
             List<SendMessage> answerMessages = new ArrayList<>();
             if (!botUsers.isEmpty()) {
@@ -369,13 +364,8 @@ public class MessageHandler implements RequestHandler {
             return ResponseContext.builder()
                     .sendMessage(answerMessages)
                     .build();
-        } else return ResponseContext.builder()
-                .sendMessage(List.of(SendMessage.builder()
-                        .chatId(String.valueOf(message.getChatId()))
-                        .text("Вибачте, але я бот, а не людина і читати не вмію." +
-                              " Виконайте, будьласка, коректну дію за допомогою кнопок")
-                        .build()))
-                .build();
+        } else return getSimpleResponseToRequest(message, "Вибачте, але я бот, а не людина і читати не вмію." +
+                                                          " Виконайте, будьласка, коректну дію за допомогою кнопок");
     }
 
     private UserRequest createNewUserRequest(Message message) {
@@ -385,12 +375,12 @@ public class MessageHandler implements RequestHandler {
         userRequest.setMessageId(message.getMessageId());
         userRequest.setDateTime(LocalDateTime.now());
         userRequest.setLocation(location.get());
+        location.set(null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment() + "\nID " + userRequest.getMessageId() +
                                      "\nвід " + userRequest.getDateTime() + "\n\n" + message.getText() + "\n\n" + isLocation);
         userRequest.setState(false);
         requestService.saveRequest(userRequest);
-        this.location.set(null);
         return userRequest;
     }
 }
