@@ -20,7 +20,7 @@ public class PingTask {
     @Value("${pings.url}")
     private String url;
 
-    @Scheduled(fixedRateString = "60000")
+    @Scheduled(fixedRateString = "600000")
     public void pingMe() {
         Logger log = null;
         try {
