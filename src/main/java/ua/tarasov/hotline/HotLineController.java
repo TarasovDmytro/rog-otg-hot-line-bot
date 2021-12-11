@@ -10,14 +10,17 @@ import ua.tarasov.hotline.models.model.RogOTGHotLineBot;
 @Slf4j
 public class HotLineController {
 private  final RogOTGHotLineBot bot;
+private final HotLineFacade facade;
 
-    public HotLineController(RogOTGHotLineBot bot) {
+    public HotLineController(RogOTGHotLineBot bot, HotLineFacade facade) {
         this.bot = bot;
+        this.facade = facade;
     }
 
     @PostMapping("/")
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
         log.info("got update{}", update);
-        return bot.onWebhookUpdateReceived(update);
+        return facade.onWebhookUpdateReceived(update);
+//        return bot.onWebhookUpdateReceived(update);
     }
 }
