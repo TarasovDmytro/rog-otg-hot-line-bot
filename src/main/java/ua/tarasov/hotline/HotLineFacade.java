@@ -83,9 +83,9 @@ public class HotLineFacade extends TelegramWebhookBot {
         response.forEach(message -> {
                     botApiMethod.set(message);
                     try {
-                        execute(message);
+//                        execute(message);
                         Thread.sleep(35);
-                    } catch (TelegramApiException | InterruptedException e) {
+                    } catch ( InterruptedException e) {
                         e.printStackTrace();
                     }
                 });
