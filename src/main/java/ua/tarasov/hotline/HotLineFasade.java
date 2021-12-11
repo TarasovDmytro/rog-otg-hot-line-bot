@@ -87,12 +87,12 @@ public class HotLineFasade extends TelegramWebhookBot {
         answerMessagesList.forEach(answerMessages ->
             answerMessages.forEach(message -> {
                 botApiMethod.set(message);
-//                try {
-//                    execute(message);
-//                    Thread.sleep(35);
-//                } catch (TelegramApiException | InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    execute(message);
+                    Thread.sleep(35);
+                } catch (TelegramApiException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }));
         return botApiMethod.get();
         }
