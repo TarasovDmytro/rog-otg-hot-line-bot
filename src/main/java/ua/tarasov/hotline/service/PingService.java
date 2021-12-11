@@ -16,7 +16,7 @@ import java.net.URL;
 @Slf4j
 @Getter
 @Setter
-public class PingTask {
+public class PingService {
     @Value("${pings.url}")
     private String url;
 

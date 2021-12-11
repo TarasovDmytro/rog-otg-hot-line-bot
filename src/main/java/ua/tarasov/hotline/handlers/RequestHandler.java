@@ -6,5 +6,5 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 public interface RequestHandler {
-    List<BotApiMethod<?>> getResponseContext(Update update);
+    List<BotApiMethod<?>> getHandlerUpdate(Update update);
 }

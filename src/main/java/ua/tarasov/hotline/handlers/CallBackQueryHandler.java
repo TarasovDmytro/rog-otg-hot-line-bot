@@ -1,7 +1,10 @@
 package ua.tarasov.hotline.handlers;
 
 import com.google.gson.Gson;
+import lombok.AccessLevel;
 import lombok.SneakyThrows;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -23,20 +26,22 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
+@Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CallBackQueryHandler implements RequestHandler {
-    private final UserRequestService requestService;
-    private final BotUserService botUserService;
-    private final KeyboardService keyboardService;
-    private final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
+    final UserRequestService requestService;
+    final BotUserService botUserService;
+    final KeyboardService keyboardService;
+    final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
 
-    private final String TRUE_ACTION_STATE_TEXT = "✅  Виконана";
-    private final String FALSE_ACTION_STATE_TEXT = "⭕️ На виконанні";
-    private final AtomicReference<String> stateText = new AtomicReference<>("null");
-    private final Gson jsonConverter = new Gson();
+    final String TRUE_ACTION_STATE_TEXT = "✅  Виконана";
+    final String FALSE_ACTION_STATE_TEXT = "⭕️ На виконанні";
+    final AtomicReference<String> stateText = new AtomicReference<>("null");
+    final Gson jsonConverter = new Gson();
 
-    private UserRequest userRequest = new UserRequest();
-    private BotUser botUser = new BotUser();
-    private List<BotApiMethod<?>> answerMessage = new ArrayList<>();
+    UserRequest userRequest = new UserRequest();
+    BotUser botUser = new BotUser();
+    List<BotApiMethod<?>> answerMessage = new ArrayList<>();
 
     public CallBackQueryHandler(UserRequestService requestService, BotUserService botUserService, KeyboardService keyboardService) {
         this.requestService = requestService;
@@ -45,7 +50,7 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> getResponseContext(Update update) {
+    public List<BotApiMethod<?>> getHandlerUpdate(Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         if (callbackQuery.getData().startsWith("department")) {
             return getButtonDepartmentHandler(callbackQuery);
@@ -76,21 +81,21 @@ public class CallBackQueryHandler implements RequestHandler {
             return getRefusalPlaceLocation(callbackQuery);
         }
         return Collections.singletonList(SendMessage.builder()
-                        .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                        .text("Something wrong...")
-                        .build());
+                .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
+                .text("Something wrong...")
+                .build());
     }
 
     private List<BotApiMethod<?>> setRefuseRequestMessage(CallbackQuery callbackQuery) {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return (List.of(SendMessage.builder()
-                                .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                                .text("Вібачте, Вам відмовлено в зміні прав доступу")
-                                .build(),
-                        SendMessage.builder()
-                                .chatId(String.valueOf(superAdmin.getId()))
-                                .text("Відмовлено")
-                                .build()));
+                        .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
+                        .text("Вібачте, Вам відмовлено в зміні прав доступу")
+                        .build(),
+                SendMessage.builder()
+                        .chatId(String.valueOf(superAdmin.getId()))
+                        .text("Відмовлено")
+                        .build()));
     }
 
     private List<BotApiMethod<?>> setBotUserDepartment(CallbackQuery callbackQuery) {
@@ -108,13 +113,13 @@ public class CallBackQueryHandler implements RequestHandler {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         botUserService.saveBotUser(this.botUser);
         return List.of(SendMessage.builder()
-                                .chatId(String.valueOf(message.getChatId()))
-                                .text("Ваші права доступу встановлені")
-                                .build(),
-                        SendMessage.builder()
-                                .chatId(String.valueOf(superAdmin.getId()))
-                                .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
-                                .build());
+                        .chatId(String.valueOf(message.getChatId()))
+                        .text("Ваші права доступу встановлені")
+                        .build(),
+                SendMessage.builder()
+                        .chatId(String.valueOf(superAdmin.getId()))
+                        .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
+                        .build());
     }
 
     private List<BotApiMethod<?>> getRefusalPlaceLocation(CallbackQuery callbackQuery) {
@@ -128,24 +133,25 @@ public class CallBackQueryHandler implements RequestHandler {
         Location messageLocation = userRequest.getLocation();
         if (messageLocation != null) {
             return Collections.singletonList(SendLocation.builder()
-                            .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                            .replyToMessageId(callbackQuery.getMessage().getMessageId())
-                            .heading(messageLocation.getHeading())
-                            .horizontalAccuracy(messageLocation.getHorizontalAccuracy())
-                            .latitude(messageLocation.getLatitude())
-                            .livePeriod(messageLocation.getLivePeriod())
-                            .longitude(messageLocation.getLongitude())
-                            .proximityAlertRadius(messageLocation.getProximityAlertRadius())
-                            .build());
+                    .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
+                    .replyToMessageId(callbackQuery.getMessage().getMessageId())
+                    .heading(messageLocation.getHeading())
+                    .horizontalAccuracy(messageLocation.getHorizontalAccuracy())
+                    .latitude(messageLocation.getLatitude())
+                    .livePeriod(messageLocation.getLivePeriod())
+                    .longitude(messageLocation.getLongitude())
+                    .proximityAlertRadius(messageLocation.getProximityAlertRadius())
+                    .build());
         } else
             return List.of(SendMessage.builder()
-                            .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                            .replyToMessageId(callbackQuery.getMessage().getMessageId())
-                            .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
-                            .build());
+                    .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
+                    .replyToMessageId(callbackQuery.getMessage().getMessageId())
+                    .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
+                    .build());
     }
 
     private List<BotApiMethod<?>> getButtonDepartmentHandler(CallbackQuery callbackQuery) {
+        log.info("get button department");
         String textMessage = "Департамент обрано.\nЧи бажаєте Ви додати до заявки геолокацію?";
         return buttonDepartmentHandler(callbackQuery, textMessage);
     }
@@ -195,15 +201,15 @@ public class CallBackQueryHandler implements RequestHandler {
         String phone = botUser.getPhone();
         if (phone != null) {
             answerMessage = Collections.singletonList(SendMessage.builder()
-                            .chatId(String.valueOf(message.getChatId()))
-                            .text(userRequest.getBodyOfMessage() + "\n\nІз користувачем можна зв'язатись за телефоном:\n" + phone)
-                            .build());
+                    .chatId(String.valueOf(message.getChatId()))
+                    .text(userRequest.getBodyOfMessage() + "\n\nІз користувачем можна зв'язатись за телефоном:\n" + phone)
+                    .build());
         } else {
             answerMessage = Collections.singletonList(AnswerCallbackQuery.builder()
-                            .callbackQueryId(callbackQuery.getId())
-                            .text("Користувач відмовився надати свій номер телефону")
-                            .showAlert(true)
-                            .build());
+                    .callbackQueryId(callbackQuery.getId())
+                    .text("Користувач відмовився надати свій номер телефону")
+                    .showAlert(true)
+                    .build());
         }
         return answerMessage;
     }
@@ -212,25 +218,25 @@ public class CallBackQueryHandler implements RequestHandler {
     private List<BotApiMethod<?>> setLocationMessage(CallbackQuery callbackQuery) {
         chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
         return Collections.singletonList(SendMessage.builder()
-                        .chatId(callbackQuery.getMessage().getChatId().toString())
-                        .text("""
-                                Дякую, відправте, будьласка, Вашу поточну геолокацію.
-                                Це можна зробити, натиснув на позначку 'скрепки' поруч
-                                із полем для вводу текста.\s
-                                Увага! Телеграм підтримує цю послугу тільки у версії для
-                                смартфонів, якщо Ви використовуєте інший пристрій, або
-                                передумали - натиснить кнопку 'відмовитись'""")
-                        .replyMarkup(InlineKeyboardMarkup.builder()
-                                .keyboard(keyboardService.getRefuseButton(callbackQuery.getMessage()))
-                                .build())
-                        .build());
+                .chatId(callbackQuery.getMessage().getChatId().toString())
+                .text("""
+                        Дякую, відправте, будьласка, Вашу поточну геолокацію.
+                        Це можна зробити, натиснув на позначку 'скрепки' поруч
+                        із полем для вводу текста.\s
+                        Увага! Телеграм підтримує цю послугу тільки у версії для
+                        смартфонів, якщо Ви використовуєте інший пристрій, або
+                        передумали - натиснить кнопку 'відмовитись'""")
+                .replyMarkup(InlineKeyboardMarkup.builder()
+                        .keyboard(keyboardService.getRefuseButton(callbackQuery.getMessage()))
+                        .build())
+                .build());
     }
 
     private List<BotApiMethod<?>> setRequestMessage(CallbackQuery callbackQuery) {
         chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_MESSAGE);
         return List.of(SendMessage.builder()
-                        .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                        .text("Добре. Введіть, будьласка, текст заявки")
-                        .build());
+                .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
+                .text("Добре. Введіть, будьласка, текст заявки")
+                .build());
     }
 }

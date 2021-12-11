@@ -52,7 +52,7 @@ public class MessageHandler implements RequestHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> getResponseContext(Update update) {
+    public List<BotApiMethod<?>> getHandlerUpdate(Update update) {
         Message message = update.getMessage();
         String messageText = message.getText();
         if (message.getContact() == null && message.getLocation() == null) {
