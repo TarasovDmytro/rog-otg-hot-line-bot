@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
-public class HotLineFasade extends TelegramWebhookBot {
+public class HotLineFacade extends TelegramWebhookBot {
     private final MessageHandler messageHandler;
     private final CallBackQueryHandler callBackQueryHandler;
 
@@ -28,10 +28,10 @@ public class HotLineFasade extends TelegramWebhookBot {
     @Value("${telegram.bot.token}")
     private String botToken;
 
-    @Value("telegram.bot.path")
+    @Value("${telegram.bot.path}")
     private String botPath;
 
-    public HotLineFasade(MessageHandler messageHandler, CallBackQueryHandler callBackQueryHandler) {
+    public HotLineFacade(MessageHandler messageHandler, CallBackQueryHandler callBackQueryHandler) {
         this.messageHandler = messageHandler;
         this.callBackQueryHandler = callBackQueryHandler;
     }

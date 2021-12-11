@@ -9,14 +9,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @RestController
 public class HotLineController {
-    private final HotLineFasade fasade;
+    private final HotLineFacade facade;
 
-    public HotLineController(HotLineFasade fasade) {
-        this.fasade = fasade;
+    public HotLineController(HotLineFacade facade) {
+        this.facade = facade;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
-        return fasade.onWebhookUpdateReceived(update);
+        return facade.onWebhookUpdateReceived(update);
     }
 }
