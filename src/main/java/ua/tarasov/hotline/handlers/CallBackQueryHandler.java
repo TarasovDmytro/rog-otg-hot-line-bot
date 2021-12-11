@@ -158,6 +158,7 @@ public class CallBackQueryHandler implements RequestHandler {
 
     @SneakyThrows
     private List<BotApiMethod<?>> buttonDepartmentHandler(CallbackQuery callbackQuery, String textMessage) {
+        log.info("button department handler");
         Message message = callbackQuery.getMessage();
         Departments department = jsonConverter.fromJson(callbackQuery
                 .getData().substring("department".length()), Departments.class);
