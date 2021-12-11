@@ -14,7 +14,7 @@ public class HotLineController {
         this.facade = facade;
     }
 
-    @PostMapping(value = "/")
+    @PostMapping("/")
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
         log.info("got update{}", update);
         return facade.onWebhookUpdateReceived(update);
