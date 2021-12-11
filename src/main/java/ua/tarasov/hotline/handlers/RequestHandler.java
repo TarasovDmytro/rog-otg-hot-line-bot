@@ -1,8 +1,10 @@
 package ua.tarasov.hotline.handlers;
 
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ua.tarasov.hotline.models.model.ResponseContext;
+
+import java.util.List;
 
 public interface RequestHandler {
-    ResponseContext getResponseContext(Update update);
+    List<BotApiMethod<?>> getResponseContext(Update update);
 }

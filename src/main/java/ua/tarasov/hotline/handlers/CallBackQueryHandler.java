@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -12,7 +13,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.models.model.BotState;
-import ua.tarasov.hotline.models.model.ResponseContext;
 import ua.tarasov.hotline.models.entities.BotUser;
 import ua.tarasov.hotline.models.model.Departments;
 import ua.tarasov.hotline.models.entities.UserRequest;
@@ -36,6 +36,7 @@ public class CallBackQueryHandler implements RequestHandler {
 
     private UserRequest userRequest = new UserRequest();
     private BotUser botUser = new BotUser();
+    private List<BotApiMethod<?>> answerMessage = new ArrayList<>();
 
     public CallBackQueryHandler(UserRequestService requestService, BotUserService botUserService, KeyboardService keyboardService) {
         this.requestService = requestService;
@@ -44,7 +45,7 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     @Override
-    public ResponseContext getResponseContext(Update update) {
+    public List<BotApiMethod<?>> getResponseContext(Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         if (callbackQuery.getData().startsWith("department")) {
             return getButtonDepartmentHandler(callbackQuery);
@@ -74,29 +75,25 @@ public class CallBackQueryHandler implements RequestHandler {
         if (callbackQuery.getData().startsWith("refuse")) {
             return getRefusalPlaceLocation(callbackQuery);
         }
-        return ResponseContext.builder()
-                .sendMessage(Collections.singletonList(SendMessage.builder()
+        return Collections.singletonList(SendMessage.builder()
                         .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
                         .text("Something wrong...")
-                        .build()))
-                .build();
+                        .build());
     }
 
-    private ResponseContext setRefuseRequestMessage(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> setRefuseRequestMessage(CallbackQuery callbackQuery) {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
-        return ResponseContext.builder()
-                .sendMessage(List.of(SendMessage.builder()
+        return (List.of(SendMessage.builder()
                                 .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
                                 .text("Вібачте, Вам відмовлено в зміні прав доступу")
                                 .build(),
                         SendMessage.builder()
                                 .chatId(String.valueOf(superAdmin.getId()))
                                 .text("Відмовлено")
-                                .build()))
-                .build();
+                                .build()));
     }
 
-    private ResponseContext setBotUserDepartment(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> setBotUserDepartment(CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
@@ -110,30 +107,27 @@ public class CallBackQueryHandler implements RequestHandler {
         botUser.setDepartments(departments);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         botUserService.saveBotUser(this.botUser);
-        return ResponseContext.builder()
-                .sendMessage(List.of(SendMessage.builder()
+        return List.of(SendMessage.builder()
                                 .chatId(String.valueOf(message.getChatId()))
                                 .text("Ваші права доступу встановлені")
                                 .build(),
                         SendMessage.builder()
                                 .chatId(String.valueOf(superAdmin.getId()))
                                 .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
-                                .build()))
-                .build();
+                                .build());
     }
 
-    private ResponseContext getRefusalPlaceLocation(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> getRefusalPlaceLocation(CallbackQuery callbackQuery) {
         return setRequestMessage(callbackQuery);
     }
 
-    private ResponseContext getLocationOfMessage(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> getLocationOfMessage(CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery
                 .getData().substring("location".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
         Location messageLocation = userRequest.getLocation();
         if (messageLocation != null) {
-            return ResponseContext.builder()
-                    .sendLocation(Collections.singletonList(SendLocation.builder()
+            return Collections.singletonList(SendLocation.builder()
                             .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
                             .replyToMessageId(callbackQuery.getMessage().getMessageId())
                             .heading(messageLocation.getHeading())
@@ -142,64 +136,55 @@ public class CallBackQueryHandler implements RequestHandler {
                             .livePeriod(messageLocation.getLivePeriod())
                             .longitude(messageLocation.getLongitude())
                             .proximityAlertRadius(messageLocation.getProximityAlertRadius())
-                            .build()))
-                    .build();
+                            .build());
         } else
-            return ResponseContext.builder()
-                    .sendMessage(List.of(SendMessage.builder()
+            return List.of(SendMessage.builder()
                             .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
                             .replyToMessageId(callbackQuery.getMessage().getMessageId())
                             .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
-                            .build()))
-                    .build();
+                            .build());
     }
 
-    private ResponseContext getButtonDepartmentHandler(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> getButtonDepartmentHandler(CallbackQuery callbackQuery) {
         String textMessage = "Департамент обрано.\nЧи бажаєте Ви додати до заявки геолокацію?";
         return buttonDepartmentHandler(callbackQuery, textMessage);
     }
 
     @SneakyThrows
-    private ResponseContext buttonDepartmentHandler(CallbackQuery callbackQuery, String textMessage) {
+    private List<BotApiMethod<?>> buttonDepartmentHandler(CallbackQuery callbackQuery, String textMessage) {
         Message message = callbackQuery.getMessage();
         Departments department = jsonConverter.fromJson(callbackQuery
                 .getData().substring("department".length()), Departments.class);
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
-        return ResponseContext.builder()
-                .sendMessage(List.of(SendMessage.builder()
+        return List.of(SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
                         .text(textMessage)
                         .replyMarkup(InlineKeyboardMarkup.builder()
                                 .keyboard(keyboardService.getAgreeButtons("location"))
                                 .build())
-                        .build()))
-                .editMessageReplyMarkup(List.of(keyboardService.getCorrectReplyMarkup(message,
-                        keyboardService.getDepartmentInlineButtons(message))))
-                .build();
+                        .build(),
+                keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(message)));
     }
 
     @SneakyThrows
-    private ResponseContext setStateRequest(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> setStateRequest(CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
         userRequest.setState(!userRequest.isState());
         requestService.saveRequest(userRequest);
         stateText.set(userRequest.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
-        return ResponseContext.builder()
-                .editMessageReplyMarkup(List.of((keyboardService.getCorrectReplyMarkup(message,
-                        keyboardService.getStateRequestButton(messageId, stateText.get())))))
-                .sendMessage(List.of(SendMessage.builder()
+        return List.of(keyboardService.getCorrectReplyMarkup(message,
+                        keyboardService.getStateRequestButton(messageId, stateText.get())),
+                SendMessage.builder()
                         .chatId(userRequest.getChatId().toString())
                         .replyToMessageId(messageId)
                         .text("Ваша заявка\nID " + messageId + "\nвід " + userRequest.getDateTime() + "\n" + stateText)
-                        .build()))
-                .build();
+                        .build());
     }
 
     @SneakyThrows
-    private ResponseContext requestBotUserContact(CallbackQuery callbackQuery) {
-        ResponseContext responseContext;
+    private List<BotApiMethod<?>> requestBotUserContact(CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("contact".length()), Integer.class);
         Long botUserId = requestService.findByMessageId(messageId).getChatId();
@@ -209,29 +194,24 @@ public class CallBackQueryHandler implements RequestHandler {
         }
         String phone = botUser.getPhone();
         if (phone != null) {
-            responseContext = ResponseContext.builder()
-                    .sendMessage(Collections.singletonList(SendMessage.builder()
+            answerMessage = Collections.singletonList(SendMessage.builder()
                             .chatId(String.valueOf(message.getChatId()))
                             .text(userRequest.getBodyOfMessage() + "\n\nІз користувачем можна зв'язатись за телефоном:\n" + phone)
-                            .build()))
-                    .build();
+                            .build());
         } else {
-            responseContext = ResponseContext.builder()
-                    .answerCallbackQuery(Collections.singletonList(AnswerCallbackQuery.builder()
+            answerMessage = Collections.singletonList(AnswerCallbackQuery.builder()
                             .callbackQueryId(callbackQuery.getId())
                             .text("Користувач відмовився надати свій номер телефону")
                             .showAlert(true)
-                            .build()))
-                    .build();
+                            .build());
         }
-        return responseContext;
+        return answerMessage;
     }
 
     @SneakyThrows
-    private ResponseContext setLocationMessage(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> setLocationMessage(CallbackQuery callbackQuery) {
         chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
-        return ResponseContext.builder()
-                .sendMessage(Collections.singletonList(SendMessage.builder()
+        return Collections.singletonList(SendMessage.builder()
                         .chatId(callbackQuery.getMessage().getChatId().toString())
                         .text("""
                                 Дякую, відправте, будьласка, Вашу поточну геолокацію.
@@ -243,17 +223,14 @@ public class CallBackQueryHandler implements RequestHandler {
                         .replyMarkup(InlineKeyboardMarkup.builder()
                                 .keyboard(keyboardService.getRefuseButton(callbackQuery.getMessage()))
                                 .build())
-                        .build()))
-                .build();
+                        .build());
     }
 
-    private ResponseContext setRequestMessage(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> setRequestMessage(CallbackQuery callbackQuery) {
         chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_MESSAGE);
-        return ResponseContext.builder()
-                .sendMessage(List.of(SendMessage.builder()
+        return List.of(SendMessage.builder()
                         .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
                         .text("Добре. Введіть, будьласка, текст заявки")
-                        .build()))
-                .build();
+                        .build());
     }
 }
