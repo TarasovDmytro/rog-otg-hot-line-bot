@@ -42,7 +42,8 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
         methods.forEach(botApiMethod -> {
             try {
                 execute(botApiMethod);
-            } catch (TelegramApiException e) {
+                Thread.sleep(35);
+            } catch (TelegramApiException | InterruptedException e) {
                 e.printStackTrace();
             }
         });
