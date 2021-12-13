@@ -119,7 +119,7 @@ public class KeyboardService {
         buttons.add(List.of(
                 InlineKeyboardButton.builder()
                         .text("❌ Відмовити")
-                        .callbackData("message_id" + jsonConverter.toJson(messageId))
+                        .callbackData("refuse_request" + jsonConverter.toJson(messageId))
                         .build(),
                 InlineKeyboardButton.builder()
                         .text(text)

@@ -57,8 +57,8 @@ public class CallBackQueryHandler implements RequestHandler {
         if (callbackQuery.getData().startsWith("message_id")) {
             return setStateRequest(callbackQuery);
         }
-        if (callbackQuery.getData().startsWith("❌ Відмовити")) {
-            return setStateRequest(callbackQuery);
+        if (callbackQuery.getData().startsWith("refuse_request")) {
+            return setRefuseRequest(callbackQuery);
         }
         if (callbackQuery.getData().startsWith("contact")) {
             return requestBotUserContact(callbackQuery);
@@ -195,7 +195,7 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> setRefuseRequest(CallbackQuery callbackQuery) {
-        Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
+        Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("refuse_request".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
         long chatId = userRequest.getChatId();
         requestService.deleteUserRequest(userRequest);
