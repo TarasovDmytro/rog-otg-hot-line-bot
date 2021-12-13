@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -18,6 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Slf4j
 public class RogOTGHotLineBot extends SpringWebhookBot {
     String botPath;
     String botUsername;
@@ -39,6 +41,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         List<BotApiMethod<?>> methods = hotLineFacade.handleUpdate(update);
+        log.info(methods.toString());
         if (methods.size()>1) {
             methods.forEach(botApiMethod -> {
                 try {
@@ -49,6 +52,6 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                 }
             });
         }
-        return methods.get(methods.size() - 1);
+        return methods.get(0);
     }
 }
