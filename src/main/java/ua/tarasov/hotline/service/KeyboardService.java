@@ -118,12 +118,17 @@ public class KeyboardService {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(
                 InlineKeyboardButton.builder()
-                        .text("Отримати контакт")
-                        .callbackData("contact" + jsonConverter.toJson(messageId))
+                        .text("❌ Відмовити")
+                        .callbackData("message_id" + jsonConverter.toJson(messageId))
                         .build(),
                 InlineKeyboardButton.builder()
                         .text(text)
                         .callbackData("message_id" + jsonConverter.toJson(messageId))
+                        .build()));
+        buttons.add(List.of(
+                InlineKeyboardButton.builder()
+                        .text("Отримати контакт")
+                        .callbackData("contact" + jsonConverter.toJson(messageId))
                         .build()));
         buttons.add(List.of(
                 InlineKeyboardButton.builder()

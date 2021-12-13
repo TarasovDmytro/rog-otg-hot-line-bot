@@ -40,4 +40,8 @@ public class UserRequestService {
     public List<UserRequest> findMessagesByDepartmentAndState(Department department, boolean state) {
         return requestRepository.findAllByDepartmentAndState(department, state);
     }
+
+    public void deleteUserRequest(UserRequest userRequest) {
+        requestRepository.delete(userRequest);
+    }
 }

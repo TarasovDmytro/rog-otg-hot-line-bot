@@ -57,6 +57,9 @@ public class CallBackQueryHandler implements RequestHandler {
         if (callbackQuery.getData().startsWith("message_id")) {
             return setStateRequest(callbackQuery);
         }
+        if (callbackQuery.getData().startsWith("❌ Відмовити")) {
+            return setStateRequest(callbackQuery);
+        }
         if (callbackQuery.getData().startsWith("contact")) {
             return requestBotUserContact(callbackQuery);
         }
@@ -172,10 +175,9 @@ public class CallBackQueryHandler implements RequestHandler {
                                 .keyboard(keyboardService.getAgreeButtons("location"))
                                 .build())
                         .build()
-                );
+        );
     }
 
-    @SneakyThrows
     private List<BotApiMethod<?>> setStateRequest(CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
@@ -190,6 +192,21 @@ public class CallBackQueryHandler implements RequestHandler {
                         .replyToMessageId(messageId)
                         .text("Ваша заявка\nID " + messageId + "\nвід " + userRequest.getDateTime() + "\n" + stateText)
                         .build());
+    }
+
+    private List<BotApiMethod<?>> setRefuseRequest(CallbackQuery callbackQuery) {
+        Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
+        userRequest = requestService.findByMessageId(messageId);
+        long chatId = userRequest.getChatId();
+        requestService.deleteUserRequest(userRequest);
+        return List.of(SendMessage.builder()
+                .chatId(String.valueOf(chatId))
+                .replyToMessageId(messageId)
+                .text("Нажаль, ми вимушені відмовити Вам у виконанні заявки" +
+                      "\nID " + messageId + "\nвід " + userRequest.getDateTime() +
+                      "\nВаша заявка не є в компетенції нашого департаменту," +
+                      "\nабо її не можливо виконати з незалежних від нас причин")
+                .build());
     }
 
     @SneakyThrows
