@@ -39,14 +39,16 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         List<BotApiMethod<?>> methods = hotLineFacade.handleUpdate(update);
-        methods.forEach(botApiMethod -> {
-            try {
-                execute(botApiMethod);
-                Thread.sleep(35);
-            } catch (TelegramApiException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        return methods.get(methods.size()-1);
+        if (methods.size()>1) {
+            methods.forEach(botApiMethod -> {
+                try {
+                    execute(botApiMethod);
+                    Thread.sleep(35);
+                } catch (TelegramApiException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        return methods.get(methods.size() - 1);
     }
 }
