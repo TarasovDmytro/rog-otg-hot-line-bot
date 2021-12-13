@@ -27,7 +27,6 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
         this.hotLineFacade = hotLineFacade;
     }
 
-
     @Autowired
     public RogOTGHotLineBot(HotLineFacade hotLineFacade, SetWebhook setWebhook) {
         super(setWebhook);
