@@ -22,15 +22,15 @@ public class PingService {
 
     @Scheduled(fixedRateString = "600000")
     public void pingMe() {
-        try {
-            URL url = new URL(getUrl());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.connect();
-            log.info("Ping {}, OK: response headers {}", url.getHost(), connection.getHeaderFields());
-            connection.disconnect();
-        } catch (IOException e) {
-            log.error("Ping FAILED");
-            e.printStackTrace();
-        }
+//        try {
+//            URL url = new URL(getUrl());
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.connect();
+//            log.info("Ping {}, OK: response headers {}", url.getHost(), connection.getHeaderFields());
+//            connection.disconnect();
+//        } catch (IOException e) {
+//            log.error("Ping FAILED");
+//            e.printStackTrace();
+//        }
     }
 }
