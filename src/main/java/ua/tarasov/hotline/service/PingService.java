@@ -26,7 +26,7 @@ public class PingService {
             URL url = new URL(getUrl());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.connect();
-            log.info("Ping {}, OK: response message {}", url.getHost(), connection.getInstanceFollowRedirects());
+            log.info("Ping {}, OK: response headers {}", url.getHost(), connection.getHeaderFields());
             connection.disconnect();
         } catch (IOException e) {
             log.error("Ping FAILED");
