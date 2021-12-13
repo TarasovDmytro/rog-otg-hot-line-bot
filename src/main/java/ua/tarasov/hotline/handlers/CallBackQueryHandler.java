@@ -163,14 +163,16 @@ public class CallBackQueryHandler implements RequestHandler {
         Departments department = jsonConverter.fromJson(callbackQuery
                 .getData().substring("department".length()), Departments.class);
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
-        return List.of(SendMessage.builder()
+        return List.of(
+                keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(message)),
+                SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
                         .text(textMessage)
                         .replyMarkup(InlineKeyboardMarkup.builder()
                                 .keyboard(keyboardService.getAgreeButtons("location"))
                                 .build())
-                        .build(),
-                keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(message)));
+                        .build()
+                );
     }
 
     @SneakyThrows

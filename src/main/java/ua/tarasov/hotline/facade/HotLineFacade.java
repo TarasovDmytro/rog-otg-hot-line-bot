@@ -7,6 +7,7 @@ import ua.tarasov.hotline.handlers.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.MessageHandler;
 import ua.tarasov.hotline.models.model.RogOTGHotLineBot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,31 +22,15 @@ public class HotLineFacade {
     }
 
     public List<BotApiMethod<?>> handleUpdate(Update update) {
-//        BotApiMethod<?> botApiMethod = null;
+        List<BotApiMethod<?>> methods = new ArrayList<>();
         if (update.hasCallbackQuery()) {
-//            botApiMethod = sendAnswerMessages(callBackQueryHandler.getHandlerUpdate(update));
-           return callBackQueryHandler.getHandlerUpdate(update);
+           methods = callBackQueryHandler.getHandlerUpdate(update);
         }
 
         if (update.hasMessage()) {
-//            botApiMethod = sendAnswerMessages(messageHandler.getHandlerUpdate(update));
-            return messageHandler.getHandlerUpdate(update);
+            methods = messageHandler.getHandlerUpdate(update);
         }
-//        return botApiMethod;
-        return null;
-    }
-
-    public BotApiMethod<?> sendAnswerMessages(List<BotApiMethod<?>> response) {
-        AtomicReference<BotApiMethod<?>> botApiMethod = new AtomicReference<>(null);
-        response.forEach(message -> {
-                    botApiMethod.set(message);
-            try {
-                Thread.sleep(35);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        return botApiMethod.get();
+        return methods;
     }
 }
 
