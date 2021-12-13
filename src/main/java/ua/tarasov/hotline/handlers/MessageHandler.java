@@ -107,13 +107,6 @@ public class MessageHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> getSimpleResponseToRequest(Message message, String textMessage) {
-        return Collections.singletonList(SendMessage.builder()
-                .chatId(String.valueOf(message.getChatId()))
-                .text(textMessage)
-                .build());
-    }
-
     private List<BotApiMethod<?>> setLocation(Message message) {
         if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();

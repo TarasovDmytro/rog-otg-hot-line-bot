@@ -132,24 +132,28 @@ public class CallBackQueryHandler implements RequestHandler {
                 .getData().substring("location".length()), Integer.class);
         Message message = callbackQuery.getMessage();
         userRequest = requestService.findByMessageId(messageId);
-        Location messageLocation = userRequest.getLocation();
-        if (messageLocation != null) {
-            return Collections.singletonList(SendLocation.builder()
-                    .chatId(String.valueOf(message.getChatId()))
-                    .replyToMessageId(message.getMessageId())
-                    .heading(messageLocation.getHeading())
-                    .horizontalAccuracy(messageLocation.getHorizontalAccuracy())
-                    .latitude(messageLocation.getLatitude())
-                    .livePeriod(messageLocation.getLivePeriod())
-                    .longitude(messageLocation.getLongitude())
-                    .proximityAlertRadius(messageLocation.getProximityAlertRadius())
-                    .build());
-        } else
-            return List.of(SendMessage.builder()
-                    .chatId(String.valueOf(message.getChatId()))
-                    .replyToMessageId(message.getMessageId())
-                    .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
-                    .build());
+        if (userRequest != null) {
+            Location messageLocation = userRequest.getLocation();
+            if (messageLocation != null) {
+                return Collections.singletonList(SendLocation.builder()
+                        .chatId(String.valueOf(message.getChatId()))
+                        .replyToMessageId(message.getMessageId())
+                        .heading(messageLocation.getHeading())
+                        .horizontalAccuracy(messageLocation.getHorizontalAccuracy())
+                        .latitude(messageLocation.getLatitude())
+                        .livePeriod(messageLocation.getLivePeriod())
+                        .longitude(messageLocation.getLongitude())
+                        .proximityAlertRadius(messageLocation.getProximityAlertRadius())
+                        .build());
+            } else
+                return List.of(SendMessage.builder()
+                        .chatId(String.valueOf(message.getChatId()))
+                        .replyToMessageId(message.getMessageId())
+                        .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
+                        .build());
+        }
+        return getSimpleResponseToRequest(message, "Ви не можете отримати шнформацію, пов'язану із цією заявкою," +
+                                                   " бо, на теперішній час її вже не існує");
     }
 
     private List<BotApiMethod<?>> getButtonDepartmentHandler(CallbackQuery callbackQuery) {
@@ -212,26 +216,30 @@ public class CallBackQueryHandler implements RequestHandler {
     private List<BotApiMethod<?>> requestBotUserContact(CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("contact".length()), Integer.class);
-        Long botUserId = requestService.findByMessageId(messageId).getChatId();
         userRequest = requestService.findByMessageId(messageId);
-        if (botUserService.findById(botUserId).isPresent()) {
-            botUser = botUserService.findById(botUserId).get();
+        if (userRequest != null) {
+            Long botUserId = userRequest.getChatId();
+            if (botUserService.findById(botUserId).isPresent()) {
+                botUser = botUserService.findById(botUserId).get();
+            }
+            String phone = botUser.getPhone();
+            List<BotApiMethod<?>> answerMessage;
+            if (phone != null) {
+                String messageText = userRequest.getBodyOfMessage() +
+                                     "\n\nІз користувачем можна зв'язатись за телефоном:\n"
+                                     + phone;
+                answerMessage = getSimpleResponseToRequest(message, messageText);
+            } else {
+                answerMessage = Collections.singletonList(AnswerCallbackQuery.builder()
+                        .callbackQueryId(callbackQuery.getId())
+                        .text("Користувач відмовився надати свій номер телефону")
+                        .showAlert(true)
+                        .build());
+            }
+            return answerMessage;
         }
-        String phone = botUser.getPhone();
-        List<BotApiMethod<?>> answerMessage;
-        if (phone != null) {
-            answerMessage = Collections.singletonList(SendMessage.builder()
-                    .chatId(String.valueOf(message.getChatId()))
-                    .text(userRequest.getBodyOfMessage() + "\n\nІз користувачем можна зв'язатись за телефоном:\n" + phone)
-                    .build());
-        } else {
-            answerMessage = Collections.singletonList(AnswerCallbackQuery.builder()
-                    .callbackQueryId(callbackQuery.getId())
-                    .text("Користувач відмовився надати свій номер телефону")
-                    .showAlert(true)
-                    .build());
-        }
-        return answerMessage;
+        return getSimpleResponseToRequest(message, "Ви не можете отримати шнформацію, пов'язану із цією заявкою," +
+                                                   " бо, на теперішній час її вже не існує");
     }
 
     @SneakyThrows
@@ -254,9 +262,6 @@ public class CallBackQueryHandler implements RequestHandler {
 
     private List<BotApiMethod<?>> setRequestMessage(CallbackQuery callbackQuery) {
         chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_MESSAGE);
-        return List.of(SendMessage.builder()
-                .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                .text("Добре. Введіть, будьласка, текст заявки")
-                .build());
+        return getSimpleResponseToRequest(callbackQuery.getMessage(), "Добре. Введіть, будьласка, текст заявки");
     }
 }
