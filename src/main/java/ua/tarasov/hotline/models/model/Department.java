@@ -1,6 +1,6 @@
 package ua.tarasov.hotline.models.model;
 
-public enum Departments {
+public enum Department {
     ЖЕУ_ДОКУЧАЄВСЬКЕ,
     КУ_ЦНСП,
     ТОВ_УНІВЕРСАЛ_СЕРВІС,

@@ -2,7 +2,7 @@ package ua.tarasov.hotline.service;
 
 import org.springframework.stereotype.Service;
 import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.model.Departments;
+import ua.tarasov.hotline.models.model.Department;
 import ua.tarasov.hotline.models.model.Role;
 import ua.tarasov.hotline.repository.BotUserRepository;
 
@@ -29,7 +29,7 @@ public class BotUserService {
         return botUserRepository.findAll();
     }
 
-    public List<BotUser> findAllByDepartment(Departments department) {
+    public List<BotUser> findAllByDepartment(Department department) {
         return botUserRepository.findAllByDepartmentsContains(department);
     }
 

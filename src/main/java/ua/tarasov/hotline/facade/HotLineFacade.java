@@ -5,11 +5,9 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.MessageHandler;
-import ua.tarasov.hotline.models.model.RogOTGHotLineBot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class HotLineFacade {

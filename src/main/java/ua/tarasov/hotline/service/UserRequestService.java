@@ -2,7 +2,7 @@ package ua.tarasov.hotline.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.tarasov.hotline.models.model.Departments;
+import ua.tarasov.hotline.models.model.Department;
 import ua.tarasov.hotline.models.entities.UserRequest;
 import ua.tarasov.hotline.repository.UserRequestRepository;
 
@@ -33,11 +33,11 @@ public class UserRequestService {
         return requestRepository.findAllByChatIdAndState(botUserId, state);
     }
 
-    public List<UserRequest> findAllByDepartment(Departments department) {
+    public List<UserRequest> findAllByDepartment(Department department) {
         return requestRepository.findAllByDepartment(department);
     }
 
-    public List<UserRequest> findMessagesByDepartmentAndState(Departments department, boolean state) {
+    public List<UserRequest> findMessagesByDepartmentAndState(Department department, boolean state) {
         return requestRepository.findAllByDepartmentAndState(department, state);
     }
 }

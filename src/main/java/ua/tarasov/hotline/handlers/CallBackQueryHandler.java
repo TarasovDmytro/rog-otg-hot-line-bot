@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.models.model.BotState;
 import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.model.Departments;
+import ua.tarasov.hotline.models.model.Department;
 import ua.tarasov.hotline.models.entities.UserRequest;
 import ua.tarasov.hotline.models.model.Role;
 import ua.tarasov.hotline.service.*;
@@ -41,7 +41,6 @@ public class CallBackQueryHandler implements RequestHandler {
 
     UserRequest userRequest = new UserRequest();
     BotUser botUser = new BotUser();
-    List<BotApiMethod<?>> answerMessage = new ArrayList<>();
 
     public CallBackQueryHandler(UserRequestService requestService, BotUserService botUserService, KeyboardService keyboardService) {
         this.requestService = requestService;
@@ -90,7 +89,7 @@ public class CallBackQueryHandler implements RequestHandler {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return (List.of(SendMessage.builder()
                         .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                        .text("Вібачте, Вам відмовлено в зміні прав доступу")
+                        .text("Вибачте, Вам відмовлено в зміні прав доступу")
                         .build(),
                 SendMessage.builder()
                         .chatId(String.valueOf(superAdmin.getId()))
@@ -104,9 +103,9 @@ public class CallBackQueryHandler implements RequestHandler {
             botUser = botUserService.findById(message.getChatId()).get();
         }
         String[] depText = jsonConverter.fromJson(callbackQuery.getData().substring("yes-department".length()), String[].class);
-        Set<Departments> departments = new HashSet<>();
+        Set<Department> departments = new HashSet<>();
         for (String s : depText) {
-            Departments department = Departments.values()[Integer.parseInt(s) - 1];
+            Department department = Department.values()[Integer.parseInt(s) - 1];
             departments.add(department);
         }
         botUser.setDepartments(departments);
@@ -129,12 +128,13 @@ public class CallBackQueryHandler implements RequestHandler {
     private List<BotApiMethod<?>> getLocationOfMessage(CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery
                 .getData().substring("location".length()), Integer.class);
+        Message message = callbackQuery.getMessage();
         userRequest = requestService.findByMessageId(messageId);
         Location messageLocation = userRequest.getLocation();
         if (messageLocation != null) {
             return Collections.singletonList(SendLocation.builder()
-                    .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                    .replyToMessageId(callbackQuery.getMessage().getMessageId())
+                    .chatId(String.valueOf(message.getChatId()))
+                    .replyToMessageId(message.getMessageId())
                     .heading(messageLocation.getHeading())
                     .horizontalAccuracy(messageLocation.getHorizontalAccuracy())
                     .latitude(messageLocation.getLatitude())
@@ -144,8 +144,8 @@ public class CallBackQueryHandler implements RequestHandler {
                     .build());
         } else
             return List.of(SendMessage.builder()
-                    .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                    .replyToMessageId(callbackQuery.getMessage().getMessageId())
+                    .chatId(String.valueOf(message.getChatId()))
+                    .replyToMessageId(message.getMessageId())
                     .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
                     .build());
     }
@@ -160,8 +160,8 @@ public class CallBackQueryHandler implements RequestHandler {
     private List<BotApiMethod<?>> buttonDepartmentHandler(CallbackQuery callbackQuery, String textMessage) {
         log.info("button department handler");
         Message message = callbackQuery.getMessage();
-        Departments department = jsonConverter.fromJson(callbackQuery
-                .getData().substring("department".length()), Departments.class);
+        Department department = jsonConverter.fromJson(callbackQuery
+                .getData().substring("department".length()), Department.class);
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
         return List.of(
                 keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(message)),
@@ -202,6 +202,7 @@ public class CallBackQueryHandler implements RequestHandler {
             botUser = botUserService.findById(botUserId).get();
         }
         String phone = botUser.getPhone();
+        List<BotApiMethod<?>> answerMessage;
         if (phone != null) {
             answerMessage = Collections.singletonList(SendMessage.builder()
                     .chatId(String.valueOf(message.getChatId()))

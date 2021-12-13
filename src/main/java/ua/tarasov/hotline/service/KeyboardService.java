@@ -1,6 +1,8 @@
 package ua.tarasov.hotline.service;
 
 import com.google.gson.Gson;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -8,16 +10,17 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import ua.tarasov.hotline.models.model.Departments;
+import ua.tarasov.hotline.models.model.Department;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class KeyboardService {
-    private final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
-    private final AdminService adminService;
-    private final Gson jsonConverter = new Gson();
+    final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
+    final AdminService adminService;
+    final Gson jsonConverter = new Gson();
 
     public KeyboardService(AdminService adminService) {
         this.adminService = adminService;
@@ -84,9 +87,9 @@ public class KeyboardService {
     public List<List<InlineKeyboardButton>> getDepartmentInlineButtons(Message message) {
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        Departments currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
-        for (Departments department : Departments.values()) {
-            if (!department.equals(Departments.USER)) {
+        Department currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
+        for (Department department : Department.values()) {
+            if (!department.equals(Department.USER)) {
                 buttons.add(List.of(
                         InlineKeyboardButton.builder()
                                 .text(getDepartmentName(currentDepartment, department))
@@ -97,7 +100,7 @@ public class KeyboardService {
         return buttons;
     }
 
-    private String getDepartmentName(Departments currentDepartment, Departments department) {
+    private String getDepartmentName(Department currentDepartment, Department department) {
         return currentDepartment == department ? currentDepartment + "✅" : department.name();
     }
 

@@ -1,6 +1,8 @@
 package ua.tarasov.hotline.handlers;
 
 import com.google.gson.Gson;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,12 +14,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import ua.tarasov.hotline.models.model.BotState;
-import ua.tarasov.hotline.models.model.Departments;
-import ua.tarasov.hotline.models.model.ResponseContext;
-import ua.tarasov.hotline.models.model.Role;
 import ua.tarasov.hotline.models.entities.BotUser;
 import ua.tarasov.hotline.models.entities.UserRequest;
+import ua.tarasov.hotline.models.model.BotState;
+import ua.tarasov.hotline.models.model.Department;
+import ua.tarasov.hotline.models.model.Role;
 import ua.tarasov.hotline.service.*;
 
 import java.time.LocalDateTime;
@@ -25,23 +26,23 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class MessageHandler implements RequestHandler {
-    private final UserRequestService requestService;
-    private final BotUserService botUserService;
-    private final KeyboardService keyboardService;
-    private final AdminService adminService;
-    private final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
+    final UserRequestService requestService;
+    final BotUserService botUserService;
+    final KeyboardService keyboardService;
+    final AdminService adminService;
+    final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
 
-    private final String TRUE_STATE_TEXT = "✅  Виконана";
-    private final String FALSE_STATE_TEXT = "⭕️ На виконанні";
-    private final String START_TEXT = "\uD83D\uDC4C Дякую, давайте почнемо";
-    private final AtomicReference<String> stateText = new AtomicReference<>("null");
-    private final AtomicReference<Location> location = new AtomicReference<>(null);
-    private final AtomicReference<ResponseContext> responseContext = new AtomicReference<>(null);
+    final String TRUE_REQUEST_STATE_TEXT = "✅  Виконана";
+    final String FALSE_REQUEST_STATE_TEXT = "⭕️ На виконанні";
+    final String START_TEXT = "\uD83D\uDC4C Дякую, давайте почнемо";
+    final AtomicReference<String> stateText = new AtomicReference<>("null");
+    final AtomicReference<Location> location = new AtomicReference<>(null);
 
-    private final UserRequest userRequest = new UserRequest();
-    private BotUser botUser = new BotUser();
-    private List<BotApiMethod<?>> answerMessages = new ArrayList<>();
+    final UserRequest userRequest = new UserRequest();
+    BotUser botUser = new BotUser();
+    List<BotApiMethod<?>> answerMessages = new ArrayList<>();
 
     public MessageHandler(UserRequestService requestService, BotUserService botUserService,
                           KeyboardService keyboardService, AdminService adminService) {
@@ -104,21 +105,21 @@ public class MessageHandler implements RequestHandler {
         String dataStartText = "department" + new Gson().toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
-                        .chatId(String.valueOf(superAdmin.getId()))
-                        .text("Отримана заявка від " + botUser.getFullName() + "\nтел." + botUser.getPhone()
-                              + ", ID:" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
-                              "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
-                        .replyMarkup(InlineKeyboardMarkup.builder()
-                                .keyboard(keyboardService.getAgreeButtons(dataStartText))
-                                .build())
-                        .build());
+                .chatId(String.valueOf(superAdmin.getId()))
+                .text("Отримана заявка від " + botUser.getFullName() + "\nтел." + botUser.getPhone()
+                      + ", ID:" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
+                      "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
+                .replyMarkup(InlineKeyboardMarkup.builder()
+                        .keyboard(keyboardService.getAgreeButtons(dataStartText))
+                        .build())
+                .build());
     }
 
     private List<BotApiMethod<?>> getSimpleResponseToRequest(Message message, String textMessage) {
         return Collections.singletonList(SendMessage.builder()
-                        .chatId(String.valueOf(message.getChatId()))
-                        .text(textMessage)
-                        .build());
+                .chatId(String.valueOf(message.getChatId()))
+                .text(textMessage)
+                .build());
     }
 
     private List<BotApiMethod<?>> setLocation(Message message) {
@@ -147,14 +148,14 @@ public class MessageHandler implements RequestHandler {
         List<KeyboardRow> keyboardRows = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId()) ?
                 keyboardService.getAdminsReplyButtons() : keyboardService.getUserReplyButtons(message);
         return Collections.singletonList(SendMessage.builder()
-                        .chatId(String.valueOf(message.getChatId()))
-                        .text(messageText)
-                        .replyMarkup(ReplyKeyboardMarkup.builder()
-                                .keyboard(keyboardRows)
-                                .resizeKeyboard(true)
-                                .oneTimeKeyboard(false)
-                                .build())
-                        .build());
+                .chatId(String.valueOf(message.getChatId()))
+                .text(messageText)
+                .replyMarkup(ReplyKeyboardMarkup.builder()
+                        .keyboard(keyboardRows)
+                        .resizeKeyboard(true)
+                        .oneTimeKeyboard(false)
+                        .build())
+                .build());
     }
 
     private List<BotApiMethod<?>> setStartProperties(Message message) {
@@ -169,36 +170,36 @@ public class MessageHandler implements RequestHandler {
         } else {
             if ((long) botUserService.findAll().size() == 0) {
                 botUser.setRole(Role.SUPER_ADMIN);
-                botUser.getDepartments().addAll(Arrays.stream(Departments.values()).toList());
+                botUser.getDepartments().addAll(Arrays.stream(Department.values()).toList());
             } else {
                 botUser.setRole(Role.USER);
-                botUser.setDepartments(Collections.singleton(Departments.USER));
+                botUser.setDepartments(Collections.singleton(Department.USER));
             }
         }
         botUserService.saveBotUser(botUser);
         chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), botUser.getRole().equals(Role.ADMIN));
         return Collections.singletonList(SendMessage.builder()
-                        .chatId(String.valueOf(message.getChatId()))
-                        .text("Радий Вас вітати, " + botUser.getFullName() +
-                              "\n\nЧи бажаєте Ви додати свій телефонний номер" +
-                              "\nдля майбутнього зв'язку з Вами співробітників" +
-                              "\nобслуговуючих департаментів з метою будь-яких" +
-                              "\nуточнень? \uD83D\uDC47")
-                        .replyMarkup(ReplyKeyboardMarkup.builder()
-                                .keyboard(keyboardService.getAgreeAddContactReplyButtons())
-                                .resizeKeyboard(true)
-                                .build())
-                        .build());
+                .chatId(String.valueOf(message.getChatId()))
+                .text("Радий Вас вітати, " + botUser.getFullName() +
+                      "\n\nЧи бажаєте Ви додати свій телефонний номер" +
+                      "\nдля майбутнього зв'язку з Вами співробітників" +
+                      "\nобслуговуючих департаментів з метою будь-яких" +
+                      "\nуточнень? \uD83D\uDC47")
+                .replyMarkup(ReplyKeyboardMarkup.builder()
+                        .keyboard(keyboardService.getAgreeAddContactReplyButtons())
+                        .resizeKeyboard(true)
+                        .build())
+                .build());
     }
 
     private List<BotApiMethod<?>> setDepartmentOfRequest(Message message) {
         return Collections.singletonList(SendMessage.builder()
-                        .chatId(message.getChatId().toString())
-                        .text("Оберіть, будьласка, обслуговуючий департамент")
-                        .replyMarkup(InlineKeyboardMarkup.builder()
-                                .keyboard(keyboardService.getDepartmentInlineButtons(message))
-                                .build())
-                        .build());
+                .chatId(message.getChatId().toString())
+                .text("Оберіть, будьласка, обслуговуючий департамент")
+                .replyMarkup(InlineKeyboardMarkup.builder()
+                        .keyboard(keyboardService.getDepartmentInlineButtons(message))
+                        .build())
+                .build());
     }
 
     private List<BotApiMethod<?>> getAllStateRequests(Message message) {
@@ -209,7 +210,7 @@ public class MessageHandler implements RequestHandler {
     private List<BotApiMethod<?>> getAdminAllStateRequests(Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
-            Set<Departments> departments = botUser.getDepartments();
+            Set<Department> departments = botUser.getDepartments();
             List<UserRequest> messages = new ArrayList<>();
             departments.forEach(department -> messages.addAll(requestService.findAllByDepartment(department)));
             answerMessages = sendAdminListOfMessages(message, messages);
@@ -225,7 +226,7 @@ public class MessageHandler implements RequestHandler {
     private List<BotApiMethod<?>> getAdminFalseStateRequests(Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
-            Set<Departments> departments = botUser.getDepartments();
+            Set<Department> departments = botUser.getDepartments();
             List<UserRequest> messages = new ArrayList<>();
             departments.forEach(department -> messages.addAll
                     (requestService.findMessagesByDepartmentAndState(department, false)));
@@ -239,7 +240,7 @@ public class MessageHandler implements RequestHandler {
         if (!messages.isEmpty()) {
             messages.sort(Comparator.comparing(UserRequest::getId));
             messages.forEach(currentMessage -> {
-                stateText.set(currentMessage.isState() ? TRUE_STATE_TEXT : FALSE_STATE_TEXT);
+                stateText.set(currentMessage.isState() ? TRUE_REQUEST_STATE_TEXT : FALSE_REQUEST_STATE_TEXT);
                 answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
                         .text(currentMessage.getBodyOfMessage() + "\n\n" + stateText)
@@ -257,7 +258,7 @@ public class MessageHandler implements RequestHandler {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             messages.sort(Comparator.comparing(UserRequest::getId));
             messages.forEach(currentMessage -> {
-                stateText.set(currentMessage.isState() ? TRUE_STATE_TEXT : FALSE_STATE_TEXT);
+                stateText.set(currentMessage.isState() ? TRUE_REQUEST_STATE_TEXT : FALSE_REQUEST_STATE_TEXT);
                 List<List<InlineKeyboardButton>> buttons =
                         keyboardService.getStateRequestButton(currentMessage.getMessageId(), stateText.get());
                 answerMessages.add(SendMessage.builder()
@@ -326,7 +327,7 @@ public class MessageHandler implements RequestHandler {
                 botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(botUser.getId()))
                         .text(userRequest.getBodyOfMessage() +
-                              "\n\n" + FALSE_STATE_TEXT)
+                              "\n\n" + FALSE_REQUEST_STATE_TEXT)
                         .build()));
             }
             answerMessages.addAll(getSimpleResponseToRequest(message,
