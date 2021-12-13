@@ -17,20 +17,20 @@ import java.net.URL;
 @Getter
 @Setter
 public class PingService {
-    @Value("${pings.url}")
+    @Value("https://roganska-gromada.gov.ua/news/")
     private String url;
 
     @Scheduled(fixedRateString = "600000")
     public void pingMe() {
-//        try {
-//            URL url = new URL(getUrl());
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.connect();
-//            log.info("Ping {}, OK: response code {}", url.getHost(), connection.getResponseCode());
-//            connection.disconnect();
-//        } catch (IOException e) {
-//            log.error("Ping FAILED");
-//            e.printStackTrace();
-//        }
+        try {
+            URL url = new URL(getUrl());
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.connect();
+            log.info("Ping {}, OK: response message {}", url.getHost(), connection.getResponseMessage());
+            connection.disconnect();
+        } catch (IOException e) {
+            log.error("Ping FAILED");
+            e.printStackTrace();
+        }
     }
 }
