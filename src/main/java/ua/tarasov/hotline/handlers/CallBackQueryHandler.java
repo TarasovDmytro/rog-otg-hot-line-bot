@@ -1,6 +1,5 @@
 package ua.tarasov.hotline.handlers;
 
-import com.google.gson.Gson;
 import lombok.AccessLevel;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
@@ -15,15 +14,20 @@ import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import ua.tarasov.hotline.models.model.BotState;
 import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.model.Department;
 import ua.tarasov.hotline.models.entities.UserRequest;
+import ua.tarasov.hotline.models.model.BotState;
+import ua.tarasov.hotline.models.model.Department;
 import ua.tarasov.hotline.models.model.Role;
-import ua.tarasov.hotline.service.*;
+import ua.tarasov.hotline.service.BotUserService;
+import ua.tarasov.hotline.service.ChatPropertyModeService;
+import ua.tarasov.hotline.service.KeyboardService;
+import ua.tarasov.hotline.service.UserRequestService;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -33,11 +37,6 @@ public class CallBackQueryHandler implements RequestHandler {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
     final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
-
-    final String TRUE_ACTION_STATE_TEXT = "✅  Виконана";
-    final String FALSE_ACTION_STATE_TEXT = "⭕️ На виконанні";
-    final AtomicReference<String> stateText = new AtomicReference<>("null");
-    final Gson jsonConverter = new Gson();
 
     UserRequest userRequest = new UserRequest();
     BotUser botUser = new BotUser();
@@ -204,7 +203,7 @@ public class CallBackQueryHandler implements RequestHandler {
                 .replyToMessageId(messageId)
                 .text("Нажаль, ми вимушені відмовити Вам у виконанні заявки" +
                       "\nID " + messageId + "\nвід " + userRequest.getDateTime() +
-                      "\nВаша заявка не є в компетенції нашого департаменту," +
+                      "\n\nВаша заявка не є в компетенції нашого департаменту," +
                       "\nабо її не можливо виконати з незалежних від нас причин")
                 .build());
     }

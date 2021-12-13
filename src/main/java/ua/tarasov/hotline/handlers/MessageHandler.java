@@ -1,6 +1,5 @@
 package ua.tarasov.hotline.handlers;
 
-import com.google.gson.Gson;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,6 @@ import ua.tarasov.hotline.service.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -33,12 +31,6 @@ public class MessageHandler implements RequestHandler {
     final KeyboardService keyboardService;
     final AdminService adminService;
     final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
-
-    final String TRUE_REQUEST_STATE_TEXT = "✅  Виконана";
-    final String FALSE_REQUEST_STATE_TEXT = "⭕️ На виконанні";
-    final String START_TEXT = "\uD83D\uDC4C Дякую, давайте почнемо";
-    final AtomicReference<String> stateText = new AtomicReference<>("null");
-    final AtomicReference<Location> location = new AtomicReference<>(null);
 
     final UserRequest userRequest = new UserRequest();
     BotUser botUser = new BotUser();
@@ -102,7 +94,7 @@ public class MessageHandler implements RequestHandler {
             botUser = botUserService.findById(message.getChatId()).get();
         }
         String[] depText = message.getText().substring("*admin*".length()).split(":");
-        String dataStartText = "department" + new Gson().toJson(depText);
+        String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
@@ -240,7 +232,7 @@ public class MessageHandler implements RequestHandler {
         if (!messages.isEmpty()) {
             messages.sort(Comparator.comparing(UserRequest::getId));
             messages.forEach(currentMessage -> {
-                stateText.set(currentMessage.isState() ? TRUE_REQUEST_STATE_TEXT : FALSE_REQUEST_STATE_TEXT);
+                stateText.set(currentMessage.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
                 answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
                         .text(currentMessage.getBodyOfMessage() + "\n\n" + stateText)
@@ -258,7 +250,7 @@ public class MessageHandler implements RequestHandler {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             messages.sort(Comparator.comparing(UserRequest::getId));
             messages.forEach(currentMessage -> {
-                stateText.set(currentMessage.isState() ? TRUE_REQUEST_STATE_TEXT : FALSE_REQUEST_STATE_TEXT);
+                stateText.set(currentMessage.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
                 List<List<InlineKeyboardButton>> buttons =
                         keyboardService.getStateRequestButton(currentMessage.getMessageId(), stateText.get());
                 answerMessages.add(SendMessage.builder()
@@ -327,7 +319,7 @@ public class MessageHandler implements RequestHandler {
                 botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(botUser.getId()))
                         .text(userRequest.getBodyOfMessage() +
-                              "\n\n" + FALSE_REQUEST_STATE_TEXT)
+                              "\n\n" + FALSE_ACTION_STATE_TEXT)
                         .build()));
             }
             answerMessages.addAll(getSimpleResponseToRequest(message,
