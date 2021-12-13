@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.MessageHandler;
+import ua.tarasov.hotline.models.model.RogOTGHotLineBot;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,16 +20,19 @@ public class HotLineFacade {
         this.callBackQueryHandler = callBackQueryHandler;
     }
 
-    public BotApiMethod<?> handleUpdate(Update update) {
-        BotApiMethod<?> botApiMethod = null;
+    public List<BotApiMethod<?>> handleUpdate(Update update) {
+//        BotApiMethod<?> botApiMethod = null;
         if (update.hasCallbackQuery()) {
-            botApiMethod = sendAnswerMessages(callBackQueryHandler.getHandlerUpdate(update));
+//            botApiMethod = sendAnswerMessages(callBackQueryHandler.getHandlerUpdate(update));
+            callBackQueryHandler.getHandlerUpdate(update);
         }
 
         if (update.hasMessage()) {
-            botApiMethod = sendAnswerMessages(messageHandler.getHandlerUpdate(update));
+//            botApiMethod = sendAnswerMessages(messageHandler.getHandlerUpdate(update));
+            messageHandler.getHandlerUpdate(update);
         }
-        return botApiMethod;
+//        return botApiMethod;
+        return null;
     }
 
     public BotApiMethod<?> sendAnswerMessages(List<BotApiMethod<?>> response) {
