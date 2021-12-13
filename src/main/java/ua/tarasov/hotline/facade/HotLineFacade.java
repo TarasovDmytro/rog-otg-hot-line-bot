@@ -24,12 +24,12 @@ public class HotLineFacade {
 //        BotApiMethod<?> botApiMethod = null;
         if (update.hasCallbackQuery()) {
 //            botApiMethod = sendAnswerMessages(callBackQueryHandler.getHandlerUpdate(update));
-            callBackQueryHandler.getHandlerUpdate(update);
+           return callBackQueryHandler.getHandlerUpdate(update);
         }
 
         if (update.hasMessage()) {
 //            botApiMethod = sendAnswerMessages(messageHandler.getHandlerUpdate(update));
-            messageHandler.getHandlerUpdate(update);
+            return messageHandler.getHandlerUpdate(update);
         }
 //        return botApiMethod;
         return null;
