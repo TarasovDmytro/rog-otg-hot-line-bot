@@ -2,6 +2,7 @@ package ua.tarasov.hotline.handlers;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MessageHandler implements RequestHandler {
     final UserRequestService requestService;
@@ -54,7 +56,13 @@ public class MessageHandler implements RequestHandler {
                     return setStartProperties(message);
                 }
                 case "Зробити заявку" -> {
-                    return setDepartmentOfRequest(message);
+                    log.info("call setDepartment method");
+                    List <BotApiMethod<?>> methods = setDepartmentOfRequest(message);
+                    if (methods!=null){
+                        log.info("getDepartment");
+                    } else
+                    log.error("departments is nul");
+                    return methods;
                 }
                 case "Мої заявки" -> {
                     return getAllStateRequests(message);
@@ -178,6 +186,7 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> setDepartmentOfRequest(Message message) {
+        log.info("message {}", message);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будьласка, обслуговуючий департамент")
