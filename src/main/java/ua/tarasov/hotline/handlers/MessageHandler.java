@@ -32,18 +32,19 @@ public class MessageHandler implements RequestHandler {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
     final AdminService adminService;
-    final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
+    final ChatPropertyModeService chatPropertyModeService;
 
     final UserRequest userRequest = new UserRequest();
     BotUser botUser = new BotUser();
     List<BotApiMethod<?>> answerMessages = new ArrayList<>();
 
     public MessageHandler(UserRequestService requestService, BotUserService botUserService,
-                          KeyboardService keyboardService, AdminService adminService) {
+                          KeyboardService keyboardService, AdminService adminService, ChatPropertyModeService chatPropertyModeService) {
         this.requestService = requestService;
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
         this.adminService = adminService;
+        this.chatPropertyModeService = chatPropertyModeService;
     }
 
     @Override
@@ -57,11 +58,8 @@ public class MessageHandler implements RequestHandler {
                 }
                 case "Зробити заявку" -> {
                     log.info("call setDepartment method");
-                    List <BotApiMethod<?>> methods = setDepartmentOfRequest(message);
-                    if (methods!=null){
-                        log.info("getDepartment");
-                    } else
-                    log.error("departments is nul");
+                    List<BotApiMethod<?>> methods = setDepartmentOfRequest(message);
+                    log.info("getDepartment");
                     return methods;
                 }
                 case "Мої заявки" -> {

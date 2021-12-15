@@ -36,15 +36,16 @@ public class CallBackQueryHandler implements RequestHandler {
     final UserRequestService requestService;
     final BotUserService botUserService;
     final KeyboardService keyboardService;
-    final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
+    final ChatPropertyModeService chatPropertyModeService;
 
     UserRequest userRequest = new UserRequest();
     BotUser botUser = new BotUser();
 
-    public CallBackQueryHandler(UserRequestService requestService, BotUserService botUserService, KeyboardService keyboardService) {
+    public CallBackQueryHandler(UserRequestService requestService, BotUserService botUserService, KeyboardService keyboardService, ChatPropertyModeService chatPropertyModeService) {
         this.requestService = requestService;
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
+        this.chatPropertyModeService = chatPropertyModeService;
     }
 
     @Override

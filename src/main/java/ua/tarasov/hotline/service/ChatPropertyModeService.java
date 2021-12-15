@@ -2,6 +2,7 @@ package ua.tarasov.hotline.service;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import ua.tarasov.hotline.models.model.BotState;
 import ua.tarasov.hotline.models.model.Department;
@@ -20,6 +21,7 @@ public class ChatPropertyModeService {
     private ChatPropertyModeService() {
     }
 
+    @Bean
     public static ChatPropertyModeService getChatProperties() {
         if (chatProperties == null) {
             chatProperties = new ChatPropertyModeService();
