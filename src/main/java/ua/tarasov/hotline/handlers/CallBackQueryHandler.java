@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -49,7 +51,7 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> getHandlerUpdate(Update update) {
+    public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         if (callbackQuery.getData().startsWith("department")) {
             return getButtonDepartmentHandler(callbackQuery);
@@ -88,7 +90,7 @@ public class CallBackQueryHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> setRefuseRequestMessage(CallbackQuery callbackQuery) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setRefuseRequestMessage(@NotNull CallbackQuery callbackQuery) {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return (List.of(SendMessage.builder()
                         .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
@@ -100,7 +102,7 @@ public class CallBackQueryHandler implements RequestHandler {
                         .build()));
     }
 
-    private List<BotApiMethod<?>> setBotUserDepartment(CallbackQuery callbackQuery) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setBotUserDepartment(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
@@ -128,7 +130,7 @@ public class CallBackQueryHandler implements RequestHandler {
         return setRequestMessage(callbackQuery);
     }
 
-    private List<BotApiMethod<?>> getLocationOfMessage(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> getLocationOfMessage(@NotNull CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery
                 .getData().substring("location".length()), Integer.class);
         Message message = callbackQuery.getMessage();
@@ -157,14 +159,14 @@ public class CallBackQueryHandler implements RequestHandler {
                                                    " бо, на теперішній час її вже не існує");
     }
 
-    private List<BotApiMethod<?>> getButtonDepartmentHandler(CallbackQuery callbackQuery) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> getButtonDepartmentHandler(CallbackQuery callbackQuery) {
         log.info("get button department");
         String textMessage = "Департамент обрано.\nЧи бажаєте Ви додати до заявки геолокацію?";
         return buttonDepartmentHandler(callbackQuery, textMessage);
     }
 
     @SneakyThrows
-    private List<BotApiMethod<?>> buttonDepartmentHandler(CallbackQuery callbackQuery, String textMessage) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> buttonDepartmentHandler(@NotNull CallbackQuery callbackQuery, String textMessage) {
         log.info("button department handler");
         Message message = callbackQuery.getMessage();
         Department department = jsonConverter.fromJson(callbackQuery
@@ -182,7 +184,7 @@ public class CallBackQueryHandler implements RequestHandler {
         );
     }
 
-    private List<BotApiMethod<?>> setStateRequest(CallbackQuery callbackQuery) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setStateRequest(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
@@ -198,7 +200,7 @@ public class CallBackQueryHandler implements RequestHandler {
                         .build());
     }
 
-    private List<BotApiMethod<?>> setRefuseRequest(CallbackQuery callbackQuery) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setRefuseRequest(@NotNull CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("refuse_request".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
         long chatId = userRequest.getChatId();
@@ -214,7 +216,7 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     @SneakyThrows
-    private List<BotApiMethod<?>> requestBotUserContact(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> requestBotUserContact(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("contact".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
@@ -244,7 +246,7 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     @SneakyThrows
-    private List<BotApiMethod<?>> setLocationMessage(CallbackQuery callbackQuery) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setLocationMessage(@NotNull CallbackQuery callbackQuery) {
         chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(callbackQuery.getMessage().getChatId().toString())
@@ -261,7 +263,7 @@ public class CallBackQueryHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> setRequestMessage(CallbackQuery callbackQuery) {
+    private List<BotApiMethod<?>> setRequestMessage(@NotNull CallbackQuery callbackQuery) {
         chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_MESSAGE);
         return getSimpleResponseToRequest(callbackQuery.getMessage(), "Добре. Введіть, будьласка, текст заявки");
     }

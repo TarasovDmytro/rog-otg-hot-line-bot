@@ -3,6 +3,9 @@ package ua.tarasov.hotline.handlers;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -51,7 +54,7 @@ public class MessageHandler implements RequestHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> getHandlerUpdate(Update update) {
+    public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         Message message = update.getMessage();
         String messageText = message.getText();
         if (message.getContact() == null && message.getLocation() == null) {
@@ -98,7 +101,7 @@ public class MessageHandler implements RequestHandler {
         return getSimpleResponseToRequest(message, "Something wrong...");
     }
 
-    private List<BotApiMethod<?>> requestAdminRole(Message message) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> requestAdminRole(@NotNull Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
         }
@@ -116,7 +119,7 @@ public class MessageHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> setLocation(Message message) {
+    private List<BotApiMethod<?>> setLocation(@NotNull Message message) {
         if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             this.location.set(location);
@@ -139,7 +142,7 @@ public class MessageHandler implements RequestHandler {
         return responseMessages;
     }
 
-    private List<BotApiMethod<?>> setReplyKeyboard(Message message, String messageText) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setReplyKeyboard(@NotNull Message message, String messageText) {
         List<KeyboardRow> keyboardRows = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId()) ?
                 keyboardService.getAdminsReplyButtons() : keyboardService.getUserReplyButtons(message);
         return Collections.singletonList(SendMessage.builder()
@@ -153,7 +156,7 @@ public class MessageHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> setStartProperties(Message message) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setStartProperties(@NotNull Message message) {
         chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
         User user = message.getFrom();
         botUser.setId(message.getChatId());
@@ -187,7 +190,8 @@ public class MessageHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> setDepartmentOfRequest(Message message) {
+    @Contract("_ -> new")
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setDepartmentOfRequest(@NotNull Message message) {
         return Collections.singletonList(SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будьласка, обслуговуючий департамент")
@@ -197,12 +201,12 @@ public class MessageHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> getAllStateRequests(Message message) {
+    private @NotNull List<BotApiMethod<?>> getAllStateRequests(@NotNull Message message) {
         List<UserRequest> messages = requestService.findMessagesByBotUser(message.getChatId());
         return sendUserListOfMessages(message, messages);
     }
 
-    private List<BotApiMethod<?>> getAdminAllStateRequests(Message message) {
+    private List<BotApiMethod<?>> getAdminAllStateRequests(@NotNull Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             Set<Department> departments = botUser.getDepartments();
@@ -213,12 +217,12 @@ public class MessageHandler implements RequestHandler {
         return answerMessages;
     }
 
-    private List<BotApiMethod<?>> getFalseStateRequests(Message message) {
+    private @NotNull List<BotApiMethod<?>> getFalseStateRequests(@NotNull Message message) {
         List<UserRequest> messages = requestService.findMessagesByBotUserAndState(message.getChatId(), false);
         return sendUserListOfMessages(message, messages);
     }
 
-    private List<BotApiMethod<?>> getAdminFalseStateRequests(Message message) {
+    private List<BotApiMethod<?>> getAdminFalseStateRequests(@NotNull Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             Set<Department> departments = botUser.getDepartments();
@@ -230,7 +234,7 @@ public class MessageHandler implements RequestHandler {
         return answerMessages;
     }
 
-    private List<BotApiMethod<?>> sendUserListOfMessages(Message message, List<UserRequest> messages) {
+    private @NotNull List<BotApiMethod<?>> sendUserListOfMessages(Message message, @NotNull List<UserRequest> messages) {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         if (!messages.isEmpty()) {
             messages.sort(Comparator.comparing(UserRequest::getId));
@@ -248,7 +252,7 @@ public class MessageHandler implements RequestHandler {
         return answerMessages;
     }
 
-    private List<BotApiMethod<?>> sendAdminListOfMessages(Message message, List<UserRequest> messages) {
+    private List<BotApiMethod<?>> sendAdminListOfMessages(Message message, @NotNull List<UserRequest> messages) {
         if (!messages.isEmpty()) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             messages.sort(Comparator.comparing(UserRequest::getId));
@@ -291,7 +295,7 @@ public class MessageHandler implements RequestHandler {
         return Collections.singletonList(adminService.getFalseAdminText(message));
     }
 
-    private List<BotApiMethod<?>> sendMessageToAll(Message message) {
+    private @NotNull List<BotApiMethod<?>> sendMessageToAll(Message message) {
         if (adminService.checkIsAdmin(message)) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
@@ -306,7 +310,7 @@ public class MessageHandler implements RequestHandler {
         return Collections.singletonList(adminService.getFalseAdminText(message));
     }
 
-    private List<BotApiMethod<?>> createRequestMessageHandler(Message message) {
+    private List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
             return getSimpleResponseToRequest(message, """
                     Невірний формат повідомлення.
@@ -334,7 +338,7 @@ public class MessageHandler implements RequestHandler {
                                                           " Виконайте, будьласка, коректну дію за допомогою кнопок");
     }
 
-    private UserRequest createNewUserRequest(Message message) {
+    private UserRequest createNewUserRequest(@NotNull Message message) {
         userRequest.setId(0L);
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         userRequest.setChatId(message.getChatId());
