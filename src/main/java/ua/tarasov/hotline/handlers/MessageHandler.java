@@ -131,7 +131,9 @@ public class MessageHandler implements RequestHandler {
         List<BotApiMethod<?>> responseMessages = getSimpleResponseToRequest(message, "Something wrong...");
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
-            botUser.setPhone(message.getContact().getPhoneNumber());
+            String phone = message.getContact().getPhoneNumber();
+            if (!phone.startsWith("+")) phone = "+" + phone;
+            botUser.setPhone(phone);
             botUserService.saveBotUser(botUser);
             responseMessages = setReplyKeyboard(message, START_TEXT);
         }
@@ -187,7 +189,6 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> setDepartmentOfRequest(Message message) {
-        log.info("message {}", message);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будьласка, обслуговуючий департамент")
