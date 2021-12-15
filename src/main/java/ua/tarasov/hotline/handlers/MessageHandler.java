@@ -22,6 +22,7 @@ import ua.tarasov.hotline.models.model.Role;
 import ua.tarasov.hotline.service.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Component
@@ -336,7 +337,7 @@ public class MessageHandler implements RequestHandler {
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
-        userRequest.setDateTime(LocalDateTime.now());
+        userRequest.setDateTime(LocalDateTime.now(ZoneId.systemDefault()));
         userRequest.setLocation(location.get());
         location.set(null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
