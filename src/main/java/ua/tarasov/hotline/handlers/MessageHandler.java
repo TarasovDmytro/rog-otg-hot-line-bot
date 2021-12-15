@@ -339,7 +339,7 @@ public class MessageHandler implements RequestHandler {
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
-        userRequest.setDateTime(LocalDateTime.now((Clock) ZoneId.getAvailableZoneIds()));
+        userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kyiv")));
         userRequest.setLocation(location.get());
         location.set(null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
