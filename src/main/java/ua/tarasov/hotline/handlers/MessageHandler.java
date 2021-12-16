@@ -61,15 +61,12 @@ public class MessageHandler implements RequestHandler {
         String messageText = message.getText();
         log.info("message has text = {}", messageText);
         if (message.getContact() == null && message.getLocation() == null && messageText != null) {
-
             switch (messageText) {
                 case "/start" -> {
                     return setStartProperties(message);
                 }
                 case "Зробити заявку" -> {
-                    log.info("call setDepartment method");
                     List<BotApiMethod<?>> methods = setDepartmentOfRequest(message);
-                    log.info("getDepartment");
                     return methods;
                 }
                 case "Мої заявки" -> {
@@ -102,12 +99,12 @@ public class MessageHandler implements RequestHandler {
         }
         if (message.getContact() != null) return setBotUserPhone(message);
         if (message.getLocation() != null) return setLocation(message);
-        if (message.getText() == null) {
-            return List.of(SendMessage.builder()
-                    .chatId(String.valueOf(1138897828))
-                    .text("Something wrong...")
-                    .build());
-        }
+//        if (message.getText() == null) {
+//            return List.of(SendMessage.builder()
+//                    .chatId(String.valueOf(1138897828))
+//                    .text("Something wrong...")
+//                    .build());
+//        }
         return getSimpleResponseToRequest(message, "Something wrong...");
     }
 
