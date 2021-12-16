@@ -185,31 +185,35 @@ public class CallBackQueryHandler implements RequestHandler {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
-        userRequest.setState(!userRequest.isState());
-        requestService.saveRequest(userRequest);
-        stateText.set(userRequest.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
-        return List.of(keyboardService.getCorrectReplyMarkup(message,
-                        keyboardService.getStateRequestButton(messageId, stateText.get())),
-                SendMessage.builder()
-                        .chatId(userRequest.getChatId().toString())
-                        .replyToMessageId(messageId)
-                        .text("Ваша заявка\nID " + messageId + "\nвід " + userRequest.getDateTime() + "\n" + stateText)
-                        .build());
+        if (userRequest != null) {
+            userRequest.setState(!userRequest.isState());
+            requestService.saveRequest(userRequest);
+            stateText.set(userRequest.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
+            return List.of(keyboardService.getCorrectReplyMarkup(message,
+                            keyboardService.getStateRequestButton(messageId, stateText.get())),
+                    SendMessage.builder()
+                            .chatId(userRequest.getChatId().toString())
+                            .replyToMessageId(messageId)
+                            .text("Ваша заявка\nID " + messageId + "\nвід " + userRequest.getDateTime() + "\n" + stateText)
+                            .build());
+        } else return getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setRefuseRequest(@NotNull CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("refuse_request".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
-        long chatId = userRequest.getChatId();
-        requestService.deleteUserRequest(userRequest);
-        return List.of(SendMessage.builder()
-                .chatId(String.valueOf(chatId))
-                .replyToMessageId(messageId)
-                .text("Нажаль, ми вимушені відмовити Вам у виконанні заявки" +
-                      "\nID " + messageId + "\nвід " + userRequest.getDateTime() +
-                      "\n\nВаша заявка не є в компетенції нашого департаменту," +
-                      "\nабо її не можливо виконати з незалежних від нас причин")
-                .build());
+        if (userRequest != null) {
+            long chatId = userRequest.getChatId();
+            requestService.deleteUserRequest(userRequest);
+            return List.of(SendMessage.builder()
+                    .chatId(String.valueOf(chatId))
+                    .replyToMessageId(messageId)
+                    .text("Нажаль, ми вимушені відмовити Вам у виконанні заявки" +
+                          "\nID " + messageId + "\nвід " + userRequest.getDateTime() +
+                          "\n\nВаша заявка не є в компетенції нашого департаменту," +
+                          "\nабо її не можливо виконати з незалежних від нас причин")
+                    .build());
+        } else return getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
     }
 
     @SneakyThrows
