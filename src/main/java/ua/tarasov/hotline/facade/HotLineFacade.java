@@ -27,17 +27,16 @@ public class HotLineFacade {
         List<BotApiMethod<?>> methods = new ArrayList<>();
         log.info("facade get update = {}", update);
         if (update.hasCallbackQuery()) {
-           methods = callBackQueryHandler.getHandlerUpdate(update);
+           return callBackQueryHandler.getHandlerUpdate(update);
         }
 
         if (update.hasMessage()) {
-            methods = messageHandler.getHandlerUpdate(update);
+            return messageHandler.getHandlerUpdate(update);
         }
-        if (methods.isEmpty())methods.add(SendMessage.builder()
+        return List.of(SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text("Something wrong...")
                 .build());
-        return methods;
     }
 }
 
