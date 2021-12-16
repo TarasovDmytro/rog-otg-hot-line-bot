@@ -24,10 +24,8 @@ import ua.tarasov.hotline.models.model.Department;
 import ua.tarasov.hotline.models.model.Role;
 import ua.tarasov.hotline.service.*;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 @Component
@@ -98,7 +96,7 @@ public class MessageHandler implements RequestHandler {
         }
         if (message.getContact() != null) return setBotUserPhone(message);
         if (message.getLocation() != null) return setLocation(message);
-        return getSimpleResponseToRequest(message, "Вибачте, але Ви додали данні, які я не в змозі обробити, виконайте, будьласка коректну дію");
+        return getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> requestAdminRole(@NotNull Message message) {

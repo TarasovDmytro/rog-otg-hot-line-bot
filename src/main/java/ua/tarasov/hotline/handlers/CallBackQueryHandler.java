@@ -84,10 +84,7 @@ public class CallBackQueryHandler implements RequestHandler {
         if (callbackQuery.getData().startsWith("refuse")) {
             return getRefusalPlaceLocation(callbackQuery);
         }
-        return Collections.singletonList(SendMessage.builder()
-                .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
-                .text("Something wrong...")
-                .build());
+        return getSimpleResponseToRequest(callbackQuery.getMessage(), WRONG_ACTION_TEXT);
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setRefuseRequestMessage(@NotNull CallbackQuery callbackQuery) {

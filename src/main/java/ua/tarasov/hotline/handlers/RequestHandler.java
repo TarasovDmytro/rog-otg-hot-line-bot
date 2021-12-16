@@ -17,6 +17,7 @@ public interface RequestHandler {
     AtomicReference<Location> location = new AtomicReference<>(null);
     String TRUE_ACTION_STATE_TEXT = "✅  Виконана";
     String FALSE_ACTION_STATE_TEXT = "⭕️ На виконанні";
+    String WRONG_ACTION_TEXT = "Вибачте, але Ви додали данні, які я не в змозі обробити, виконайте, будьласка коректну дію";
 
     Gson jsonConverter = new Gson();
 

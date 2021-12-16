@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.MessageHandler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
