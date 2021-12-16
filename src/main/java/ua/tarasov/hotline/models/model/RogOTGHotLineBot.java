@@ -41,7 +41,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         List<BotApiMethod<?>> methods = hotLineFacade.handleUpdate(update);
-        if(methods!=null) {
+        if (methods != null && !methods.isEmpty()) {
             if (methods.size() > 1) {
                 methods.forEach(botApiMethod -> {
                     try {
@@ -55,7 +55,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                 });
             }
             return methods.get(methods.size() - 1);
-        }else return SendMessage.builder()
+        } else return SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text("Something wrong...")
                 .build();
