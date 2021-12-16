@@ -55,8 +55,11 @@ public class MessageHandler implements RequestHandler {
 
     @Override
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
+        log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
+        log.info("update has message = {}", message);
         String messageText = message.getText();
+        log.info("message has text = {}", messageText);
         if (message.getContact() == null && message.getLocation() == null) {
             switch (messageText) {
                 case "/start" -> {

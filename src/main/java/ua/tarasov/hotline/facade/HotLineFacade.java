@@ -1,5 +1,6 @@
 package ua.tarasov.hotline.facade;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class HotLineFacade {
     private final MessageHandler messageHandler;
     private final CallBackQueryHandler callBackQueryHandler;
@@ -22,6 +24,7 @@ public class HotLineFacade {
 
     public List<BotApiMethod<?>> handleUpdate(@NotNull Update update) {
         List<BotApiMethod<?>> methods = new ArrayList<>();
+        log.info("facade get update = {}", update);
         if (update.hasCallbackQuery()) {
            methods = callBackQueryHandler.getHandlerUpdate(update);
         }
