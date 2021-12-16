@@ -66,8 +66,7 @@ public class MessageHandler implements RequestHandler {
                     return setStartProperties(message);
                 }
                 case "Зробити заявку" -> {
-                    List<BotApiMethod<?>> methods = setDepartmentOfRequest(message);
-                    return methods;
+                    return setDepartmentOfRequest(message);
                 }
                 case "Мої заявки" -> {
                     return getAllStateRequests(message);
@@ -99,13 +98,7 @@ public class MessageHandler implements RequestHandler {
         }
         if (message.getContact() != null) return setBotUserPhone(message);
         if (message.getLocation() != null) return setLocation(message);
-//        if (message.getText() == null) {
-//            return List.of(SendMessage.builder()
-//                    .chatId(String.valueOf(1138897828))
-//                    .text("Something wrong...")
-//                    .build());
-//        }
-        return getSimpleResponseToRequest(message, "Something wrong...");
+        return getSimpleResponseToRequest(message, "Вибачте, але Ви додали данні, які я не в змозі обробити, виконайте, будьласка коректну дію");
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> requestAdminRole(@NotNull Message message) {
