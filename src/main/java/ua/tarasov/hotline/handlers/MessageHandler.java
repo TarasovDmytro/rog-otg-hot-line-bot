@@ -61,6 +61,7 @@ public class MessageHandler implements RequestHandler {
         String messageText = message.getText();
         log.info("message has text = {}", messageText);
         if (message.getContact() == null && message.getLocation() == null) {
+
             switch (messageText) {
                 case "/start" -> {
                     return setStartProperties(message);

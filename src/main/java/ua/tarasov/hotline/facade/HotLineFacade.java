@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.MessageHandler;
@@ -32,6 +33,10 @@ public class HotLineFacade {
         if (update.hasMessage()) {
             methods = messageHandler.getHandlerUpdate(update);
         }
+        if (methods.isEmpty())methods.add(SendMessage.builder()
+                .chatId(update.getMessage().getChatId().toString())
+                .text("Something wrong...")
+                .build());
         return methods;
     }
 }
