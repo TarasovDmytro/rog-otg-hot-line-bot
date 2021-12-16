@@ -102,6 +102,12 @@ public class MessageHandler implements RequestHandler {
         }
         if (message.getContact() != null) return setBotUserPhone(message);
         if (message.getLocation() != null) return setLocation(message);
+        if (message.getText() == null) {
+            List.of(SendMessage.builder()
+                    .chatId(String.valueOf(1138897828))
+                    .text("Something wrong...")
+                    .build());
+        }
         return getSimpleResponseToRequest(message, "Something wrong...");
     }
 

@@ -19,7 +19,7 @@ import java.util.Set;
 @Entity
 public class BotUser {
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(nullable = false)
     Long id;
 
     String fullName;
