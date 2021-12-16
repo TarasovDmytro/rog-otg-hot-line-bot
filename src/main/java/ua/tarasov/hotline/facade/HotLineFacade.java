@@ -37,7 +37,7 @@ public class HotLineFacade {
         }
         log.info("return simple message");
         return List.of(SendMessage.builder()
-                .chatId(update.getMessage().getChatId().toString())
+                .chatId(String.valueOf(1138897828))
                 .text("Something wrong...")
                 .build());
     }
