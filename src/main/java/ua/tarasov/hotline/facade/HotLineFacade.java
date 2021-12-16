@@ -24,7 +24,6 @@ public class HotLineFacade {
     }
 
     public List<BotApiMethod<?>> handleUpdate(@NotNull Update update) {
-        List<BotApiMethod<?>> methods = new ArrayList<>();
         log.info("facade get update = {}", update);
         if (update.hasCallbackQuery()) {
             log.info("return callBackQueryHandler action");

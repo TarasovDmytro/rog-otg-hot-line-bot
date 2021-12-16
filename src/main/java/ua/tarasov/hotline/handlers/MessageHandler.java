@@ -60,7 +60,7 @@ public class MessageHandler implements RequestHandler {
         log.info("update has message = {}", message);
         String messageText = message.getText();
         log.info("message has text = {}", messageText);
-        if (message.getContact() == null && message.getLocation() == null) {
+        if (message.getContact() == null && message.getLocation() == null && messageText != null) {
 
             switch (messageText) {
                 case "/start" -> {
