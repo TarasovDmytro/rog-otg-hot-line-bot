@@ -89,7 +89,10 @@ public class MessageHandler implements RequestHandler {
                 }
                 default -> {
                     if (message.getText().startsWith("@@")) return sendMessageToAll(message);
-                    if (messageText.startsWith("*admin*")) return requestAdminRole(message);
+                    if (message.getText().startsWith("*admin*")) return requestAdminRole(message);
+                    if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)){
+                        return setRequestAddress(message);
+                    }
                     else return createRequestMessageHandler(message);
                 }
             }
@@ -97,6 +100,13 @@ public class MessageHandler implements RequestHandler {
         if (message.getContact() != null) return setBotUserPhone(message);
         if (message.getLocation() != null) return setLocation(message);
         return getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
+    }
+
+    private List<BotApiMethod<?>> setRequestAddress(Message message) {
+        chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
+        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE);
+        return getSimpleResponseToRequest(message, "Адресу додано до заявки" +
+                                                   "\nВведіть, будьласка, текст заявки");
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> requestAdminRole(@NotNull Message message) {
@@ -120,10 +130,10 @@ public class MessageHandler implements RequestHandler {
     private List<BotApiMethod<?>> setLocation(@NotNull Message message) {
         if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
-            this.location.set(location);
-            chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE);
+            chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
+            chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_ADDRESS);
             return getSimpleResponseToRequest(message, "Локацію установлено" +
-                                                       "\nВведіть, будьласка, текст заявки");
+                                                       "\nВведіть, будьласка, адресу, за якою сталася проблема");
         } else return getSimpleResponseToRequest(message,
                 "Вибачте, але локацію має сенс додавати тільки при створенні заявки.");
     }
@@ -342,11 +352,13 @@ public class MessageHandler implements RequestHandler {
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
         userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
-        userRequest.setLocation(location.get());
-        location.set(null);
+        userRequest.setAddress(chatPropertyModeService.getCurrentRequestAddress(message.getChatId()));
+        userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
+        chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment() + "\nID " + userRequest.getMessageId() +
-                                     "\nвід " + userRequest.getDateTime() + "\n\n" + message.getText() + "\n\n" + isLocation);
+                                     "\nвід " + userRequest.getDateTime() + "\n\n" + message.getText() +
+                                     "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
         requestService.saveRequest(userRequest);
         return userRequest;

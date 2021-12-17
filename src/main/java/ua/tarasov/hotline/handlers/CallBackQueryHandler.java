@@ -265,7 +265,8 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> setRequestMessage(@NotNull CallbackQuery callbackQuery) {
-        chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_MESSAGE);
-        return getSimpleResponseToRequest(callbackQuery.getMessage(), "Добре. Введіть, будьласка, текст заявки");
+        chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_ADDRESS);
+        return getSimpleResponseToRequest(callbackQuery.getMessage(), "Добре. Введіть, будьласка, адресу," +
+                                                                      " за якою сталася проблема");
     }
 }

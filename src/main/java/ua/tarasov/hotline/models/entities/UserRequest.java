@@ -30,6 +30,7 @@ public class UserRequest {
     Long chatId;
     Integer messageId;
     boolean state;
+    String address;
     String location;
 
     public void setLocation(Location location) {
