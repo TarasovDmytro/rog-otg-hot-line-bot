@@ -229,6 +229,9 @@ public class CallBackQueryHandler implements RequestHandler {
             String phone = botUser.getPhone();
             List<BotApiMethod<?>> answerMessage;
             if (phone != null) {
+                if (!phone.startsWith("+")){
+                    phone = "+" + phone;
+                }
                 String messageText = userRequest.getBodyOfMessage() +
                                      "\n\nІз користувачем можна зв'язатись за телефоном:\n"
                                      + phone;

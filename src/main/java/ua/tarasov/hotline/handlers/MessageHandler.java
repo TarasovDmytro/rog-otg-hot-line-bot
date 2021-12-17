@@ -56,10 +56,9 @@ public class MessageHandler implements RequestHandler {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
         log.info("update has message = {}", message);
-        String messageText = message.getText();
-        log.info("message has text = {}", messageText);
-        if (message.getContact() == null && message.getLocation() == null && messageText != null) {
-            switch (messageText) {
+        if (message.hasText()) {
+            log.info("message has text = {}", message.getText());
+            switch (message.getText()) {
                 case "/start" -> {
                     return setStartProperties(message);
                 }
@@ -97,8 +96,8 @@ public class MessageHandler implements RequestHandler {
                 }
             }
         }
-        if (message.getContact() != null) return setBotUserPhone(message);
-        if (message.getLocation() != null) return setLocation(message);
+        if (message.hasContact()) return setBotUserPhone(message);
+        if (message.hasLocation()) return setRequestLocation(message);
         return getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
     }
 
@@ -127,7 +126,7 @@ public class MessageHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> setLocation(@NotNull Message message) {
+    private List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
         if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
