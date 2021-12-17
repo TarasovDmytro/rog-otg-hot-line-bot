@@ -56,19 +56,19 @@ public class ChatPropertyModeService {
         return botStateMap.getOrDefault(chatId, BotState.WAIT_BUTTON);
     }
 
-    public void  setCurrentRequestAddress(long chatId, String address){
+    public void setCurrentRequestAddress(long chatId, String address) {
         currentRequestAddress.put(chatId, address);
     }
 
-    public String getCurrentRequestAddress(long chatId){
+    public String getCurrentRequestAddress(long chatId) {
         return currentRequestAddress.getOrDefault(chatId, "Адресу не встановлено");
     }
 
-    public void setCurrentLocation(long chatId, Location location){
+    public void setCurrentLocation(long chatId, Location location) {
         currentLocation.put(chatId, location);
     }
 
-    public Location getCurrentLocation(long chatId){
+    public Location getCurrentLocation(long chatId) {
         return currentLocation.get(chatId);
     }
 }

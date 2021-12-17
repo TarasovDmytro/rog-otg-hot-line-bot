@@ -101,7 +101,7 @@ public class MessageHandler implements RequestHandler {
         return getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
     }
 
-    private List<BotApiMethod<?>> setRequestAddress(Message message) {
+    private List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         return getSimpleResponseToRequest(message, "Адресу додано до заявки" +
