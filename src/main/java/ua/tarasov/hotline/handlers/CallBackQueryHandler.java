@@ -245,7 +245,7 @@ public class CallBackQueryHandler implements RequestHandler {
             }
             return answerMessage;
         }
-        return getSimpleResponseToRequest(message, "Ви не можете отримати шнформацію, пов'язану із цією заявкою," +
+        return getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану із цією заявкою," +
                                                    " бо, на теперішній час її вже не існує");
     }
 
