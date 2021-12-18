@@ -41,7 +41,7 @@ public class UserRequest {
         return new Gson().fromJson(location, Location.class);
     }
 
-    public String getDateTime() {
+    public String getDateTimeToString() {
         return this.dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH.mm.ss"));
     }
 

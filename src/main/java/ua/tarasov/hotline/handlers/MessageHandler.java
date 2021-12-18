@@ -338,7 +338,7 @@ public class MessageHandler implements RequestHandler {
             }
             answerMessages.addAll(getSimpleResponseToRequest(message,
                     "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
-                    "\nвід " + userRequest.getDateTime() + "\nприйнята"));
+                    "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         } else return getSimpleResponseToRequest(message, "Вибачте, але я бот, а не людина і читати не вмію." +
@@ -356,9 +356,10 @@ public class MessageHandler implements RequestHandler {
         chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment() + "\nID " + userRequest.getMessageId() +
-                                     "\nвід " + userRequest.getDateTime() + "\n\n" + message.getText() +
+                                     "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
                                      "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
+        requestService.cleanRequestData();
         requestService.saveRequest(userRequest);
         return userRequest;
     }

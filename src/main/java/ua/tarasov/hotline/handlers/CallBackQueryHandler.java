@@ -194,7 +194,7 @@ public class CallBackQueryHandler implements RequestHandler {
                     SendMessage.builder()
                             .chatId(userRequest.getChatId().toString())
                             .replyToMessageId(messageId)
-                            .text("Ваша заявка\nID " + messageId + "\nвід " + userRequest.getDateTime() + "\n" + stateText)
+                            .text("Ваша заявка\nID " + messageId + "\nвід " + userRequest.getDateTimeToString() + "\n" + stateText)
                             .build());
         } else return getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
     }
@@ -209,7 +209,7 @@ public class CallBackQueryHandler implements RequestHandler {
                     .chatId(String.valueOf(chatId))
                     .replyToMessageId(messageId)
                     .text("Нажаль, ми вимушені відмовити Вам у виконанні заявки" +
-                          "\nID " + messageId + "\nвід " + userRequest.getDateTime() +
+                          "\nID " + messageId + "\nвід " + userRequest.getDateTimeToString() +
                           "\n\nВаша заявка не є в компетенції нашого департаменту," +
                           "\nабо її не можливо виконати з незалежних від нас причин")
                     .build());

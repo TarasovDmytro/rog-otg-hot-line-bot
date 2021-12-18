@@ -1,16 +1,14 @@
 package ua.tarasov.hotline.service;
 
-import ch.qos.logback.classic.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import ua.tarasov.hotline.models.entities.UserRequest;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.List;
 
 @Service
 @Slf4j

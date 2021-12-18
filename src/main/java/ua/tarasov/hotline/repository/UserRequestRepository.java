@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ua.tarasov.hotline.models.model.Department;
 import ua.tarasov.hotline.models.entities.UserRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface UserRequestRepository extends JpaRepository<UserRequest, Long> {
@@ -15,4 +16,6 @@ public interface UserRequestRepository extends JpaRepository<UserRequest, Long> 
     List<UserRequest> findAllByDepartment(Department department);
 
     List<UserRequest> findAllByDepartmentAndState(Department department, boolean state);
+
+    List<UserRequest> findAllByDateTimeBeforeAndState(LocalDateTime beforeTime, boolean state);
 }
