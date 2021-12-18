@@ -225,25 +225,23 @@ public class CallBackQueryHandler implements RequestHandler {
             Long botUserId = userRequest.getChatId();
             if (botUserService.findById(botUserId).isPresent()) {
                 botUser = botUserService.findById(botUserId).get();
-            }
-            String phone = botUser.getPhone();
-            List<BotApiMethod<?>> answerMessage;
-            if (phone != null) {
-                if (!phone.startsWith("+")) {
-                    phone = "+" + phone;
+                String phone = botUser.getPhone();
+                if (phone != null) {
+                    if (!phone.startsWith("+")) {
+                        phone = "+" + phone;
+                    }
+                    String messageText = userRequest.getBodyOfMessage() +
+                                         "\n\nІз користувачем можна зв'язатись за телефоном:\n"
+                                         + phone;
+                    return getSimpleResponseToRequest(message, messageText);
+                } else {
+                    return Collections.singletonList(AnswerCallbackQuery.builder()
+                            .callbackQueryId(callbackQuery.getId())
+                            .text("Користувач відмовився надати свій номер телефону")
+                            .showAlert(true)
+                            .build());
                 }
-                String messageText = userRequest.getBodyOfMessage() +
-                                     "\n\nІз користувачем можна зв'язатись за телефоном:\n"
-                                     + phone;
-                answerMessage = getSimpleResponseToRequest(message, messageText);
-            } else {
-                answerMessage = Collections.singletonList(AnswerCallbackQuery.builder()
-                        .callbackQueryId(callbackQuery.getId())
-                        .text("Користувач відмовився надати свій номер телефону")
-                        .showAlert(true)
-                        .build());
             }
-            return answerMessage;
         }
         return getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану із цією заявкою," +
                                                    " бо, на теперішній час її вже не існує");
