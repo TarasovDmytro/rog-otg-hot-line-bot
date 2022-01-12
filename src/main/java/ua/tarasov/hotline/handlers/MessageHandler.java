@@ -92,10 +92,9 @@ public class MessageHandler implements RequestHandler {
                         return sendMessageToAll(message);
                     }
                     if (message.getText().startsWith("*admin*")) return requestAdminRole(message);
-                    if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)){
+                    if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
                         return setRequestAddress(message);
-                    }
-                    else return createRequestMessageHandler(message);
+                    } else return createRequestMessageHandler(message);
                 }
             }
         }
@@ -108,7 +107,7 @@ public class MessageHandler implements RequestHandler {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         return getSimpleResponseToRequest(message, "Адресу додано до заявки" +
-                                                   "\nВведіть, будьласка, текст заявки");
+                "\nВведіть, будьласка, текст заявки");
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> requestAdminRole(@NotNull Message message) {
@@ -121,8 +120,9 @@ public class MessageHandler implements RequestHandler {
         return List.of(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
-                      + "<b>, ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
-                      "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
+                        + "<b>, ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
+                        "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
+                .parseMode("HTML")
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
                         .build())
@@ -135,7 +135,7 @@ public class MessageHandler implements RequestHandler {
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_ADDRESS);
             return getSimpleResponseToRequest(message, "Локацію установлено" +
-                                                       "\nВведіть, будьласка, адресу, за якою сталася проблема");
+                    "\nВведіть, будьласка, адресу, за якою сталася проблема");
         } else return getSimpleResponseToRequest(message,
                 "Вибачте, але локацію має сенс додавати тільки при створенні заявки.");
     }
@@ -189,10 +189,10 @@ public class MessageHandler implements RequestHandler {
         return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(message.getChatId()))
                 .text("Радий Вас вітати, " + botUser.getFullName() +
-                      "\n\nЧи бажаєте Ви додати свій телефонний номер" +
-                      "\nдля майбутнього зв'язку з Вами співробітників" +
-                      "\nобслуговуючих департаментів з метою будь-яких" +
-                      "\nуточнень? \uD83D\uDC47")
+                        "\n\nЧи бажаєте Ви додати свій телефонний номер" +
+                        "\nдля майбутнього зв'язку з Вами співробітників" +
+                        "\nобслуговуючих департаментів з метою будь-яких" +
+                        "\nуточнень? \uD83D\uDC47")
                 .replyMarkup(ReplyKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeAddContactReplyButtons())
                         .resizeKeyboard(true)
@@ -334,16 +334,16 @@ public class MessageHandler implements RequestHandler {
                 botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(botUser.getId()))
                         .text(userRequest.getBodyOfMessage() +
-                              "\n\n" + FALSE_ACTION_STATE_TEXT)
+                                "\n\n" + FALSE_ACTION_STATE_TEXT)
                         .build()));
             }
             answerMessages.addAll(getSimpleResponseToRequest(message,
                     "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
-                    "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
+                            "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         } else return getSimpleResponseToRequest(message, "Вибачте, але я бот, а не людина і читати не вмію." +
-                                                          " Виконайте, будьласка, коректну дію за допомогою кнопок");
+                " Виконайте, будьласка, коректну дію за допомогою кнопок");
     }
 
     private UserRequest createNewUserRequest(@NotNull Message message) {
@@ -357,8 +357,8 @@ public class MessageHandler implements RequestHandler {
         chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment() + "\nID " + userRequest.getMessageId() +
-                                     "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
-                                     "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
+                "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
+                "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
         requestService.cleanRequestData();
         requestService.saveRequest(userRequest);
