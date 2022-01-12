@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 import ua.tarasov.hotline.facade.HotLineFacade;
+import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
 import ua.tarasov.hotline.service.NewsService;
 
@@ -32,6 +33,8 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     private HotLineFacade hotLineFacade;
     @Autowired
     ChatPropertyModeService chatPropertyModeService;
+    @Autowired
+    BotUserService botUserService;
 
     public RogOTGHotLineBot(HotLineFacade hotLineFacade, DefaultBotOptions options, SetWebhook setWebhook) {
         super(options, setWebhook);
@@ -71,7 +74,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
 
     @Scheduled(fixedDelayString = "60000")
     public void sendNews() {
-        NewsService newsService = new NewsService();
+        NewsService newsService = new NewsService(botUserService);
         List<BotApiMethod<?>> methods = newsService.getNews();
         if (methods != null && !methods.isEmpty()) {
             chatPropertyModeService.setBotState(1138897828, BotState.WAIT_MESSAGE_TO_ALL);

@@ -7,14 +7,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.models.BotState;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,9 +25,12 @@ public class NewsService {
     @Value("https://roganska-gromada.gov.ua/more_news/")
     private String url;
 
-    @Autowired
-    BotUserService botUserService;
+    private final BotUserService botUserService;
     private final List<BotApiMethod<?>> answerMessages = new ArrayList<>();
+
+    public NewsService(BotUserService botUserService) {
+        this.botUserService = botUserService;
+    }
 
     public List<BotApiMethod<?>> getNews() {
         try {
