@@ -72,23 +72,23 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                 .build();
     }
 
-    @Scheduled(fixedDelayString = "60000")
-    public void sendNews() {
-        NewsService newsService = new NewsService(botUserService);
-        List<BotApiMethod<?>> methods = newsService.getNews();
-        if (methods != null && !methods.isEmpty()) {
-            chatPropertyModeService.setBotState(1138897828, BotState.WAIT_MESSAGE_TO_ALL);
-            methods.forEach(botApiMethod -> {
-                try {
-                    if (botApiMethod != methods.get(methods.size() - 1)) {
-                        execute(botApiMethod);
-                        Thread.sleep(35);
-                    }
-                } catch (TelegramApiException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-            chatPropertyModeService.setBotState(1138897828, BotState.WAIT_BUTTON);
-        }
-    }
+//    @Scheduled(fixedDelayString = "60000")
+//    public void sendNews() {
+//        NewsService newsService = new NewsService(botUserService);
+//        List<BotApiMethod<?>> methods = newsService.getNews();
+//        if (methods != null && !methods.isEmpty()) {
+//            chatPropertyModeService.setBotState(1138897828, BotState.WAIT_MESSAGE_TO_ALL);
+//            methods.forEach(botApiMethod -> {
+//                try {
+//                    if (botApiMethod != methods.get(methods.size() - 1)) {
+//                        execute(botApiMethod);
+//                        Thread.sleep(35);
+//                    }
+//                } catch (TelegramApiException | InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//            chatPropertyModeService.setBotState(1138897828, BotState.WAIT_BUTTON);
+//        }
+//    }
 }
