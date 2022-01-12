@@ -1,18 +1,18 @@
 package ua.tarasov.hotline.models.entities;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.Hibernate;
 import ua.tarasov.hotline.models.models.Department;
 import ua.tarasov.hotline.models.models.Role;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
+@ToString
+@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -32,4 +32,17 @@ public class BotUser {
     Role role;
 
     String phone;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        BotUser botUser = (BotUser) o;
+        return id != null && Objects.equals(id, botUser.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
