@@ -87,7 +87,10 @@ public class MessageHandler implements RequestHandler {
                     return setReplyKeyboard(message, START_TEXT);
                 }
                 default -> {
-                    if (message.getText().startsWith("@@")) return sendMessageToAll(message);
+//                    if (message.getText().startsWith("@@")) return sendMessageToAll(message);
+                    if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
+                        return sendMessageToAll(message);
+                    }
                     if (message.getText().startsWith("*admin*")) return requestAdminRole(message);
                     if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)){
                         return setRequestAddress(message);
