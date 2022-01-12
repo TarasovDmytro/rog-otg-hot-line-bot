@@ -144,6 +144,7 @@ public class MessageHandler implements RequestHandler {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             String phone = message.getContact().getPhoneNumber();
+            if (!phone.startsWith("+")) phone = "+" + phone;
             botUser.setPhone(phone);
             botUserService.saveBotUser(botUser);
             responseMessages = setReplyKeyboard(message, START_TEXT);
