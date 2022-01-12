@@ -334,7 +334,7 @@ public class MessageHandler implements RequestHandler {
                             "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
-        } else return getSimpleResponseToRequest(message, "Вибачте, але я бот, а не людина і читати не вмію." +
+        } else return getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
                 "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");
     }
 
