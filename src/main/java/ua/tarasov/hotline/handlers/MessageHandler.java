@@ -120,7 +120,7 @@ public class MessageHandler implements RequestHandler {
         return List.of(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
-                        + "<b>, ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
+                        + "\n<b>ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
                         "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
                 .parseMode("HTML")
                 .replyMarkup(InlineKeyboardMarkup.builder()
