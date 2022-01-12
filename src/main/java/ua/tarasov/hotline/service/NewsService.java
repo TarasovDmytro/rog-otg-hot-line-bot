@@ -31,7 +31,7 @@ public class NewsService {
                     .get();
             Elements news = doc.getElementsByClass("news_title");
             for (Element element : news){
-                String title = String.valueOf(element.getElementsByAttribute("href"));
+                String title = element.html();
                 log.info(title);
             }
         } catch (IOException e) {

@@ -310,6 +310,7 @@ public class MessageHandler implements RequestHandler {
             botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                     .chatId(String.valueOf(botUser.getId()))
                     .text(message.getText())
+                    .parseMode("HTML")
                     .build()));
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
