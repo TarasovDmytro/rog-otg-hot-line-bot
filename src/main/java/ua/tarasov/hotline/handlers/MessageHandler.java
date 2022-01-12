@@ -330,12 +330,12 @@ public class MessageHandler implements RequestHandler {
                         .build()));
             }
             answerMessages.addAll(getSimpleResponseToRequest(message,
-                    "\uD83D\uDC4D\nДякуємо, Ваша заявка\n<b>ID </b>" + userRequest.getMessageId() +
-                            "\n<b>від </b>" + userRequest.getDateTimeToString() + "\nприйнята"));
+                    "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
+                            "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         } else return getSimpleResponseToRequest(message, "Вибачте, але я бот, а не людина і читати не вмію." +
-                " Виконайте, будьласка, коректну дію за допомогою кнопок");
+                "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");
     }
 
     private UserRequest createNewUserRequest(@NotNull Message message) {
