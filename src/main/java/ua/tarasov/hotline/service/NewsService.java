@@ -34,7 +34,7 @@ public class NewsService {
 
     public List<BotApiMethod<?>> getNews() {
         try {
-            Document doc = Jsoup.connect(url)
+            Document doc = Jsoup.connect("https://roganska-gromada.gov.ua/more_news/")
                     .userAgent("Mozilla")
                     .timeout(5000)
                     .referrer("https://google.com")
