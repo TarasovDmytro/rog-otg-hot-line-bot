@@ -120,8 +120,8 @@ public class MessageHandler implements RequestHandler {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
-                .text("Отримана заявка від " + botUser.getFullName() + "\nтел." + botUser.getPhone()
-                      + ", ID:" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
+                .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
+                      + "<b>, ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
                       "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
