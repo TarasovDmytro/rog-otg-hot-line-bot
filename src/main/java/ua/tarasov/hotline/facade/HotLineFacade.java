@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.MessageHandler;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -34,7 +35,7 @@ public class HotLineFacade {
             return messageHandler.getHandlerUpdate(update);
         }
         log.info("return simple message");
-        return List.of(SendMessage.builder()
+        return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(1138897828))
                 .text("Something wrong...")
                 .build());

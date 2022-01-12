@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.tarasov.hotline.models.model.Department;
+import ua.tarasov.hotline.models.models.Department;
 import ua.tarasov.hotline.models.entities.UserRequest;
 import ua.tarasov.hotline.repository.UserRequestRepository;
 

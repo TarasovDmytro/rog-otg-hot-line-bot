@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ua.tarasov.hotline.models.model.RogOTGHotLineBot;
+import ua.tarasov.hotline.models.models.RogOTGHotLineBot;
 
 @RestController
 public class HotLineController {

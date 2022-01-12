@@ -19,9 +19,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ua.tarasov.hotline.models.entities.BotUser;
 import ua.tarasov.hotline.models.entities.UserRequest;
-import ua.tarasov.hotline.models.model.BotState;
-import ua.tarasov.hotline.models.model.Department;
-import ua.tarasov.hotline.models.model.Role;
+import ua.tarasov.hotline.models.models.BotState;
+import ua.tarasov.hotline.models.models.Department;
+import ua.tarasov.hotline.models.models.Role;
 import ua.tarasov.hotline.service.*;
 
 import java.time.LocalDateTime;

@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 import org.telegram.telegrambots.meta.api.objects.Location;
-import ua.tarasov.hotline.models.model.Department;
+import ua.tarasov.hotline.models.models.Department;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package ua.tarasov.hotline.models.model;
+package ua.tarasov.hotline.models.models;
 
 import lombok.AccessLevel;
 import lombok.Getter;

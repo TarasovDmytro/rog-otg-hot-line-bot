@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import ua.tarasov.hotline.models.model.Department;
-import ua.tarasov.hotline.models.model.Role;
+import ua.tarasov.hotline.models.models.Department;
+import ua.tarasov.hotline.models.models.Role;
 
 import javax.persistence.*;
 import java.util.HashSet;
