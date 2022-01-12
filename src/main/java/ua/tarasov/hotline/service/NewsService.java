@@ -7,11 +7,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import ua.tarasov.hotline.models.entities.BotUser;
+import ua.tarasov.hotline.models.models.BotState;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -21,8 +28,11 @@ public class NewsService {
     @Value("https://roganska-gromada.gov.ua/more_news/")
     private String url;
 
-    @Scheduled(fixedDelayString = "60000")
-    public void getNews() {
+    @Autowired
+    BotUserService botUserService;
+    private final List<BotApiMethod<?>> answerMessages = new ArrayList<>();
+
+    public List<BotApiMethod<?>> getNews() {
         try {
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla")
@@ -33,9 +43,16 @@ public class NewsService {
             for (Element element : news){
                 String title = element.html();
                 log.info(title);
+                List<BotUser> botUsers = botUserService.findAll();
+                botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
+                        .chatId(String.valueOf(botUser.getId()))
+                        .text(title)
+                        .parseMode("HTML")
+                        .build()));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return answerMessages;
     }
 }

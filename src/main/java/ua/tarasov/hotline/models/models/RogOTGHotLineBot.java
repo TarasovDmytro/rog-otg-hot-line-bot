@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,6 +15,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 import ua.tarasov.hotline.facade.HotLineFacade;
+import ua.tarasov.hotline.service.ChatPropertyModeService;
+import ua.tarasov.hotline.service.NewsService;
 
 import java.util.List;
 
@@ -27,6 +30,8 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     String botToken;
 
     private HotLineFacade hotLineFacade;
+    @Autowired
+    ChatPropertyModeService chatPropertyModeService;
 
     public RogOTGHotLineBot(HotLineFacade hotLineFacade, DefaultBotOptions options, SetWebhook setWebhook) {
         super(options, setWebhook);
@@ -64,5 +69,23 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                 .build();
     }
 
-
+    @Scheduled(fixedDelayString = "60000")
+    public void sendNews() {
+        NewsService newsService = new NewsService();
+        List<BotApiMethod<?>> methods = newsService.getNews();
+        if (methods != null && !methods.isEmpty()) {
+            chatPropertyModeService.setBotState(1138897828, BotState.WAIT_MESSAGE_TO_ALL);
+            methods.forEach(botApiMethod -> {
+                try {
+                    if (botApiMethod != methods.get(methods.size() - 1)) {
+                        execute(botApiMethod);
+                        Thread.sleep(35);
+                    }
+                } catch (TelegramApiException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+            chatPropertyModeService.setBotState(1138897828, BotState.WAIT_BUTTON);
+        }
+    }
 }
