@@ -31,8 +31,8 @@ public class NewsService {
                     .get();
             Elements news = doc.getElementsByClass("news_title");
             for (Element element : news){
-                Elements title = element.getAllElements();
-                log.info(String.valueOf(title));
+                String title = String.valueOf(element.getElementsByAttribute("a"));
+                log.info(title);
             }
         } catch (IOException e) {
             e.printStackTrace();
