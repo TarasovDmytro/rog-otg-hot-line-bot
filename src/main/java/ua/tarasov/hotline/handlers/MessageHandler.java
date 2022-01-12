@@ -311,7 +311,7 @@ public class MessageHandler implements RequestHandler {
             List<BotUser> botUsers = botUserService.findAll();
             botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                     .chatId(String.valueOf(botUser.getId()))
-                    .text(message.getText().substring("@@".length()))
+                    .text(message.getText())
                     .build()));
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
