@@ -298,9 +298,7 @@ public class MessageHandler implements RequestHandler {
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
             return getSimpleResponseToRequest(message, """
                     Введіть, будьласка, повідомлення
-                    для всіх користувачів в форматі:
-
-                    @@'Ваше повідомлення'""");
+                    для всіх користувачів""");
         }
         return Collections.singletonList(adminService.getFalseAdminText(message));
     }
