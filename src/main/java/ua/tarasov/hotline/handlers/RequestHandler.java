@@ -25,6 +25,7 @@ public interface RequestHandler {
         return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(message.getChatId()))
                 .text(textMessage)
+                .parseMode("HTML")
                 .build());
     }
 }

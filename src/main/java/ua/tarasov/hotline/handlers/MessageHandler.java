@@ -87,7 +87,6 @@ public class MessageHandler implements RequestHandler {
                     return setReplyKeyboard(message, START_TEXT);
                 }
                 default -> {
-//                    if (message.getText().startsWith("@@")) return sendMessageToAll(message);
                     if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
                         return sendMessageToAll(message);
                     }
@@ -319,13 +318,6 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
-        if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
-            return getSimpleResponseToRequest(message, """
-                    Невірний формат повідомлення.
-                    Введіть повідомлення в форматі:
-
-                    @@'Ваше повідомлення'""");
-        }
         if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             UserRequest userRequest = createNewUserRequest(message);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
@@ -338,8 +330,8 @@ public class MessageHandler implements RequestHandler {
                         .build()));
             }
             answerMessages.addAll(getSimpleResponseToRequest(message,
-                    "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
-                            "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
+                    "\uD83D\uDC4D\nДякуємо, Ваша заявка\n<b>ID </b>" + userRequest.getMessageId() +
+                            "\n<b>від </b>" + userRequest.getDateTimeToString() + "\nприйнята"));
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         } else return getSimpleResponseToRequest(message, "Вибачте, але я бот, а не людина і читати не вмію." +
