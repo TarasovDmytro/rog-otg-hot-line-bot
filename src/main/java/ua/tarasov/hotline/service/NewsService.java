@@ -3,6 +3,7 @@ package ua.tarasov.hotline.service;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.tarasov.hotline.models.entities.News;
 import ua.tarasov.hotline.repository.NewsRepository;
 
@@ -21,6 +22,7 @@ public class NewsService {
         return repository.existsNewsByTitle(newsTitle);
     }
 
+    @Transactional
     public void saveNews(News news) {
         repository.save(news);
         if (repository.count() > 10) {
