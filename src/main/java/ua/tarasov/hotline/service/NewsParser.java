@@ -32,7 +32,6 @@ public class NewsParser {
 
     final BotUserService botUserService;
     final NewsService newsService;
-    final List<BotApiMethod<?>> answerMessages = new ArrayList<>();
 
     public NewsParser(@Autowired BotUserService botUserService, @Autowired NewsService newsService) {
         this.botUserService = botUserService;
@@ -40,6 +39,7 @@ public class NewsParser {
     }
 
     public List<BotApiMethod<?>> getNews() {
+        List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         try {
             Document doc = Jsoup.connect("https://roganska-gromada.gov.ua/more_news/")
                     .userAgent("Mozilla")
