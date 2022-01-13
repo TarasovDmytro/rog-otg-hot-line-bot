@@ -17,12 +17,15 @@ public class NewsService {
         this.repository = repository;
     }
 
-    public Boolean isExist (String newsTitle){
+    public Boolean isExist(String newsTitle) {
         return repository.existsNewsByTitle(newsTitle);
     }
 
-    public void saveNews (News news){
+    public void saveNews(News news) {
         repository.save(news);
+        if (repository.count() > 10) {
+            repository.deleteById(news.getId() - 10);
+        }
     }
 
     public List<News> findAll() {
