@@ -80,6 +80,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     public void sendNews() {
         NewsParser parser = new NewsParser(botUserService, newsService);
         List<BotApiMethod<?>> methods = parser.getNews();
+        log.info(String.valueOf(methods));
         if (methods != null && !methods.isEmpty()) {
             chatPropertyModeService.setBotState(1138897828, BotState.WAIT_MESSAGE_TO_ALL);
             methods.forEach(botApiMethod -> {
