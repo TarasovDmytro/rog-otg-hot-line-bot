@@ -57,7 +57,7 @@ public class NewsParser {
                     List<BotUser> botUsers = botUserService.findAll();
                     botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                             .chatId(String.valueOf(botUser.getId()))
-                            .text(title)
+                            .text(news.getTitle())
                             .parseMode("HTML")
                             .build()));
                 }
