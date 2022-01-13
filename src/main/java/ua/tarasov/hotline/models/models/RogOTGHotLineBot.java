@@ -83,16 +83,14 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
         log.info(String.valueOf(methods));
         if (methods != null && !methods.isEmpty()) {
             chatPropertyModeService.setBotState(1138897828, BotState.WAIT_MESSAGE_TO_ALL);
-            methods.forEach(botApiMethod -> {
+            for (BotApiMethod<?> botApiMethod : methods) {
                 try {
-                    if (botApiMethod != methods.get(methods.size() - 1)) {
                         execute(botApiMethod);
                         Thread.sleep(35);
-                    }
                 } catch (TelegramApiException | InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            }
             chatPropertyModeService.setBotState(1138897828, BotState.WAIT_BUTTON);
         }
     }
