@@ -17,8 +17,8 @@ import org.telegram.telegrambots.starter.SpringWebhookBot;
 import ua.tarasov.hotline.facade.HotLineFacade;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
-import ua.tarasov.hotline.service.NewsParser;
-import ua.tarasov.hotline.service.NewsService;
+import ua.tarasov.hotline.service.NotificationParser;
+import ua.tarasov.hotline.service.NotificationService;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     @Autowired
     BotUserService botUserService;
     @Autowired
-    NewsService newsService;
+    NotificationService notificationService;
 
     public RogOTGHotLineBot(HotLineFacade hotLineFacade, DefaultBotOptions options, SetWebhook setWebhook) {
         super(options, setWebhook);
@@ -78,7 +78,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
 
     @Scheduled(fixedDelayString = "60000")
     public void sendNews() {
-        NewsParser parser = new NewsParser(botUserService, newsService);
+        NotificationParser parser = new NotificationParser(botUserService, notificationService);
         List<BotApiMethod<?>> methods = parser.getNews();
         log.info(String.valueOf(methods));
         if (methods != null && !methods.isEmpty()) {

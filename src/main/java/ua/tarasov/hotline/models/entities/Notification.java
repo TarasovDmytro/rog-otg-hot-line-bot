@@ -11,7 +11,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class News {
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
@@ -23,8 +23,8 @@ public class News {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        News news = (News) o;
-        return id != null && Objects.equals(id, news.id);
+        Notification notification = (Notification) o;
+        return id != null && Objects.equals(id, notification.id);
     }
 
     @Override

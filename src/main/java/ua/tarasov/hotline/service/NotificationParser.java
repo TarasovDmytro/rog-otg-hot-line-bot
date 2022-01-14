@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.entities.News;
+import ua.tarasov.hotline.models.entities.Notification;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,16 +26,16 @@ import java.util.List;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NewsParser {
+public class NotificationParser {
     @Value("https://roganska-gromada.gov.ua/more_news/")
     String url;
 
     final BotUserService botUserService;
-    final NewsService newsService;
+    final NotificationService notificationService;
 
-    public NewsParser(@Autowired BotUserService botUserService, @Autowired NewsService newsService) {
+    public NotificationParser(@Autowired BotUserService botUserService, @Autowired NotificationService notificationService) {
         this.botUserService = botUserService;
-        this.newsService = newsService;
+        this.notificationService = notificationService;
     }
 
     public List<BotApiMethod<?>> getNews() {
@@ -52,15 +52,15 @@ public class NewsParser {
                 String title = element.text();
                 log.info("link: " + link);
                 log.info("title: " + title);
-                if (!newsService.isExist(title)) {
-                    News news = new News();
-                    news.setLink(link);
-                    news.setTitle(title);
-                    newsService.saveNews(news);
+                if (!notificationService.isExist(title)) {
+                    Notification notification = new Notification();
+                    notification.setLink(link);
+                    notification.setTitle(title);
+                    notificationService.saveNotification(notification);
                     List<BotUser> botUsers = botUserService.findAll();
                     botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                             .chatId(String.valueOf(botUser.getId()))
-                            .text(news.getLink())
+                            .text(notification.getLink())
                             .parseMode("HTML") 
                             .build()));
                 }
