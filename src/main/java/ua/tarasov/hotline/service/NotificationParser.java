@@ -18,6 +18,7 @@ import ua.tarasov.hotline.models.entities.BotUser;
 import ua.tarasov.hotline.models.entities.Notification;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +42,9 @@ public class NotificationParser {
     public List<BotApiMethod<?>> getNews() {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         try {
-            log.info(getUrl());
-            Document doc = Jsoup.connect(getUrl())
+            URL url = new URL(getUrl());
+            log.info(String.valueOf(url));
+            Document doc = Jsoup.connect(String.valueOf(url))
                     .userAgent("Mozilla")
                     .timeout(5000)
                     .referrer("https://google.com")
