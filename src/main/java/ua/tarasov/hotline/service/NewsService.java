@@ -7,8 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.tarasov.hotline.models.entities.News;
 import ua.tarasov.hotline.repository.NewsRepository;
 
-import java.util.List;
-
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NewsService {
@@ -18,8 +16,8 @@ public class NewsService {
         this.repository = repository;
     }
 
-    public Boolean isExist(String newsTitle) {
-        return repository.existsNewsByTitle(newsTitle);
+    public Boolean isExist(String newsLink) {
+        return repository.existsNewsByLink(newsLink);
     }
 
     @Transactional
