@@ -48,17 +48,17 @@ public class NewsParser {
                     .get();
             Elements newsTitles = doc.getElementsByClass("news_title");
             for (Element element : newsTitles){
-                String title = element.html();
-                log.info(title);
-                if (!newsService.isExist(title)) {
+                String link = element.text();
+                log.info(link);
+                if (!newsService.isExist(link)) {
                     News news = new News();
-                    news.setTitle(title);
+                    news.setLink(link);
                     newsService.saveNews(news);
                     List<BotUser> botUsers = botUserService.findAll();
                     botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                             .chatId(String.valueOf(botUser.getId()))
-                            .text(news.getTitle())
-                            .parseMode("HTML")
+                            .text(news.getLink())
+                            .parseMode("HTML") 
                             .build()));
                 }
             }

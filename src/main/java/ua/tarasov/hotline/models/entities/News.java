@@ -16,7 +16,7 @@ public class News {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     Long id;
-    String title;
+    String link;
 
     @Override
     public boolean equals(Object o) {
