@@ -52,9 +52,10 @@ public class NewsParser {
                 String title = element.text();
                 log.info("link: " + link);
                 log.info("title: " + title);
-                if (!newsService.isExist(link)) {
+                if (!newsService.isExist(title)) {
                     News news = new News();
                     news.setLink(link);
+                    news.setTitle(title);
                     newsService.saveNews(news);
                     List<BotUser> botUsers = botUserService.findAll();
                     botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()

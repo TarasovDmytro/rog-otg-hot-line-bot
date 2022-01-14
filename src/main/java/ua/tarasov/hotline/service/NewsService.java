@@ -16,8 +16,8 @@ public class NewsService {
         this.repository = repository;
     }
 
-    public Boolean isExist(String newsLink) {
-        return repository.existsNewsByLink(newsLink);
+    public Boolean isExist(String newsTitle) {
+        return repository.existsNewsByTitle(newsTitle);
     }
 
     @Transactional

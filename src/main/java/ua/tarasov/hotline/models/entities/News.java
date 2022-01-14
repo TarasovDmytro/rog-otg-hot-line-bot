@@ -17,6 +17,7 @@ public class News {
     @Column(nullable = false)
     Long id;
     String link;
+    String title;
 
     @Override
     public boolean equals(Object o) {
