@@ -206,7 +206,7 @@ public class MessageHandler implements RequestHandler {
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будьласка, обслуговуючий департамент")
                 .replyMarkup(InlineKeyboardMarkup.builder()
-                        .keyboard(keyboardService.getDepartmentInlineButtons(message))
+                        .keyboard(keyboardService.getDepartmentInlineButtons(message.getChatId()))
                         .build())
                 .build());
     }
