@@ -41,8 +41,8 @@ public class NotificationParser {
     public List<BotApiMethod<?>> getNews() {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         try {
-            log.info(url);
-            Document doc = Jsoup.connect(url)
+            log.info(getUrl());
+            Document doc = Jsoup.connect(getUrl())
                     .userAgent("Mozilla")
                     .timeout(5000)
                     .referrer("https://google.com")
