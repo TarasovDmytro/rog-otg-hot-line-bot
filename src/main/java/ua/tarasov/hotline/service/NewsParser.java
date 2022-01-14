@@ -48,8 +48,10 @@ public class NewsParser {
                     .get();
             Elements newsTitles = doc.getElementsByClass("news_title");
             for (Element element : newsTitles){
-                String link = element.text();
-                log.info(link);
+                String link = element.html();
+                String title = element.text();
+                log.info("link: " + link);
+                log.info("title: " + title);
                 if (!newsService.isExist(link)) {
                     News news = new News();
                     news.setLink(link);

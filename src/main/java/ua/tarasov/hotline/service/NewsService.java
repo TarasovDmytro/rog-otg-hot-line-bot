@@ -29,8 +29,4 @@ public class NewsService {
             repository.deleteById(news.getId() - 10);
         }
     }
-
-    public List<News> findAll() {
-        return repository.findAll();
-    }
 }
