@@ -20,7 +20,6 @@ import java.util.List;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KeyboardService {
-    final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
     final AdminService adminService;
     final Gson jsonConverter = new Gson();
 
@@ -87,11 +86,7 @@ public class KeyboardService {
     }
 
     public List<List<InlineKeyboardButton>> getDepartmentInlineButtons(Department currentDepartment) {
-
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        log.info("Departments = " + chatPropertyModeService.getCurrentDepartment());
-//        Department currentDepartment = chatPropertyModeService.getCurrentDepartment(department);
-        log.info("Current department: " + currentDepartment);
         for (Department department : Department.values()) {
             if (!department.equals(Department.USER)) {
                 buttons.add(List.of(

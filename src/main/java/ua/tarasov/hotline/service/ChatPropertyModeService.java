@@ -15,7 +15,6 @@ import java.util.Map;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
 public class ChatPropertyModeService {
     static ChatPropertyModeService chatProperties;
     final Map<Long, Department> currentDepartment = new HashMap<>();

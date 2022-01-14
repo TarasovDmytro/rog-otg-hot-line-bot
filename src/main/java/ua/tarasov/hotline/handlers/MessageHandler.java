@@ -203,6 +203,7 @@ public class MessageHandler implements RequestHandler {
     @Contract("_ -> new")
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setDepartmentOfRequest(@NotNull Message message) {
         Department currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
+        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будьласка, обслуговуючий департамент")
@@ -214,10 +215,12 @@ public class MessageHandler implements RequestHandler {
 
     private @NotNull List<BotApiMethod<?>> getAllStateRequests(@NotNull Message message) {
         List<UserRequest> messages = requestService.findMessagesByBotUser(message.getChatId());
+        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return sendUserListOfMessages(message, messages);
     }
 
     private List<BotApiMethod<?>> getAdminAllStateRequests(@NotNull Message message) {
+        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             Set<Department> departments = botUser.getDepartments();
@@ -229,11 +232,13 @@ public class MessageHandler implements RequestHandler {
     }
 
     private @NotNull List<BotApiMethod<?>> getFalseStateRequests(@NotNull Message message) {
+        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
         List<UserRequest> messages = requestService.findMessagesByBotUserAndState(message.getChatId(), false);
         return sendUserListOfMessages(message, messages);
     }
 
     private List<BotApiMethod<?>> getAdminFalseStateRequests(@NotNull Message message) {
+        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             Set<Department> departments = botUser.getDepartments();

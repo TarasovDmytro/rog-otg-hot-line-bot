@@ -158,6 +158,7 @@ public class CallBackQueryHandler implements RequestHandler {
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> getButtonDepartmentHandler(CallbackQuery callbackQuery) {
         log.info("get button department");
+        chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_BUTTON);
         String textMessage = "Департамент обрано.\nЧи бажаєте Ви додати до заявки геолокацію?";
         return buttonDepartmentHandler(callbackQuery, textMessage);
     }
@@ -171,7 +172,6 @@ public class CallBackQueryHandler implements RequestHandler {
         log.info("Set department: " + department);
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
         log.info("Current department: " + chatPropertyModeService.getCurrentDepartment(message.getChatId()));
-        log.info("ChatID = " + message.getChatId());
         return List.of(
                 keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(department)),
                 SendMessage.builder()
