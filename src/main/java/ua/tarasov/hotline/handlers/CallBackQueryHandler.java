@@ -168,7 +168,9 @@ public class CallBackQueryHandler implements RequestHandler {
         Message message = callbackQuery.getMessage();
         Department department = jsonConverter.fromJson(callbackQuery
                 .getData().substring("department".length()), Department.class);
+        log.info("Set department: " + department);
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
+        log.info("Current department: " + chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         return List.of(
                 keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(message)),
                 SendMessage.builder()
