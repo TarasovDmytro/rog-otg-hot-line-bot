@@ -27,7 +27,7 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationParser {
-    @Value("https://roganska-gromada.gov.ua/more_news/")
+    @Value("${notifications.url}")
     String url;
 
     final BotUserService botUserService;
@@ -41,7 +41,7 @@ public class NotificationParser {
     public List<BotApiMethod<?>> getNews() {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         try {
-            Document doc = Jsoup.connect("https://roganska-gromada.gov.ua/more_news/")
+            Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla")
                     .timeout(5000)
                     .referrer("https://google.com")

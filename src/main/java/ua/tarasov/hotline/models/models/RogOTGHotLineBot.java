@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -15,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 import ua.tarasov.hotline.facade.HotLineFacade;
+import ua.tarasov.hotline.models.entities.BotUser;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
 import ua.tarasov.hotline.service.NotificationParser;
@@ -76,13 +78,16 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                 .build();
     }
 
-    @Scheduled(fixedDelayString = "60000")
-    public void sendNews() {
+    @Scheduled(fixedDelayString = "${checkNotification.period}")
+    public void sendNotification() {
         NotificationParser parser = new NotificationParser(botUserService, notificationService);
         List<BotApiMethod<?>> methods = parser.getNews();
         log.info(String.valueOf(methods));
+        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        Long chatId = superAdmin.getId();
+        BotState currentBotState = chatPropertyModeService.getBotState(chatId);
         if (methods != null && !methods.isEmpty()) {
-            chatPropertyModeService.setBotState(1138897828, BotState.WAIT_MESSAGE_TO_ALL);
+            chatPropertyModeService.setBotState(chatId, BotState.WAIT_MESSAGE_TO_ALL);
             for (BotApiMethod<?> botApiMethod : methods) {
                 try {
                         execute(botApiMethod);
@@ -91,7 +96,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                     e.printStackTrace();
                 }
             }
-            chatPropertyModeService.setBotState(1138897828, BotState.WAIT_BUTTON);
+            chatPropertyModeService.setBotState(chatId, currentBotState);
         }
     }
 }
