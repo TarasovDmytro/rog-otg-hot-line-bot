@@ -77,7 +77,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                 .build();
     }
 
-    @Scheduled(fixedDelayString = "${checkNotification.period}")
+    @Scheduled(fixedDelayString = "60000")
     public void sendNotification() {
         NotificationParser parser = new NotificationParser(botUserService, notificationService);
         List<BotApiMethod<?>> methods = parser.getNews();

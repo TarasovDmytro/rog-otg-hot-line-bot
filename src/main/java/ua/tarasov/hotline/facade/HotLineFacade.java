@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.MessageHandler;
+import ua.tarasov.hotline.models.entities.BotUser;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,17 +29,10 @@ public class HotLineFacade {
         if (update.hasCallbackQuery()) {
             log.info("return callBackQueryHandler action");
            return callBackQueryHandler.getHandlerUpdate(update);
-        }
-
-        if (update.hasMessage()) {
+        } else {
             log.info("return messageHandler action");
             return messageHandler.getHandlerUpdate(update);
         }
-        log.info("return simple message");
-        return Collections.singletonList(SendMessage.builder()
-                .chatId(String.valueOf(1138897828))
-                .text("Something wrong...")
-                .build());
     }
 }
 
