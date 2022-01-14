@@ -86,11 +86,11 @@ public class KeyboardService {
         return buttons;
     }
 
-    public List<List<InlineKeyboardButton>> getDepartmentInlineButtons(Long chatId) {
+    public List<List<InlineKeyboardButton>> getDepartmentInlineButtons(Department currentDepartment) {
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         log.info("Departments = " + chatPropertyModeService.getCurrentDepartment());
-        Department currentDepartment = chatPropertyModeService.getCurrentDepartment(chatId);
+//        Department currentDepartment = chatPropertyModeService.getCurrentDepartment(department);
         log.info("Current department: " + currentDepartment);
         for (Department department : Department.values()) {
             if (!department.equals(Department.USER)) {

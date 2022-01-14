@@ -18,7 +18,7 @@ import java.util.Map;
 @Getter
 public class ChatPropertyModeService {
     static ChatPropertyModeService chatProperties;
-    final static Map<Long, Department> currentDepartment = new HashMap<>();
+    final Map<Long, Department> currentDepartment = new HashMap<>();
     final Map<Long, Boolean> currentAdminKeyboardState = new HashMap<>();
     final Map<Long, BotState> botStateMap = new HashMap<>();
     final Map<Long, String> currentRequestAddress = new HashMap<>();

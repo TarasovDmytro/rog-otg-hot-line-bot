@@ -202,11 +202,12 @@ public class MessageHandler implements RequestHandler {
 
     @Contract("_ -> new")
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setDepartmentOfRequest(@NotNull Message message) {
+        Department currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
         return Collections.singletonList(SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будьласка, обслуговуючий департамент")
                 .replyMarkup(InlineKeyboardMarkup.builder()
-                        .keyboard(keyboardService.getDepartmentInlineButtons(message.getChatId()))
+                        .keyboard(keyboardService.getDepartmentInlineButtons(currentDepartment))
                         .build())
                 .build());
     }
