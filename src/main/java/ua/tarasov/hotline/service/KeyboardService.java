@@ -89,6 +89,7 @@ public class KeyboardService {
     public List<List<InlineKeyboardButton>> getDepartmentInlineButtons(Message message) {
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        log.info("ChatID = " + message.getChatId());
         Department currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
         log.info("Current department: " + currentDepartment);
         for (Department department : Department.values()) {

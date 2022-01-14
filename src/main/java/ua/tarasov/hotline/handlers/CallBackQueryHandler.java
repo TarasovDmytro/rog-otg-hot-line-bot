@@ -171,6 +171,7 @@ public class CallBackQueryHandler implements RequestHandler {
         log.info("Set department: " + department);
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
         log.info("Current department: " + chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+        log.info("ChatID = " + message.getChatId());
         return List.of(
                 keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(message)),
                 SendMessage.builder()
