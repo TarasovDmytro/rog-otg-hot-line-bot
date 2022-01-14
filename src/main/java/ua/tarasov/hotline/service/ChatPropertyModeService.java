@@ -1,6 +1,7 @@
 package ua.tarasov.hotline.service;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter
 public class ChatPropertyModeService {
     static ChatPropertyModeService chatProperties;
     final Map<Long, Department> currentDepartment = new HashMap<>();
