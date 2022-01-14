@@ -19,7 +19,6 @@ import ua.tarasov.hotline.models.entities.BotUser;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
 import ua.tarasov.hotline.service.NotificationParser;
-import ua.tarasov.hotline.service.NotificationService;
 
 import java.util.List;
 
@@ -38,8 +37,6 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     ChatPropertyModeService chatPropertyModeService;
     @Autowired
     BotUserService botUserService;
-    @Autowired
-    NotificationService notificationService;
     @Autowired
     NotificationParser notificationParser;
 
