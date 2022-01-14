@@ -40,6 +40,8 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     BotUserService botUserService;
     @Autowired
     NotificationService notificationService;
+    @Autowired
+    NotificationParser notificationParser;
 
     public RogOTGHotLineBot(HotLineFacade hotLineFacade, DefaultBotOptions options, SetWebhook setWebhook) {
         super(options, setWebhook);
@@ -79,8 +81,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
 
     @Scheduled(fixedDelayString = "${checkNotification.period}")
     public void sendNotification() {
-        NotificationParser parser = new NotificationParser(botUserService, notificationService);
-        List<BotApiMethod<?>> methods = parser.getNews();
+        List<BotApiMethod<?>> methods = notificationParser.getNews();
         log.info(String.valueOf(methods));
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         Long chatId = superAdmin.getId();

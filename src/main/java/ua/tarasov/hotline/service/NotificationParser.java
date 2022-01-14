@@ -18,7 +18,6 @@ import ua.tarasov.hotline.models.entities.BotUser;
 import ua.tarasov.hotline.models.entities.Notification;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,14 +41,14 @@ public class NotificationParser {
     public List<BotApiMethod<?>> getNews() {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         try {
-            log.info(url);
+            log.info(getUrl());
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla")
                     .timeout(5000)
                     .referrer("https://google.com")
                     .get();
             Elements newsTitles = doc.getElementsByClass("news_title");
-            for (Element element : newsTitles){
+            for (Element element : newsTitles) {
                 String link = element.html();
                 String title = element.text();
                 log.info("link: " + link);
@@ -63,7 +62,7 @@ public class NotificationParser {
                     botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                             .chatId(String.valueOf(botUser.getId()))
                             .text(notification.getLink())
-                            .parseMode("HTML") 
+                            .parseMode("HTML")
                             .build()));
                 }
             }
