@@ -3,6 +3,7 @@ package ua.tarasov.hotline.service;
 import com.google.gson.Gson;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KeyboardService {
     final ChatPropertyModeService chatPropertyModeService = ChatPropertyModeService.getChatProperties();
@@ -88,6 +90,7 @@ public class KeyboardService {
 
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         Department currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
+        log.info("Current department: " + currentDepartment);
         for (Department department : Department.values()) {
             if (!department.equals(Department.USER)) {
                 buttons.add(List.of(
