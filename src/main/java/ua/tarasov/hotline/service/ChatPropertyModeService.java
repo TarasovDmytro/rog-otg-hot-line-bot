@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import ua.tarasov.hotline.models.models.BotState;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Getter
 public class ChatPropertyModeService {
     static ChatPropertyModeService chatProperties;
-    final Map<Long, Department> currentDepartment = new HashMap<>();
+    final static Map<Long, Department> currentDepartment = new HashMap<>();
     final Map<Long, Boolean> currentAdminKeyboardState = new HashMap<>();
     final Map<Long, BotState> botStateMap = new HashMap<>();
     final Map<Long, String> currentRequestAddress = new HashMap<>();
