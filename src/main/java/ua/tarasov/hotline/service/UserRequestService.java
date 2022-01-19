@@ -56,7 +56,7 @@ public class UserRequestService {
         log.info("requests: {}", requests);
         UserRequest lastRequest = requests.get(requests.size() - 1);
         LocalDateTime dateTime = lastRequest.getDateTime();
-        LocalDateTime minDateTime = dateTime.minusMonths(2);
+        LocalDateTime minDateTime = dateTime.minusMonths(1);
         List<UserRequest> oldRequests = requestRepository.findAllByDateTimeBeforeAndState(minDateTime, true);
         requestRepository.deleteAll(oldRequests);
     }
