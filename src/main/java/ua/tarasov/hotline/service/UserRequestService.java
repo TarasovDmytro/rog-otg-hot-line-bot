@@ -2,6 +2,7 @@ package ua.tarasov.hotline.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,8 @@ import java.util.List;
 @Slf4j
 public class UserRequestService {
     private final UserRequestRepository requestRepository;
+    @Value("${termOfStorageOfRequestsInMonths}")
+    private Integer termOfStorageOfRequestsInMonths;
 
     public UserRequestService(@Autowired UserRequestRepository requestRepository) {
         this.requestRepository = requestRepository;
@@ -56,7 +59,7 @@ public class UserRequestService {
         log.info("requests: {}", requests);
         UserRequest lastRequest = requests.get(requests.size() - 1);
         LocalDateTime dateTime = lastRequest.getDateTime();
-        LocalDateTime minDateTime = dateTime.minusMonths(1);
+        LocalDateTime minDateTime = dateTime.minusMonths(termOfStorageOfRequestsInMonths);
         List<UserRequest> oldRequests = requestRepository.findAllByDateTimeBeforeAndState(minDateTime, true);
         requestRepository.deleteAll(oldRequests);
     }
