@@ -40,6 +40,7 @@ public class NotificationParser {
 
     public List<BotApiMethod<?>> getNews() {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
+        List<Notification> newNotifications = new ArrayList<>();
         try {
             log.info("Notification url: {}", url);
             Document doc = Jsoup.connect(url)
@@ -57,15 +58,19 @@ public class NotificationParser {
                     Notification notification = new Notification();
                     notification.setLink(link);
                     notification.setTitle(title);
-                    notificationService.saveNotification(notification);
-                    List<BotUser> botUsers = botUserService.findAll();
-                    botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
-                            .chatId(String.valueOf(botUser.getId()))
-                            .text(notification.getLink())
-                            .parseMode("HTML")
-                            .build()));
+                    newNotifications.add(notification);
                 }
             }
+            log.info("New notifications: {}", newNotifications);
+            newNotifications.forEach(notification -> {
+                notificationService.saveNotification(notification);
+                List<BotUser> botUsers = botUserService.findAll();
+                botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
+                        .chatId(String.valueOf(botUser.getId()))
+                        .text(notification.getLink())
+                        .parseMode("HTML")
+                        .build()));
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
