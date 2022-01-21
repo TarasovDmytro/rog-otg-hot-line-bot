@@ -49,7 +49,7 @@ public class NotificationParser {
                     .referrer("https://google.com")
                     .get();
             Elements newsTitles = doc.getElementsByClass("news_title");
-            for (Element element : newsTitles) {
+            newsTitles.forEach(element -> {
                 String link = element.html();
                 String title = element.text();
                 log.info("link: " + link);
@@ -60,7 +60,7 @@ public class NotificationParser {
                     notification.setTitle(title);
                     newNotifications.add(notification);
                 }
-            }
+            });
             log.info("New notifications: {}", newNotifications);
             newNotifications.forEach(notification -> {
                 notificationService.saveNotification(notification);

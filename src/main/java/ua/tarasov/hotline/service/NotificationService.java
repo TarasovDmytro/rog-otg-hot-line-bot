@@ -23,8 +23,8 @@ public class NotificationService {
     @Transactional
     public void saveNotification(Notification notification) {
         repository.save(notification);
-        if (repository.count() > 10) {
-            repository.deleteById(notification.getId() - 10);
+        if (repository.count() > 20) {
+            repository.deleteById(notification.getId() - 20);
         }
     }
 }
