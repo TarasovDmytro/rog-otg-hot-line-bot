@@ -39,7 +39,7 @@ public class HotLineFacade {
         }
     }
 
-    public List<BotApiMethod<?>> getUpdateNotification() {
+    public List<BotApiMethod<?>> getUpdateNotifications() {
         return notificationHandler.getNewNotifications();
     }
 }

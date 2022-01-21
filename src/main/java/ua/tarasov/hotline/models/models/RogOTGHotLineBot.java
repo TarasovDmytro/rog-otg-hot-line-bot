@@ -78,7 +78,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
 
     @Scheduled(fixedDelayString = "${checkNotification.period}")
     public void sendNotification() {
-        List<BotApiMethod<?>> methods = hotLineFacade.getUpdateNotification();
+        List<BotApiMethod<?>> methods = hotLineFacade.getUpdateNotifications();
         log.info(String.valueOf(methods));
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         Long chatId = superAdmin.getId();
