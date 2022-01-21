@@ -27,54 +27,62 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationParser {
     @Value("${notifications.url}")
-    String url;
+    String notificationUrl;
+//    @Value("${news.url}")
+//    String newsUrl;
 
     final BotUserService botUserService;
     final NotificationService notificationService;
+    List<Notification> newNotifications = new ArrayList<>();
 
     public NotificationParser(@Autowired BotUserService botUserService, @Autowired NotificationService notificationService) {
         this.botUserService = botUserService;
         this.notificationService = notificationService;
     }
 
-    public List<BotApiMethod<?>> getNews() {
+    public List<BotApiMethod<?>> getMethodsForSendNews() {
+        List<String> notificationUrls = new ArrayList<>(List.of(notificationUrl.split(";")));
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
-        List<Notification> newNotifications = new ArrayList<>();
+        notificationUrls.forEach(url -> getNewNotifications(notificationUrl));
+//        getNewNotifications(newsUrl);
+        log.info("New notifications: {}", newNotifications);
+        newNotifications.forEach(notification -> {
+            notificationService.saveNotification(notification);
+            List<BotUser> botUsers = botUserService.findAll();
+            botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
+                    .chatId(String.valueOf(botUser.getId()))
+                    .text(notification.getDate() + "\n" + notification.getLink())
+                    .parseMode("HTML")
+                    .build()));
+        });
+        return answerMessages;
+    }
+
+    private void getNewNotifications(String url) {
         try {
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla")
                     .timeout(5000)
                     .referrer("https://google.com")
                     .get();
-            Elements newsTitles = doc.getElementsByClass("one_news_col");
-            newsTitles.forEach(element -> {
-                String link = element.getElementsByClass("news_title").get(0).html();
-                String title = element.getElementsByClass("news_title").get(0).text();
-                String date = element.getElementsByClass("news_date").get(0).text();
-                log.info("link: " + link);
-                log.info("title: " + title);
-                log.info("date: {}", date);
-                if (!notificationService.isExist(date)) {
-                    Notification notification = new Notification();
-                    notification.setLink(link);
-                    notification.setTitle(title);
-                    notification.setDate(date);
-                    newNotifications.add(notification);
-                }
-            });
-            log.info("New notifications: {}", newNotifications);
-            newNotifications.forEach(notification -> {
-                notificationService.saveNotification(notification);
-                List<BotUser> botUsers = botUserService.findAll();
-                botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
-                        .chatId(String.valueOf(botUser.getId()))
-                        .text(notification.getDate() + "\n" + notification.getLink())
-                        .parseMode("HTML")
-                        .build()));
-            });
+        Elements newsTitles = doc.getElementsByClass("one_news_col");
+        newsTitles.forEach(element -> {
+            String link = element.getElementsByClass("news_title").get(0).html();
+            String title = element.getElementsByClass("news_title").get(0).text();
+            String date = element.getElementsByClass("news_date").get(0).text();
+            log.info("link: " + link);
+            log.info("title: " + title);
+            log.info("date: {}", date);
+            if (!notificationService.isExist(date)) {
+                Notification notification = new Notification();
+                notification.setLink(link);
+                notification.setTitle(title);
+                notification.setDate(date);
+                newNotifications.add(notification);
+            }
+        });
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return answerMessages;
     }
 }
