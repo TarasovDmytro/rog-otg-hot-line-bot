@@ -68,7 +68,7 @@ public class NotificationParser {
                 List<BotUser> botUsers = botUserService.findAll();
                 botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(botUser.getId()))
-                        .text("<p>" + notification.getDate() + "</p>\n" + notification.getLink())
+                        .text(notification.getDate() + "\n" + notification.getLink())
                         .parseMode("HTML")
                         .build()));
             });
