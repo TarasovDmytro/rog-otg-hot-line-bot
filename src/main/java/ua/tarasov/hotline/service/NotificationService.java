@@ -16,8 +16,8 @@ public class NotificationService {
         this.repository = repository;
     }
 
-    public Boolean isExist(String newsTitle) {
-        return repository.existsNotificationByTitle(newsTitle);
+    public Boolean isExist(String newsDate) {
+        return repository.existsNotificationByDate(newsDate);
     }
 
     @Transactional

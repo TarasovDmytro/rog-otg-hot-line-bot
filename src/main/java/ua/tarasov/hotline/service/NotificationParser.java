@@ -54,7 +54,7 @@ public class NotificationParser {
                 log.info("link: " + link);
                 log.info("title: " + title);
                 log.info("date: {}", date);
-                if (!notificationService.isExist(title)) {
+                if (!notificationService.isExist(date)) {
                     Notification notification = new Notification();
                     notification.setLink(link);
                     notification.setTitle(title);
