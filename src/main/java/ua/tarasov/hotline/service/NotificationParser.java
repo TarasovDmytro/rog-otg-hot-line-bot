@@ -48,12 +48,14 @@ public class NotificationParser {
                     .timeout(5000)
                     .referrer("https://google.com")
                     .get();
-            Elements newsTitles = doc.getElementsByClass("news_title");
+            Elements newsTitles = doc.getElementsByClass("one_news_col");
             newsTitles.forEach(element -> {
-                String link = element.html();
-                String title = element.text();
+                String link = element.getElementsByClass("news_title").get(0).html();
+                String title = element.getElementsByClass("news_title").get(0).text();
+                String date = element.getElementsByClass("news_date").get(0).text();
                 log.info("link: " + link);
                 log.info("title: " + title);
+                log.info("date: {}", date);
                 if (!notificationService.isExist(title)) {
                     Notification notification = new Notification();
                     notification.setLink(link);
