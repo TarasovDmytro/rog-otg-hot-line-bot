@@ -9,11 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ua.tarasov.hotline.models.entities.BotUser;
 import ua.tarasov.hotline.models.entities.Notification;
 
 import java.io.IOException;
@@ -26,38 +22,14 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationParser {
-    @Value("${notifications.url}")
-    String notificationUrl;
-
-    final BotUserService botUserService;
     final NotificationService notificationService;
     List<Notification> newNotifications = new ArrayList<>();
 
-    public NotificationParser(@Autowired BotUserService botUserService, @Autowired NotificationService notificationService) {
-        this.botUserService = botUserService;
+    public NotificationParser(@Autowired NotificationService notificationService) {
         this.notificationService = notificationService;
     }
 
-    public List<BotApiMethod<?>> getMethodsForSendNews() {
-        List<String> notificationUrls = new ArrayList<>(List.of(notificationUrl.split(";")));
-        newNotifications = new ArrayList<>();
-        log.info("notificationUrls: {}", notificationUrls);
-        List<BotApiMethod<?>> answerMessages = new ArrayList<>();
-        notificationUrls.forEach(this::getNewNotifications);
-        log.info("New notifications: {}", newNotifications);
-        newNotifications.forEach(notification -> {
-            notificationService.saveNotification(notification);
-            List<BotUser> botUsers = botUserService.findAll();
-            botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
-                    .chatId(String.valueOf(botUser.getId()))
-                    .text(notification.getDate() + "\n" + notification.getLink())
-                    .parseMode("HTML")
-                    .build()));
-        });
-        return answerMessages;
-    }
-
-    private void getNewNotifications(String url) {
+    public List<Notification> getNewNotifications(String url) {
         try {
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla")
@@ -77,11 +49,14 @@ public class NotificationParser {
                 notification.setLink(link);
                 notification.setTitle(title);
                 notification.setDate(date);
+                notificationService.saveNotification(notification);
                 newNotifications.add(notification);
             }
         });
         } catch (IOException e) {
             e.printStackTrace();
         }
+        notificationService.cleanNotificationDB();
+        return newNotifications;
     }
 }

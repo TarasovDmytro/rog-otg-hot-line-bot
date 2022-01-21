@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.tarasov.hotline.models.entities.Notification;
 import ua.tarasov.hotline.repository.NotificationRepository;
 
+import java.util.List;
+
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationService {
@@ -20,11 +22,14 @@ public class NotificationService {
         return repository.existsNotificationByDate(newsDate);
     }
 
-    @Transactional
     public void saveNotification(Notification notification) {
         repository.save(notification);
-        if (repository.count() > 20) {
-            repository.deleteById(notification.getId() - 20);
+    }
+
+    public void cleanNotificationDB(){
+        while (repository.count() > 20) {
+            List<Notification> notifications = repository.findAll();
+            repository.delete(notifications.get(0));
         }
     }
 }
