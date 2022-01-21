@@ -41,7 +41,6 @@ public class NotificationParser {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         List<Notification> newNotifications = new ArrayList<>();
         try {
-            log.info("Notification url: {}", url);
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla")
                     .timeout(5000)
