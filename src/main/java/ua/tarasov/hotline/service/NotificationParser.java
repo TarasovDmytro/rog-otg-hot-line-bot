@@ -28,8 +28,6 @@ import java.util.List;
 public class NotificationParser {
     @Value("${notifications.url}")
     String notificationUrl;
-//    @Value("${news.url}")
-//    String newsUrl;
 
     final BotUserService botUserService;
     final NotificationService notificationService;
@@ -42,10 +40,10 @@ public class NotificationParser {
 
     public List<BotApiMethod<?>> getMethodsForSendNews() {
         List<String> notificationUrls = new ArrayList<>(List.of(notificationUrl.split(";")));
+        newNotifications = new ArrayList<>();
         log.info("notificationUrls: {}", notificationUrls);
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         notificationUrls.forEach(this::getNewNotifications);
-//        getNewNotifications(newsUrl);
         log.info("New notifications: {}", newNotifications);
         newNotifications.forEach(notification -> {
             notificationService.saveNotification(notification);
