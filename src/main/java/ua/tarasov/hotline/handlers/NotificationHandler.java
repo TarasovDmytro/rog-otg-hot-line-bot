@@ -32,7 +32,6 @@ public class NotificationHandler {
 
     public List<BotApiMethod<?>> getNewNotifications() {
         List<String> notificationUrls = new ArrayList<>(List.of(notificationUrl.split(";")));
-        newNotifications = new ArrayList<>();
         log.info("notificationUrls: {}", notificationUrls);
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         notificationUrls.forEach(url -> newNotifications = parser.getNewNotifications(url));
