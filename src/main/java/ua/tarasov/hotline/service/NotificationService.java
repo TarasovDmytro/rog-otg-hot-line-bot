@@ -3,7 +3,6 @@ package ua.tarasov.hotline.service;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ua.tarasov.hotline.models.entities.Notification;
 import ua.tarasov.hotline.repository.NotificationRepository;
 
