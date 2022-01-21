@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +51,7 @@ public class NotificationParser {
             newsTitles.forEach(element -> {
                 String link = element.getElementsByClass("news_title").get(0).html();
                 String title = element.getElementsByClass("news_title").get(0).text();
-                String date = element.getElementsByClass("news_date").get(0).html();
+                String date = element.getElementsByClass("news_date").get(0).text();
                 log.info("link: " + link);
                 log.info("title: " + title);
                 log.info("date: {}", date);
