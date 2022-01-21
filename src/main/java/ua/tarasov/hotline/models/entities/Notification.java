@@ -18,6 +18,7 @@ public class Notification {
     Long id;
     String link;
     String title;
+    String date;
 
     @Override
     public boolean equals(Object o) {

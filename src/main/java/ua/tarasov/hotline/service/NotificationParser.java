@@ -60,6 +60,7 @@ public class NotificationParser {
                     Notification notification = new Notification();
                     notification.setLink(link);
                     notification.setTitle(title);
+                    notification.setDate(date);
                     newNotifications.add(notification);
                 }
             });
@@ -69,7 +70,7 @@ public class NotificationParser {
                 List<BotUser> botUsers = botUserService.findAll();
                 botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(botUser.getId()))
-                        .text(notification.getLink())
+                        .text(notification.getDate() + notification.getLink())
                         .parseMode("HTML")
                         .build()));
             });
