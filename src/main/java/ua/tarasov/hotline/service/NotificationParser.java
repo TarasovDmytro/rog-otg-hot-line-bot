@@ -70,7 +70,7 @@ public class NotificationParser {
                 List<BotUser> botUsers = botUserService.findAll();
                 botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(botUser.getId()))
-                        .text("<div>notification.getDate()</div>" + notification.getLink())
+                        .text("<div>" + notification.getDate() + "</div>" + notification.getLink())
                         .parseMode("HTML")
                         .build()));
             });
