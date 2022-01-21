@@ -21,7 +21,7 @@ import java.util.List;
 public class NotificationHandler {
     @Value("${notifications.url}")
     String notificationUrl;
-    List<Notification> newNotifications;
+    List<Notification> newNotifications = new ArrayList<>();
     final NotificationParser parser;
     final BotUserService botUserService;
 
@@ -35,7 +35,7 @@ public class NotificationHandler {
         newNotifications = new ArrayList<>();
         log.info("notificationUrls: {}", notificationUrls);
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
-        notificationUrls.forEach(url -> newNotifications.addAll(parser.getNewNotifications(url)));
+        notificationUrls.forEach(url -> newNotifications = parser.getNewNotifications(url));
         log.info("New notifications: {}", newNotifications);
         newNotifications.forEach(notification -> {
             List<BotUser> botUsers = botUserService.findAll();

@@ -23,13 +23,14 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationParser {
     final NotificationService notificationService;
-    List<Notification> newNotifications = new ArrayList<>();
+    List<Notification> newNotifications;
 
     public NotificationParser(@Autowired NotificationService notificationService) {
         this.notificationService = notificationService;
     }
 
     public List<Notification> getNewNotifications(String url) {
+        newNotifications = new ArrayList<>();
         try {
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla")
