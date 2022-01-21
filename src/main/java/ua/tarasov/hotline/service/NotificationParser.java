@@ -52,7 +52,7 @@ public class NotificationParser {
             newsTitles.forEach(element -> {
                 String link = element.getElementsByClass("news_title").get(0).html();
                 String title = element.getElementsByClass("news_title").get(0).text();
-                String date = element.getElementsByClass("news_date").get(0).text();
+                String date = element.getElementsByClass("news_date").get(0).data();
                 log.info("link: " + link);
                 log.info("title: " + title);
                 log.info("date: {}", date);
