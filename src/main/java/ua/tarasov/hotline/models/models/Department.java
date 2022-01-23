@@ -8,7 +8,7 @@ public enum Department {
     KU_CNSP("КУ ЦНСП"),
     UNIVERSAL_SERVICE("ТОВ УНІВЕРСАЛ-СЕРВІС"),
     CHILDREN_ACTION_SERVICE("СЛУЖБА У СПРАВАХ ДІТЕЙ"),
-    ROHAN_COUNCIL("РАДА"),
+    ROHAN_COUNCIL("РОГАНСЬКА РАДА"),
     USER("Користувач");
 
     private final String departmentName;
