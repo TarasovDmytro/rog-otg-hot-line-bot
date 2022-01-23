@@ -33,7 +33,7 @@ public class ChatPropertyModeService {
     }
 
     public Department getCurrentDepartment(long chatId) {
-        return currentDepartment.getOrDefault(chatId, Department.ЖЕУ_ДОКУЧАЄВСЬКЕ);
+        return currentDepartment.getOrDefault(chatId, Department.JEU_DOKUCHAEVSKE);
     }
 
     public void setCurrentDepartment(long chatId, Department department) {

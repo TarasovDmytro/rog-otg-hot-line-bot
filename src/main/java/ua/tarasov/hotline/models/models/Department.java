@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum Department {
-    ЖЕУ_ДОКУЧАЄВСЬКЕ("КП ЖЕУ ДОКУЧАЄВСЬКЕ"),
-    КУ_ЦНСП("КУ ЦНСП"),
-    ТОВ_УНІВЕРСАЛ_СЕРВІС("ТОВ УНІВЕРСАЛ-СЕРВІС"),
-    СЛУЖБА_У_СПРАВАХ_ДІТЕЙ("СЛУЖБА У СПРАВАХ ДІТЕЙ"),
-    РАДА("РАДА"),
+    JEU_DOKUCHAEVSKE("КП ЖЕУ ДОКУЧАЄВСЬКЕ"),
+    KU_CNSP("КУ ЦНСП"),
+    UNIVERSAL_SERVICE("ТОВ УНІВЕРСАЛ-СЕРВІС"),
+    CHILDREN_ACTION_SERVICE("СЛУЖБА У СПРАВАХ ДІТЕЙ"),
+    ROHAN_COUNCIL("ROHAN_COUNCIL"),
     USER("Користувач");
 
     private final String departmentName;
