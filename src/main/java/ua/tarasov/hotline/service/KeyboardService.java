@@ -100,7 +100,7 @@ public class KeyboardService {
     }
 
     private String getDepartmentName(Department currentDepartment, Department department) {
-        return currentDepartment == department ? currentDepartment + "✅" : department.name();
+        return currentDepartment == department ? currentDepartment + "✅" : department.toString();
     }
 
     public EditMessageReplyMarkup getCorrectReplyMarkup(Message message, List<List<InlineKeyboardButton>> buttons) {
