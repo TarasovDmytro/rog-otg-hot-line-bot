@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.MessageHandler;
-import ua.tarasov.hotline.handlers.NotificationHandler;
+import ua.tarasov.hotline.listener.NotificationListener;
 
 import java.util.List;
 
@@ -19,13 +19,13 @@ import java.util.List;
 public class HotLineFacade {
     final MessageHandler messageHandler;
     final CallBackQueryHandler callBackQueryHandler;
-    final NotificationHandler notificationHandler;
+    final NotificationListener notificationListener;
 
     public HotLineFacade(MessageHandler messageHandler, CallBackQueryHandler callBackQueryHandler,
-                         NotificationHandler notificationHandler) {
+                         NotificationListener notificationListener) {
         this.messageHandler = messageHandler;
         this.callBackQueryHandler = callBackQueryHandler;
-        this.notificationHandler = notificationHandler;
+        this.notificationListener = notificationListener;
     }
 
     public List<BotApiMethod<?>> handleUpdate(@NotNull Update update) {
@@ -40,7 +40,7 @@ public class HotLineFacade {
     }
 
     public List<BotApiMethod<?>> getUpdateNotifications() {
-        return notificationHandler.getNewNotifications();
+        return notificationListener.getNewNotifications();
     }
 }
 

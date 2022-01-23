@@ -1,9 +1,9 @@
 package ua.tarasov.hotline.service;
 
 import org.springframework.stereotype.Service;
-import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.models.Department;
-import ua.tarasov.hotline.models.models.Role;
+import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.models.Department;
+import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.repository.BotUserRepository;
 
 import java.util.List;

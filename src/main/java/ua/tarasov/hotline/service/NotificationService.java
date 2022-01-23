@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ua.tarasov.hotline.models.entities.Notification;
+import ua.tarasov.hotline.entities.Notification;
 import ua.tarasov.hotline.repository.NotificationRepository;
 
 import java.util.List;

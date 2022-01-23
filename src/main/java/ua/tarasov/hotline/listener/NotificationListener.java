@@ -1,4 +1,4 @@
-package ua.tarasov.hotline.handlers;
+package ua.tarasov.hotline.listener;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.entities.Notification;
+import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.entities.Notification;
 import ua.tarasov.hotline.service.BotUserService;
-import ua.tarasov.hotline.service.NotificationParser;
+import ua.tarasov.hotline.service.NotificationParseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +18,14 @@ import java.util.List;
 @Component
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NotificationHandler {
+public class NotificationListener {
     @Value("${notifications.url}")
     String notificationUrl;
     List<Notification> newNotifications = new ArrayList<>();
-    final NotificationParser parser;
+    final NotificationParseService parser;
     final BotUserService botUserService;
 
-    public NotificationHandler(NotificationParser parser, BotUserService botUserService) {
+    public NotificationListener(NotificationParseService parser, BotUserService botUserService) {
         this.parser = parser;
         this.botUserService = botUserService;
     }

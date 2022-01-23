@@ -1,8 +1,5 @@
-package ua.tarasov.hotline.models.models;
+package ua.tarasov.hotline.models;
 
-import lombok.Getter;
-
-@Getter
 public enum Department {
     JEU_DOKUCHAEVSKE("КП ЖЕУ ДОКУЧАЄВСЬКЕ"),
     KU_CNSP("КУ ЦНСП"),

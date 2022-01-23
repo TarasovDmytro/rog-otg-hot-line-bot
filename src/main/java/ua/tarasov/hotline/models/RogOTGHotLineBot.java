@@ -1,4 +1,4 @@
-package ua.tarasov.hotline.models.models;
+package ua.tarasov.hotline.models;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,10 +15,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 import ua.tarasov.hotline.facade.HotLineFacade;
-import ua.tarasov.hotline.models.entities.BotUser;
+import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
-import ua.tarasov.hotline.service.NotificationParser;
+import ua.tarasov.hotline.service.NotificationParseService;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     @Autowired
     BotUserService botUserService;
     @Autowired
-    NotificationParser notificationParser;
+    NotificationParseService notificationParseService;
 
     public RogOTGHotLineBot(HotLineFacade hotLineFacade, DefaultBotOptions options, SetWebhook setWebhook) {
         super(options, setWebhook);

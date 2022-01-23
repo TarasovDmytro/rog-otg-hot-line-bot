@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.tarasov.hotline.models.entities.Notification;
+import ua.tarasov.hotline.entities.Notification;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,11 +21,11 @@ import java.util.List;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NotificationParser {
+public class NotificationParseService {
     final NotificationService notificationService;
     List<Notification> newNotifications;
 
-    public NotificationParser(@Autowired NotificationService notificationService) {
+    public NotificationParseService(@Autowired NotificationService notificationService) {
         this.notificationService = notificationService;
     }
 

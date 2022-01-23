@@ -17,11 +17,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.entities.UserRequest;
-import ua.tarasov.hotline.models.models.BotState;
-import ua.tarasov.hotline.models.models.Department;
-import ua.tarasov.hotline.models.models.Role;
+import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.entities.UserRequest;
+import ua.tarasov.hotline.models.BotState;
+import ua.tarasov.hotline.models.Department;
+import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.service.*;
 
 import java.time.LocalDateTime;

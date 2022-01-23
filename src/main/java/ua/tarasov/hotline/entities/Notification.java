@@ -1,4 +1,4 @@
-package ua.tarasov.hotline.models.entities;
+package ua.tarasov.hotline.entities;
 
 import lombok.*;
 import org.hibernate.Hibernate;

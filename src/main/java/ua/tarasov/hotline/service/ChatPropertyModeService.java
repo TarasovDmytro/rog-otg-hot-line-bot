@@ -5,8 +5,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Location;
-import ua.tarasov.hotline.models.models.BotState;
-import ua.tarasov.hotline.models.models.Department;
+import ua.tarasov.hotline.models.BotState;
+import ua.tarasov.hotline.models.Department;
 
 import java.util.HashMap;
 import java.util.Map;

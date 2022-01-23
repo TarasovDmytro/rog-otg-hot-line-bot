@@ -1,8 +1,8 @@
 package ua.tarasov.hotline.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ua.tarasov.hotline.models.models.Department;
-import ua.tarasov.hotline.models.entities.UserRequest;
+import ua.tarasov.hotline.models.Department;
+import ua.tarasov.hotline.entities.UserRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;

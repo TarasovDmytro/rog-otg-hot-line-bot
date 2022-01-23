@@ -1,11 +1,11 @@
-package ua.tarasov.hotline.models.entities;
+package ua.tarasov.hotline.entities;
 
 import com.google.gson.Gson;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 import org.telegram.telegrambots.meta.api.objects.Location;
-import ua.tarasov.hotline.models.models.Department;
+import ua.tarasov.hotline.models.Department;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

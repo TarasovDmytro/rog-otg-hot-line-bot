@@ -3,8 +3,8 @@ package ua.tarasov.hotline.service;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ua.tarasov.hotline.models.entities.BotUser;
-import ua.tarasov.hotline.models.models.Role;
+import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.models.Role;
 
 @Service
 public class AdminService {

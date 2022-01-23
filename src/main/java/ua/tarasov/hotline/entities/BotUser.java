@@ -1,10 +1,10 @@
-package ua.tarasov.hotline.models.entities;
+package ua.tarasov.hotline.entities;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
-import ua.tarasov.hotline.models.models.Department;
-import ua.tarasov.hotline.models.models.Role;
+import ua.tarasov.hotline.models.Department;
+import ua.tarasov.hotline.models.Role;
 
 import javax.persistence.*;
 import java.util.HashSet;
