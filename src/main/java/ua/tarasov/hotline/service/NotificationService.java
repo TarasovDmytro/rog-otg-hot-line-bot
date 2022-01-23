@@ -2,6 +2,7 @@ package ua.tarasov.hotline.service;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.tarasov.hotline.models.entities.Notification;
 import ua.tarasov.hotline.repository.NotificationRepository;
@@ -27,7 +28,7 @@ public class NotificationService {
 
     public void cleanNotificationDB(){
         while (repository.count() > 20) {
-            List<Notification> notifications = repository.findAll();
+            List<Notification> notifications = repository.findAll(Sort.by("id"));
             repository.delete(notifications.get(0));
         }
     }
