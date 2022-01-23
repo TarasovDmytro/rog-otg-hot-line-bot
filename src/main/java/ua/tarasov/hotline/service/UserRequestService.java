@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 public class UserRequestService {
     private final UserRequestRepository requestRepository;
-    @Value("${termOfStorageOfRequestsInMonths}")
+    @Value("${request.storage.months}")
     private Integer termOfStorageOfRequestsInMonths;
 
     public UserRequestService(@Autowired UserRequestRepository requestRepository) {

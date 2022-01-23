@@ -76,7 +76,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                 .build();
     }
 
-    @Scheduled(fixedDelayString = "${checkNotification.period}")
+    @Scheduled(fixedDelayString = "${notification.check.period}")
     public void sendNotification() {
         List<BotApiMethod<?>> methods = hotLineFacade.getUpdateNotifications();
         log.info(String.valueOf(methods));

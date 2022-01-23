@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationListener {
-    @Value("${notifications.url}")
+    @Value("${notification.urls}")
     String notificationUrl;
     List<Notification> newNotifications = new ArrayList<>();
     final NotificationParseService parser;
@@ -31,7 +31,7 @@ public class NotificationListener {
     }
 
     public List<BotApiMethod<?>> getNewNotifications() {
-        List<String> notificationUrls = new ArrayList<>(List.of(notificationUrl.split(";")));
+        List<String> notificationUrls = new ArrayList<>(List.of(notificationUrl.split(",")));
         log.info("notificationUrls: {}", notificationUrls);
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         notificationUrls.forEach(url -> newNotifications = parser.getNewNotifications(url));
