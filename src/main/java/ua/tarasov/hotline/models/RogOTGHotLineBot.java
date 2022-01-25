@@ -14,11 +14,11 @@ import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
-import ua.tarasov.hotline.facade.HotLineFacade;
 import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.facade.HotLineFacade;
+import ua.tarasov.hotline.facade.HotLineFacadeImpl;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
-import ua.tarasov.hotline.service.NotificationParseService;
 
 import java.util.List;
 
@@ -37,16 +37,14 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     ChatPropertyModeService chatPropertyModeService;
     @Autowired
     BotUserService botUserService;
-    @Autowired
-    NotificationParseService notificationParseService;
 
-    public RogOTGHotLineBot(HotLineFacade hotLineFacade, DefaultBotOptions options, SetWebhook setWebhook) {
+    public RogOTGHotLineBot(HotLineFacadeImpl hotLineFacade, DefaultBotOptions options, SetWebhook setWebhook) {
         super(options, setWebhook);
         this.hotLineFacade = hotLineFacade;
     }
 
     @Autowired
-    public RogOTGHotLineBot(HotLineFacade hotLineFacade, SetWebhook setWebhook) {
+    public RogOTGHotLineBot(HotLineFacadeImpl hotLineFacade, SetWebhook setWebhook) {
         super(setWebhook);
         this.hotLineFacade = hotLineFacade;
     }
@@ -78,7 +76,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
 
     @Scheduled(fixedDelayString = "${notification.check.period}")
     public void sendNotification() {
-        List<BotApiMethod<?>> methods = hotLineFacade.getUpdateNotifications();
+        List<BotApiMethod<?>> methods = hotLineFacade.notificationUpdate();
         log.info(String.valueOf(methods));
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         Long chatId = superAdmin.getId();

@@ -3,7 +3,7 @@ package ua.tarasov.hotline.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
-import ua.tarasov.hotline.facade.HotLineFacade;
+import ua.tarasov.hotline.facade.HotLineFacadeImpl;
 import ua.tarasov.hotline.models.RogOTGHotLineBot;
 
 @Configuration
@@ -20,8 +20,8 @@ public class AppConfig {
     }
 
     @Bean
-    public RogOTGHotLineBot springWebhookBot(SetWebhook setWebhook, HotLineFacade hotLineFacade) {
-        RogOTGHotLineBot bot = new RogOTGHotLineBot(hotLineFacade, setWebhook);
+    public RogOTGHotLineBot springWebhookBot(SetWebhook setWebhook, HotLineFacadeImpl hotLineFacadeImpl) {
+        RogOTGHotLineBot bot = new RogOTGHotLineBot(hotLineFacadeImpl, setWebhook);
         bot.setBotToken(botConfig.getBotToken());
         bot.setBotUsername(botConfig.getUserName());
         bot.setBotPath(botConfig.getWebHookPath());

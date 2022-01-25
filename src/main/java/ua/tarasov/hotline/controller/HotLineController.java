@@ -23,7 +23,7 @@ private  final RogOTGHotLineBot bot;
     }
 
     @GetMapping("/")
-    public ResponseEntity get() {
+    public ResponseEntity<?> get() {
         return ResponseEntity.ok().build();
     }
 }

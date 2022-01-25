@@ -54,7 +54,7 @@ public class UserRequestService {
     }
 
     @Transactional
-    public void cleanRequestData() {
+    public void cleanRequestDB() {
         List<UserRequest> requests = requestRepository.findAll(Sort.by("id"));
         log.info("requests: {}", requests);
         UserRequest lastRequest = requests.get(requests.size() - 1);
