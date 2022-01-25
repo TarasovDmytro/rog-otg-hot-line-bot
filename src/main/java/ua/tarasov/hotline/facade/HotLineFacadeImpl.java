@@ -4,14 +4,15 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.handlers.impl.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.impl.MessageHandler;
+import ua.tarasov.hotline.listener.WebSiteListener;
 import ua.tarasov.hotline.listener.NotificationListener;
-import ua.tarasov.hotline.listener.NotificationListenerImpl;
 
 import java.util.List;
 
@@ -21,13 +22,16 @@ import java.util.List;
 public class HotLineFacadeImpl implements HotLineFacade {
     final RequestHandler messageHandler;
     final RequestHandler callBackQueryHandler;
-    final NotificationListener notificationListener;
+    final WebSiteListener webSiteListener;
+    @Value("${notification.urls}")
+    String notificationUrl;
+
 
     public HotLineFacadeImpl(MessageHandler messageHandler, CallBackQueryHandler callBackQueryHandler,
-                             NotificationListenerImpl notificationListener) {
+                             NotificationListener notificationListener) {
         this.messageHandler = messageHandler;
         this.callBackQueryHandler = callBackQueryHandler;
-        this.notificationListener = notificationListener;
+        this.webSiteListener = notificationListener;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class HotLineFacadeImpl implements HotLineFacade {
 
     @Override
     public List<BotApiMethod<?>> notificationUpdate() {
-        return notificationListener.getNewNotifications();
+        return webSiteListener.getWebSiteUpdate(notificationUrl);
     }
 }
 
