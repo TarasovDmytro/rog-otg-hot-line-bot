@@ -4,14 +4,13 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.Notification;
-import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
 import ua.tarasov.hotline.service.NotificationParseService;
+import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
 import ua.tarasov.hotline.service.impl.NotificationParseServiceImpl;
 
 import java.util.ArrayList;
