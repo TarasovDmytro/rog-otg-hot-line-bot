@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -22,11 +23,11 @@ import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
-import ua.tarasov.hotline.service.BotUserService;
-import ua.tarasov.hotline.service.ChatPropertyModeService;
-import ua.tarasov.hotline.service.KeyboardService;
+import ua.tarasov.hotline.service.*;
+import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
+import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
-import ua.tarasov.hotline.service.UserRequestService;
+import ua.tarasov.hotline.service.impl.UserRequestServiceImpl;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ import java.util.Set;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CallBackQueryHandler implements RequestHandler {
-    final UserRequestService requestService;
+    final UserRequestServiceImpl requestService;
     final BotUserService botUserService;
     final KeyboardService keyboardService;
     final ChatPropertyModeService chatPropertyModeService;
@@ -45,8 +46,9 @@ public class CallBackQueryHandler implements RequestHandler {
     UserRequest userRequest = new UserRequest();
     BotUser botUser = new BotUser();
 
-    public CallBackQueryHandler(UserRequestService requestService, BotUserService botUserService,
-                                KeyboardServiceImpl keyboardService, ChatPropertyModeService chatPropertyModeService) {
+    public CallBackQueryHandler(UserRequestServiceImpl requestService, BotUserServiceImpl botUserService,
+                                KeyboardServiceImpl keyboardService,
+                                @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService) {
         this.requestService = requestService;
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;

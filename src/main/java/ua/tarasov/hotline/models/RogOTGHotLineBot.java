@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -19,6 +20,8 @@ import ua.tarasov.hotline.facade.HotLineFacade;
 import ua.tarasov.hotline.facade.HotLineFacadeImpl;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
+import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
+import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 
 import java.util.List;
 
@@ -33,6 +36,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
 
     @Autowired
     final HotLineFacade hotLineFacade;
+    @Qualifier("getChatProperties")
     @Autowired
     ChatPropertyModeService chatPropertyModeService;
     @Autowired
@@ -80,7 +84,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
         log.info(String.valueOf(methods));
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         Long chatId = superAdmin.getId();
-        BotState currentBotState = chatPropertyModeService.getBotState(chatId);
+        BotState currentBotState = chatPropertyModeService.getCurrentBotState(chatId);
         if (methods != null && !methods.isEmpty()) {
             chatPropertyModeService.setBotState(chatId, BotState.WAIT_MESSAGE_TO_ALL);
             for (BotApiMethod<?> botApiMethod : methods) {

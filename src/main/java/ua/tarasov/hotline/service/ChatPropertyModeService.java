@@ -1,9 +1,5 @@
 package ua.tarasov.hotline.service;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
@@ -11,64 +7,30 @@ import ua.tarasov.hotline.models.Department;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChatPropertyModeService {
-    static ChatPropertyModeService chatProperties;
-    final Map<Long, Department> currentDepartment = new HashMap<>();
-    final Map<Long, Boolean> currentAdminKeyboardState = new HashMap<>();
-    final Map<Long, BotState> botStateMap = new HashMap<>();
-    final Map<Long, String> currentRequestAddress = new HashMap<>();
-    final Map<Long, Location> currentLocation = new HashMap<>();
+public interface ChatPropertyModeService {
+    Map<Long, Department> currentDepartment = new HashMap<>();
+    Map<Long, Boolean> currentAdminKeyboardState = new HashMap<>();
+    Map<Long, BotState> currentBotState = new HashMap<>();
+    Map<Long, String> currentRequestAddress = new HashMap<>();
+    Map<Long, Location> currentLocation = new HashMap<>();
 
-    private ChatPropertyModeService() {
-    }
+    Department getCurrentDepartment(long chatId);
 
-    @Bean
-    public static ChatPropertyModeService getChatProperties() {
-        if (chatProperties == null) {
-            chatProperties = new ChatPropertyModeService();
-        }
-        return chatProperties;
-    }
+    void setCurrentDepartment(long chatId, Department department);
 
-    public Department getCurrentDepartment(long chatId) {
-        return currentDepartment.getOrDefault(chatId, Department.JEU_DOKUCHAEVSKE);
-    }
+    Boolean getCurrentAdminKeyboardState(Long chatId);
 
-    public void setCurrentDepartment(long chatId, Department department) {
-        currentDepartment.put(chatId, department);
-    }
+    void setCurrentAdminKeyboardState(long chatId, boolean adminKeyboardState);
 
-    public Boolean getCurrentAdminKeyboardState(Long chatId) {
-        return currentAdminKeyboardState.getOrDefault(chatId, true);
-    }
+    void setBotState(long chatId, BotState botState);
 
-    public void setCurrentAdminKeyboardState(long chatId, boolean adminKeyboardState) {
-        currentAdminKeyboardState.put(chatId, adminKeyboardState);
-    }
+    BotState getCurrentBotState(long chatId);
 
-    public void setBotState(long chatId, BotState botState) {
-        botStateMap.put(chatId, botState);
-    }
+    void setCurrentRequestAddress(long chatId, String address);
 
-    public BotState getBotState(long chatId) {
-        return botStateMap.getOrDefault(chatId, BotState.WAIT_BUTTON);
-    }
+    String getCurrentRequestAddress(long chatId);
 
-    public void setCurrentRequestAddress(long chatId, String address) {
-        currentRequestAddress.put(chatId, address);
-    }
+    void setCurrentLocation(long chatId, Location location);
 
-    public String getCurrentRequestAddress(long chatId) {
-        return currentRequestAddress.getOrDefault(chatId, "Адресу не встановлено");
-    }
-
-    public void setCurrentLocation(long chatId, Location location) {
-        currentLocation.put(chatId, location);
-    }
-
-    public Location getCurrentLocation(long chatId) {
-        return currentLocation.get(chatId);
-    }
+    Location getCurrentLocation(long chatId);
 }

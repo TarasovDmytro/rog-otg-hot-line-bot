@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,8 +25,7 @@ import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.service.*;
-import ua.tarasov.hotline.service.impl.CheckRoleServiceImpl;
-import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
+import ua.tarasov.hotline.service.impl.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -45,8 +45,9 @@ public class MessageHandler implements RequestHandler {
     BotUser botUser = new BotUser();
     List<BotApiMethod<?>> answerMessages = new ArrayList<>();
 
-    public MessageHandler(UserRequestService requestService, BotUserService botUserService,
-                          KeyboardServiceImpl keyboardService, CheckRoleServiceImpl checkRoleService, ChatPropertyModeService chatPropertyModeService) {
+    public MessageHandler(UserRequestServiceImpl requestService, BotUserServiceImpl botUserService,
+                          KeyboardServiceImpl keyboardService, CheckRoleServiceImpl checkRoleService,
+                          @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService) {
         this.requestService = requestService;
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
@@ -90,11 +91,11 @@ public class MessageHandler implements RequestHandler {
                     return setReplyKeyboard(message, START_TEXT);
                 }
                 default -> {
-                    if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
+                    if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
                         return sendMessageToAll(message);
                     }
                     if (message.getText().startsWith("*admin*")) return requestAdminRole(message);
-                    if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
+                    if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
                         return setRequestAddress(message);
                     } else return createRequestMessageHandler(message);
                 }
@@ -132,7 +133,7 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
-        if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
+        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_ADDRESS);
@@ -329,7 +330,7 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
-        if (chatPropertyModeService.getBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
+        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             UserRequest userRequest = createNewUserRequest(message);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
@@ -363,7 +364,6 @@ public class MessageHandler implements RequestHandler {
                 "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
                 "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
-        requestService.cleanRequestDB();
         requestService.saveRequest(userRequest);
         return userRequest;
     }

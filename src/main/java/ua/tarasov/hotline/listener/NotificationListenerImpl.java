@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.Notification;
-import ua.tarasov.hotline.service.BotUserService;
+import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
 import ua.tarasov.hotline.service.NotificationParseService;
 import ua.tarasov.hotline.service.impl.NotificationParseServiceImpl;
 
@@ -24,9 +24,9 @@ public class NotificationListenerImpl implements NotificationListener{
     String notificationUrl;
     List<Notification> newNotifications = new ArrayList<>();
     final NotificationParseService parser;
-    final BotUserService botUserService;
+    final BotUserServiceImpl botUserService;
 
-    public NotificationListenerImpl(NotificationParseServiceImpl parser, BotUserService botUserService) {
+    public NotificationListenerImpl(NotificationParseServiceImpl parser, BotUserServiceImpl botUserService) {
         this.parser = parser;
         this.botUserService = botUserService;
     }

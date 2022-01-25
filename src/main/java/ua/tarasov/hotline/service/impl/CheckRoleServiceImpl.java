@@ -6,14 +6,13 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.models.Role;
-import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.CheckRoleService;
 
 @Service
 public class CheckRoleServiceImpl implements CheckRoleService {
-    private final BotUserService botUserService;
+    private final BotUserServiceImpl botUserService;
 
-    public CheckRoleServiceImpl(BotUserService botUserService) {
+    public CheckRoleServiceImpl(BotUserServiceImpl botUserService) {
         this.botUserService = botUserService;
     }
 

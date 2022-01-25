@@ -1,0 +1,67 @@
+package ua.tarasov.hotline.service.impl;
+
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Location;
+import ua.tarasov.hotline.models.BotState;
+import ua.tarasov.hotline.models.Department;
+import ua.tarasov.hotline.service.ChatPropertyModeService;
+
+@Service
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class ChatPropertyModeServiceImpl implements ChatPropertyModeService {
+    static ChatPropertyModeServiceImpl chatProperties;
+
+    private ChatPropertyModeServiceImpl() {
+    }
+
+    @Bean
+    public static ChatPropertyModeServiceImpl getChatProperties() {
+        if (chatProperties == null) {
+            chatProperties = new ChatPropertyModeServiceImpl();
+        }
+        return chatProperties;
+    }
+
+    public Department getCurrentDepartment(long chatId) {
+        return currentDepartment.getOrDefault(chatId, Department.JEU_DOKUCHAEVSKE);
+    }
+
+    public void setCurrentDepartment(long chatId, Department department) {
+        currentDepartment.put(chatId, department);
+    }
+
+    public Boolean getCurrentAdminKeyboardState(Long chatId) {
+        return currentAdminKeyboardState.getOrDefault(chatId, true);
+    }
+
+    public void setCurrentAdminKeyboardState(long chatId, boolean adminKeyboardState) {
+        currentAdminKeyboardState.put(chatId, adminKeyboardState);
+    }
+
+    public void setBotState(long chatId, BotState botState) {
+        currentBotState.put(chatId, botState);
+    }
+
+    public BotState getCurrentBotState(long chatId) {
+        return currentBotState.getOrDefault(chatId, BotState.WAIT_BUTTON);
+    }
+
+    public void setCurrentRequestAddress(long chatId, String address) {
+        currentRequestAddress.put(chatId, address);
+    }
+
+    public String getCurrentRequestAddress(long chatId) {
+        return currentRequestAddress.getOrDefault(chatId, "Адресу не встановлено");
+    }
+
+    public void setCurrentLocation(long chatId, Location location) {
+        currentLocation.put(chatId, location);
+    }
+
+    public Location getCurrentLocation(long chatId) {
+        return currentLocation.get(chatId);
+    }
+}
