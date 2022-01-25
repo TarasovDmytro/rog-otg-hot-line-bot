@@ -37,8 +37,8 @@ import java.util.*;
 public class MessageHandler implements RequestHandler {
     final UserRequestService requestService;
     final BotUserService botUserService;
-    final KeyboardServiceImpl keyboardServiceImpl;
-    final CheckRoleServiceImpl checkRoleServiceImpl;
+    final KeyboardService keyboardService;
+    final CheckRoleService checkRoleService;
     final ChatPropertyModeService chatPropertyModeService;
 
     final UserRequest userRequest = new UserRequest();
@@ -46,11 +46,11 @@ public class MessageHandler implements RequestHandler {
     List<BotApiMethod<?>> answerMessages = new ArrayList<>();
 
     public MessageHandler(UserRequestService requestService, BotUserService botUserService,
-                          KeyboardServiceImpl keyboardServiceImpl, CheckRoleServiceImpl checkRoleServiceImpl, ChatPropertyModeService chatPropertyModeService) {
+                          KeyboardServiceImpl keyboardService, CheckRoleServiceImpl checkRoleService, ChatPropertyModeService chatPropertyModeService) {
         this.requestService = requestService;
         this.botUserService = botUserService;
-        this.keyboardServiceImpl = keyboardServiceImpl;
-        this.checkRoleServiceImpl = checkRoleServiceImpl;
+        this.keyboardService = keyboardService;
+        this.checkRoleService = checkRoleService;
         this.chatPropertyModeService = chatPropertyModeService;
     }
 
@@ -126,7 +126,7 @@ public class MessageHandler implements RequestHandler {
                         "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
                 .parseMode("HTML")
                 .replyMarkup(InlineKeyboardMarkup.builder()
-                        .keyboard(keyboardServiceImpl.getAgreeButtons(dataStartText))
+                        .keyboard(keyboardService.getAgreeButtons(dataStartText))
                         .build())
                 .build());
     }
@@ -157,7 +157,7 @@ public class MessageHandler implements RequestHandler {
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setReplyKeyboard(@NotNull Message message, String messageText) {
         List<KeyboardRow> keyboardRows = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId()) ?
-                keyboardServiceImpl.getAdminReplyButtons() : keyboardServiceImpl.getUserReplyButtons(message);
+                keyboardService.getAdminReplyButtons() : keyboardService.getUserReplyButtons(message);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(message.getChatId()))
                 .text(messageText)
@@ -197,7 +197,7 @@ public class MessageHandler implements RequestHandler {
                         "\nобслуговуючих департаментів з метою будь-яких" +
                         "\nуточнень? \uD83D\uDC47")
                 .replyMarkup(ReplyKeyboardMarkup.builder()
-                        .keyboard(keyboardServiceImpl.getAgreeAddContactReplyButtons())
+                        .keyboard(keyboardService.getAgreeAddContactReplyButtons())
                         .resizeKeyboard(true)
                         .build())
                 .build());
@@ -211,7 +211,7 @@ public class MessageHandler implements RequestHandler {
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будьласка, обслуговуючий департамент")
                 .replyMarkup(InlineKeyboardMarkup.builder()
-                        .keyboard(keyboardServiceImpl.getDepartmentInlineButtons(currentDepartment))
+                        .keyboard(keyboardService.getDepartmentInlineButtons(currentDepartment))
                         .build())
                 .build());
     }
@@ -278,7 +278,7 @@ public class MessageHandler implements RequestHandler {
             messages.forEach(currentMessage -> {
                 stateText.set(currentMessage.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
                 List<List<InlineKeyboardButton>> buttons =
-                        keyboardServiceImpl.getStateRequestButton(currentMessage.getMessageId(), stateText.get());
+                        keyboardService.getStateRequestButton(currentMessage.getMessageId(), stateText.get());
                 answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
                         .text(currentMessage.getBodyOfMessage())
@@ -293,27 +293,27 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> setChangeMenu(Message message) {
-        if (checkRoleServiceImpl.checkIsAdmin(message)) {
+        if (checkRoleService.checkIsAdmin(message)) {
             boolean state = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId());
             chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), !state);
             String messageText = "Меню змінено, приємного користування";
             return setReplyKeyboard(message, messageText);
         }
-        return List.of(checkRoleServiceImpl.getFalseAdminText(message));
+        return List.of(checkRoleService.getFalseAdminText(message));
     }
 
     private List<BotApiMethod<?>> setMessageToAll(Message message) {
-        if (checkRoleServiceImpl.checkIsAdmin(message)) {
+        if (checkRoleService.checkIsAdmin(message)) {
             chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
             return getSimpleResponseToRequest(message, """
                     Введіть, будьласка, повідомлення
                     для всіх користувачів""");
         }
-        return Collections.singletonList(checkRoleServiceImpl.getFalseAdminText(message));
+        return Collections.singletonList(checkRoleService.getFalseAdminText(message));
     }
 
     private @NotNull List<BotApiMethod<?>> sendMessageToAll(Message message) {
-        if (checkRoleServiceImpl.checkIsAdmin(message)) {
+        if (checkRoleService.checkIsAdmin(message)) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
             botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
@@ -325,7 +325,7 @@ public class MessageHandler implements RequestHandler {
             return answerMessages;
         }
         chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
-        return Collections.singletonList(checkRoleServiceImpl.getFalseAdminText(message));
+        return Collections.singletonList(checkRoleService.getFalseAdminText(message));
     }
 
     private List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {

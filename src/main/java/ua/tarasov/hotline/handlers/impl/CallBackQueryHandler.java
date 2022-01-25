@@ -24,6 +24,7 @@ import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
+import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
 import ua.tarasov.hotline.service.UserRequestService;
 
@@ -38,16 +39,17 @@ import java.util.Set;
 public class CallBackQueryHandler implements RequestHandler {
     final UserRequestService requestService;
     final BotUserService botUserService;
-    final KeyboardServiceImpl keyboardServiceImpl;
+    final KeyboardService keyboardService;
     final ChatPropertyModeService chatPropertyModeService;
 
     UserRequest userRequest = new UserRequest();
     BotUser botUser = new BotUser();
 
-    public CallBackQueryHandler(UserRequestService requestService, BotUserService botUserService, KeyboardServiceImpl keyboardServiceImpl, ChatPropertyModeService chatPropertyModeService) {
+    public CallBackQueryHandler(UserRequestService requestService, BotUserService botUserService,
+                                KeyboardServiceImpl keyboardService, ChatPropertyModeService chatPropertyModeService) {
         this.requestService = requestService;
         this.botUserService = botUserService;
-        this.keyboardServiceImpl = keyboardServiceImpl;
+        this.keyboardService = keyboardService;
         this.chatPropertyModeService = chatPropertyModeService;
     }
 
@@ -174,12 +176,12 @@ public class CallBackQueryHandler implements RequestHandler {
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
         log.info("Current department: " + chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         return List.of(
-                keyboardServiceImpl.getCorrectReplyMarkup(message, keyboardServiceImpl.getDepartmentInlineButtons(department)),
+                keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(department)),
                 SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
                         .text(textMessage)
                         .replyMarkup(InlineKeyboardMarkup.builder()
-                                .keyboard(keyboardServiceImpl.getAgreeButtons("location"))
+                                .keyboard(keyboardService.getAgreeButtons("location"))
                                 .build())
                         .build()
         );
@@ -193,8 +195,8 @@ public class CallBackQueryHandler implements RequestHandler {
             userRequest.setState(!userRequest.isState());
             requestService.saveRequest(userRequest);
             stateText.set(userRequest.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
-            return List.of(keyboardServiceImpl.getCorrectReplyMarkup(message,
-                            keyboardServiceImpl.getStateRequestButton(messageId, stateText.get())),
+            return List.of(keyboardService.getCorrectReplyMarkup(message,
+                            keyboardService.getStateRequestButton(messageId, stateText.get())),
                     SendMessage.builder()
                             .chatId(userRequest.getChatId().toString())
                             .replyToMessageId(messageId)
@@ -264,7 +266,7 @@ public class CallBackQueryHandler implements RequestHandler {
                         смартфонів, якщо Ви використовуєте інший пристрій, або
                         передумали - натиснить кнопку 'відмовитись'""")
                 .replyMarkup(InlineKeyboardMarkup.builder()
-                        .keyboard(keyboardServiceImpl.getRefuseButton(callbackQuery.getMessage()))
+                        .keyboard(keyboardService.getRefuseButton(callbackQuery.getMessage()))
                         .build())
                 .build());
     }

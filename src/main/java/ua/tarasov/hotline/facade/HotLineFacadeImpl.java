@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HotLineFacadeImpl implements HotLineFacade{
+public class HotLineFacadeImpl implements HotLineFacade {
     final RequestHandler messageHandler;
     final RequestHandler callBackQueryHandler;
     final NotificationListener notificationListener;
@@ -34,8 +34,7 @@ public class HotLineFacadeImpl implements HotLineFacade{
     public List<BotApiMethod<?>> handleUpdate(@NotNull Update update) {
         log.info("facade get update = {}", update);
         if (update.hasCallbackQuery()) {
-            log.info("return callBackQueryHandler action");
-           return callBackQueryHandler.getHandlerUpdate(update);
+            return callBackQueryHandler.getHandlerUpdate(update);
         } else {
             log.info("return messageHandler action");
             return messageHandler.getHandlerUpdate(update);

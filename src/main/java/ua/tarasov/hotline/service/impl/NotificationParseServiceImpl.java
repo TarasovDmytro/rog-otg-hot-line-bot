@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tarasov.hotline.entities.Notification;
 import ua.tarasov.hotline.service.NotificationParseService;
+import ua.tarasov.hotline.service.NotificationService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,11 +24,11 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationParseServiceImpl implements NotificationParseService {
-    final NotificationServiceImpl notificationServiceImpl;
+    final NotificationService notificationService;
     List<Notification> newNotifications;
 
-    public NotificationParseServiceImpl(@Autowired NotificationServiceImpl notificationServiceImpl) {
-        this.notificationServiceImpl = notificationServiceImpl;
+    public NotificationParseServiceImpl(@Autowired NotificationServiceImpl notificationService) {
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -47,19 +48,19 @@ public class NotificationParseServiceImpl implements NotificationParseService {
             log.info("link: " + link);
             log.info("title: " + title);
             log.info("date: {}", date);
-            if (!notificationServiceImpl.isExist(date)) {
+            if (!notificationService.isExist(date)) {
                 Notification notification = new Notification();
                 notification.setLink(link);
                 notification.setTitle(title);
                 notification.setDate(date);
-                notificationServiceImpl.saveNewNotification(notification);
+                notificationService.saveNewNotification(notification);
                 newNotifications.add(notification);
             }
         });
         } catch (IOException e) {
             e.printStackTrace();
         }
-        notificationServiceImpl.cleanNotificationDB(10);
+        notificationService.cleanNotificationDB(10);
         return newNotifications;
     }
 }

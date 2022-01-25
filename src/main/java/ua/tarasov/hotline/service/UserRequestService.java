@@ -24,7 +24,6 @@ public class UserRequestService {
         this.requestRepository = requestRepository;
     }
 
-
     public void saveRequest(UserRequest request){
         requestRepository.save(request);
     }
