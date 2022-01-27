@@ -108,7 +108,7 @@ public class MessageHandler implements RequestHandler {
 
     private List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
-        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         return getSimpleResponseToRequest(message, "Адресу додано до заявки" +
                 "\nВведіть, будьласка, текст заявки");
     }
@@ -136,7 +136,7 @@ public class MessageHandler implements RequestHandler {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
-            chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_ADDRESS);
+            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_ADDRESS);
             return getSimpleResponseToRequest(message, "Локацію установлено" +
                     "\nВведіть, будьласка, адресу, за якою сталася проблема");
         } else return getSimpleResponseToRequest(message,
@@ -171,7 +171,7 @@ public class MessageHandler implements RequestHandler {
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setStartProperties(@NotNull Message message) {
-        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         User user = message.getFrom();
         botUser.setId(message.getChatId());
         botUser.setUsername(user.getUserName());
@@ -207,7 +207,7 @@ public class MessageHandler implements RequestHandler {
     @Contract("_ -> new")
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setDepartmentOfRequest(@NotNull Message message) {
         Department currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
-        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будьласка, обслуговуючий департамент")
@@ -219,12 +219,12 @@ public class MessageHandler implements RequestHandler {
 
     private @NotNull List<BotApiMethod<?>> getAllStateRequests(@NotNull Message message) {
         List<UserRequest> messages = requestService.findMessagesByBotUser(message.getChatId());
-        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return sendUserListOfMessages(message, messages);
     }
 
     private List<BotApiMethod<?>> getAdminAllStateRequests(@NotNull Message message) {
-        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             Set<Department> departments = botUser.getDepartments();
@@ -236,13 +236,13 @@ public class MessageHandler implements RequestHandler {
     }
 
     private @NotNull List<BotApiMethod<?>> getFalseStateRequests(@NotNull Message message) {
-        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         List<UserRequest> messages = requestService.findMessagesByBotUserAndState(message.getChatId(), false);
         return sendUserListOfMessages(message, messages);
     }
 
     private List<BotApiMethod<?>> getAdminFalseStateRequests(@NotNull Message message) {
-        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             Set<Department> departments = botUser.getDepartments();
@@ -305,7 +305,7 @@ public class MessageHandler implements RequestHandler {
 
     private List<BotApiMethod<?>> setMessageToAll(Message message) {
         if (checkRoleService.checkIsAdmin(message)) {
-            chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
+            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
             return getSimpleResponseToRequest(message, """
                     Введіть, будьласка, повідомлення
                     для всіх користувачів""");
@@ -322,10 +322,10 @@ public class MessageHandler implements RequestHandler {
                     .text(message.getText())
                     .parseMode("HTML")
                     .build()));
-            chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         }
-        chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return Collections.singletonList(checkRoleService.getFalseAdminText(message));
     }
 
@@ -344,7 +344,7 @@ public class MessageHandler implements RequestHandler {
             answerMessages.addAll(getSimpleResponseToRequest(message,
                     "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
                             "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
-            chatPropertyModeService.setBotState(message.getChatId(), BotState.WAIT_BUTTON);
+            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         } else return getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
                 "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");

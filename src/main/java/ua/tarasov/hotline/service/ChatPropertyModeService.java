@@ -22,7 +22,7 @@ public interface ChatPropertyModeService {
 
     void setCurrentAdminKeyboardState(long chatId, boolean adminKeyboardState);
 
-    void setBotState(long chatId, BotState botState);
+    void setCurrentBotState(long chatId, BotState botState);
 
     BotState getCurrentBotState(long chatId);
 

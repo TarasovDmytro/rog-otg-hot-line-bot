@@ -163,7 +163,7 @@ public class CallBackQueryHandler implements RequestHandler {
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> getButtonDepartmentHandler(CallbackQuery callbackQuery) {
         log.info("get button department");
-        chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_BUTTON);
         String textMessage = "Департамент обрано.\nЧи бажаєте Ви додати до заявки геолокацію?";
         return buttonDepartmentHandler(callbackQuery, textMessage);
     }
@@ -257,7 +257,7 @@ public class CallBackQueryHandler implements RequestHandler {
 
     @SneakyThrows
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setLocationMessage(@NotNull CallbackQuery callbackQuery) {
-        chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
+        chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(callbackQuery.getMessage().getChatId().toString())
                 .text("""
@@ -274,7 +274,7 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> setRequestMessage(@NotNull CallbackQuery callbackQuery) {
-        chatPropertyModeService.setBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_ADDRESS);
+        chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_ADDRESS);
         return getSimpleResponseToRequest(callbackQuery.getMessage(), "Добре. Введіть, будьласка, адресу," +
                                                                       " за якою сталася проблема");
     }

@@ -45,7 +45,7 @@ public class ChatPropertyModeServiceImpl implements ChatPropertyModeService {
     }
 
     @Override
-    public void setBotState(long chatId, BotState botState) {
+    public void setCurrentBotState(long chatId, BotState botState) {
         currentBotState.put(chatId, botState);
     }
 
