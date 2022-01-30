@@ -36,4 +36,9 @@ public class NotificationServiceImpl implements NotificationService {
             repository.delete(notifications.get(0));
         }
     }
+
+    @Override
+    public List<Notification> findAll() {
+        return repository.findAll();
+    }
 }

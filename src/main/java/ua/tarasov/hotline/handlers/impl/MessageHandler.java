@@ -19,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.entities.Notification;
 import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.BotState;
@@ -40,6 +41,7 @@ public class MessageHandler implements RequestHandler {
     final KeyboardService keyboardService;
     final CheckRoleService checkRoleService;
     final ChatPropertyModeService chatPropertyModeService;
+    final NotificationService notificationService;
 
     final UserRequest userRequest = new UserRequest();
     BotUser botUser = new BotUser();
@@ -47,12 +49,14 @@ public class MessageHandler implements RequestHandler {
 
     public MessageHandler(UserRequestServiceImpl requestService, BotUserServiceImpl botUserService,
                           KeyboardServiceImpl keyboardService, CheckRoleServiceImpl checkRoleService,
-                          @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService) {
+                          @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService,
+                          NotificationServiceImpl notificationService) {
         this.requestService = requestService;
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
         this.checkRoleService = checkRoleService;
         this.chatPropertyModeService = chatPropertyModeService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -81,7 +85,7 @@ public class MessageHandler implements RequestHandler {
                 case "Не виконані заявки" -> {
                     return getAdminFalseStateRequests(message);
                 }
-                case "змінити меню" -> {
+                case "Змінити меню" -> {
                     return setChangeMenu(message);
                 }
                 case "Повідомлення всім" -> {
@@ -89,6 +93,9 @@ public class MessageHandler implements RequestHandler {
                 }
                 case "❌ Відмовитись" -> {
                     return setReplyKeyboard(message, START_TEXT);
+                }
+                case "Останні оголошення" -> {
+                    return getNotifications(message);
                 }
                 default -> {
                     if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
@@ -104,6 +111,16 @@ public class MessageHandler implements RequestHandler {
         if (message.hasContact()) return setBotUserPhone(message);
         if (message.hasLocation()) return setRequestLocation(message);
         return getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
+    }
+
+    private List<BotApiMethod<?>> getNotifications(Message message) {
+        List<BotApiMethod<?>> responseMessages = new ArrayList<>();
+        List<Notification> notifications = notificationService.findAll();
+        notifications.forEach(notification -> {
+            String messageText = notification.getDate() + "\n" + notification.getLink();
+            responseMessages.add(getSimpleResponseToRequest(message, messageText).get(0));
+        });
+        return responseMessages;
     }
 
     private List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
