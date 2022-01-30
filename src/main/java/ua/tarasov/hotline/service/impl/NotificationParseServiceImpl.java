@@ -54,16 +54,17 @@ public class NotificationParseServiceImpl implements NotificationParseService {
                     notification.setDate(date);
                     notificationService.saveUpdateNotification(notification);
                     updateNotifications.add(notification);
-                } else {
-                    if (notificationService.findByDate(date).isPresent()) {
-                        Notification updateNotification = notificationService.findByDate(date).get();
-                        if (!updateNotification.getLink().equals(link)) {
-                            updateNotification.setLink(link);
-                            notificationService.saveUpdateNotification(updateNotification);
-                            updateNotifications.add(updateNotification);
-                        }
-                    }
                 }
+//                else {
+//                    if (notificationService.findByDate(date).isPresent()) {
+//                        Notification updateNotification = notificationService.findByDate(date).get();
+//                        if (!updateNotification.getLink().equals(link)) {
+//                            updateNotification.setLink(link);
+//                            notificationService.saveUpdateNotification(updateNotification);
+//                            updateNotifications.add(updateNotification);
+//                        }
+//                    }
+//                }
             });
         } catch (IOException e) {
             e.printStackTrace();
