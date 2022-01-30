@@ -9,7 +9,6 @@ import ua.tarasov.hotline.repository.NotificationRepository;
 import ua.tarasov.hotline.service.NotificationService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -21,8 +20,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Boolean isExist(String notificationDate) {
-        return repository.existsNotificationByDate(notificationDate);
+    public Boolean isExist(String notificationDate, String notificationTitle) {
+        return repository.existsNotificationByDateAndTitle(notificationDate, notificationTitle);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Optional<Notification> findByDate(String date) {
-        return repository.findNotificationByDate(date);
+    public Notification findByDateAndTitle(String date, String title) {
+        return repository.findNotificationByDateAndTitle(date, title);
     }
 }

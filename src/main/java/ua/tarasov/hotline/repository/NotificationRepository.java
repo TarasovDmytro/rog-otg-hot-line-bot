@@ -6,6 +6,6 @@ import ua.tarasov.hotline.entities.Notification;
 import java.util.Optional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    Boolean existsNotificationByDate(String date);
-    Optional<Notification> findNotificationByDate(String date);
+    Boolean existsNotificationByDateAndTitle(String date, String title);
+    Notification findNotificationByDateAndTitle(String date, String title);
 }
