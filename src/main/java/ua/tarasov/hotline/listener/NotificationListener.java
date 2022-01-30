@@ -20,7 +20,6 @@ import java.util.List;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationListener implements WebSiteListener {
-    List<Notification> newNotifications = new ArrayList<>();
     final NotificationParseService parser;
     final BotUserServiceImpl botUserService;
 
@@ -31,19 +30,19 @@ public class NotificationListener implements WebSiteListener {
 
     @Override
     public List<BotApiMethod<?>> getWebSiteUpdate(@NotNull String notificationUrl) {
-        List<String> notificationUrls = new ArrayList<>(List.of(notificationUrl.split(",")));
-        log.info("notificationUrls: {}", notificationUrls);
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
-        notificationUrls.forEach(url -> newNotifications = parser.getUpdateNotifications(url));
+        List<Notification> newNotifications = parser.getUpdateNotifications(notificationUrl);
         log.info("New notifications: {}", newNotifications);
-        newNotifications.forEach(notification -> {
-            List<BotUser> botUsers = botUserService.findAll();
-            botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
-                    .chatId(String.valueOf(botUser.getId()))
-                    .text(notification.getDate() + "\n" + notification.getLink())
-                    .parseMode("HTML")
-                    .build()));
-        });
+        if (!newNotifications.isEmpty()) {
+            newNotifications.forEach(notification -> {
+                List<BotUser> botUsers = botUserService.findAll();
+                botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
+                        .chatId(String.valueOf(botUser.getId()))
+                        .text(notification.getDate() + "\n" + notification.getLink())
+                        .parseMode("HTML")
+                        .build()));
+            });
+        }
         return answerMessages;
     }
 }
