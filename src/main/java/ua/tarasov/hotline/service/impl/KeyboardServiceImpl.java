@@ -36,6 +36,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         firstRow.add("Всі заявки");
         firstRow.add("Не виконані заявки");
         var secondRow = new KeyboardRow();
+        secondRow.add("Останні оголошення");
         secondRow.add("змінити меню");
         return List.of(firstRow, secondRow);
     }
@@ -47,6 +48,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         firstRow.add("Мої заявки");
         firstRow.add("Мої не виконані заявки");
         var secondRow = new KeyboardRow();
+        secondRow.add("Останні оголошення");
         if (checkRoleServiceImpl.checkIsAdmin(message)) {
             secondRow.add("змінити меню");
         }
