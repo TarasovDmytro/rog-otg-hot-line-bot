@@ -34,7 +34,7 @@ public class NotificationListener implements WebSiteListener {
         List<String> notificationUrls = new ArrayList<>(List.of(notificationUrl.split(",")));
         log.info("notificationUrls: {}", notificationUrls);
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
-        notificationUrls.forEach(url -> newNotifications = parser.getNewNotifications(url));
+        notificationUrls.forEach(url -> newNotifications = parser.getUpdateNotifications(url));
         log.info("New notifications: {}", newNotifications);
         newNotifications.forEach(notification -> {
             List<BotUser> botUsers = botUserService.findAll();

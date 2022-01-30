@@ -9,6 +9,7 @@ import ua.tarasov.hotline.repository.NotificationRepository;
 import ua.tarasov.hotline.service.NotificationService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -25,7 +26,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void saveNewNotification(Notification notification) {
+    public void saveUpdateNotification(Notification notification) {
         repository.save(notification);
     }
 
@@ -40,5 +41,10 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<Notification> findAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public Optional<Notification> findByDate(String date) {
+        return repository.findByDate(date);
     }
 }

@@ -25,42 +25,50 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationParseServiceImpl implements NotificationParseService {
     final NotificationService notificationService;
-    List<Notification> newNotifications;
+    List<Notification> updateNotifications;
 
     public NotificationParseServiceImpl(@Autowired NotificationServiceImpl notificationService) {
         this.notificationService = notificationService;
     }
 
-    @Override
-    public List<Notification> getNewNotifications(String url) {
-        newNotifications = new ArrayList<>();
+    public List<Notification> getUpdateNotifications(String url) {
+        updateNotifications = new ArrayList<>();
         try {
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla")
                     .timeout(5000)
                     .referrer("https://google.com")
                     .get();
-        Elements newsTitles = doc.getElementsByClass("one_news_col");
-        newsTitles.forEach(element -> {
-            String link = element.getElementsByClass("news_title").get(0).html();
-            String title = element.getElementsByClass("news_title").get(0).text();
-            String date = element.getElementsByClass("news_date").get(0).text();
-            log.info("link: " + link);
-            log.info("title: " + title);
-            log.info("date: {}", date);
-            if (!notificationService.isExist(date)) {
-                Notification notification = new Notification();
-                notification.setLink(link);
-                notification.setTitle(title);
-                notification.setDate(date);
-                notificationService.saveNewNotification(notification);
-                newNotifications.add(notification);
-            }
-        });
+            Elements newsTitles = doc.getElementsByClass("one_news_col");
+            newsTitles.forEach(element -> {
+                String link = element.getElementsByClass("news_title").get(0).html();
+                String title = element.getElementsByClass("news_title").get(0).text();
+                String date = element.getElementsByClass("news_date").get(0).text();
+                log.info("link: " + link);
+                log.info("title: " + title);
+                log.info("date: {}", date);
+                if (!notificationService.isExist(date)) {
+                    Notification notification = new Notification();
+                    notification.setLink(link);
+                    notification.setTitle(title);
+                    notification.setDate(date);
+                    notificationService.saveUpdateNotification(notification);
+                    updateNotifications.add(notification);
+                } else {
+                    if (notificationService.findByDate(date).isPresent()) {
+                        Notification updateNotification = notificationService.findByDate(date).get();
+                        if (!updateNotification.getLink().equals(link)) {
+                            updateNotification.setLink(link);
+                            notificationService.saveUpdateNotification(updateNotification);
+                            updateNotifications.add(updateNotification);
+                        }
+                    }
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
         notificationService.cleanNotificationDB(10);
-        return newNotifications;
+        return updateNotifications;
     }
 }
