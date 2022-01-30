@@ -45,6 +45,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public Optional<Notification> findByDate(String date) {
-        return repository.findByDate(date);
+        return repository.findNotificationByDate(date);
     }
 }

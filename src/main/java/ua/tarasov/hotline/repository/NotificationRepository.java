@@ -7,6 +7,5 @@ import java.util.Optional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     Boolean existsNotificationByDate(String date);
-
-    Optional<Notification> findByDate(String date);
+    Optional<Notification> findNotificationByDate(String date);
 }
