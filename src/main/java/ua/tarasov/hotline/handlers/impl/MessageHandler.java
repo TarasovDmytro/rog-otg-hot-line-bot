@@ -31,6 +31,7 @@ import ua.tarasov.hotline.service.impl.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -116,7 +117,7 @@ public class MessageHandler implements RequestHandler {
     private List<BotApiMethod<?>> getNotifications(Message message) {
         List<BotApiMethod<?>> responseMessages = new ArrayList<>();
         List<Notification> notifications = notificationService.findAll();
-        notifications = notifications.subList(10, notifications.size()-1);
+        notifications = notifications.stream().skip(10L).collect(Collectors.toList());
         notifications.forEach(notification -> {
             String messageText = notification.getDate() + "\n" + notification.getLink();
             responseMessages.add(getSimpleResponseToRequest(message, messageText).get(0));
