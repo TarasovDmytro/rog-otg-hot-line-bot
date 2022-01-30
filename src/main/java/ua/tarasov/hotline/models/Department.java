@@ -1,11 +1,11 @@
 package ua.tarasov.hotline.models;
 
 public enum Department {
-    JEU_DOKUCHAEVSKE("КП ЖЕУ ДОКУЧАЄВСЬКЕ"),
-    KU_CNSP("КУ ЦНСП"),
-    UNIVERSAL_SERVICE("ТОВ УНІВЕРСАЛ-СЕРВІС"),
-    CHILDREN_ACTION_SERVICE("СЛУЖБА У СПРАВАХ ДІТЕЙ"),
-    ROHAN_COUNCIL("РОГАНСЬКА РАДА"),
+    JEU_DOKUCHAEVSKE("1. КП ЖЕУ ДОКУЧАЄВСЬКЕ"),
+    KU_CNSP("2. КУ ЦНСП"),
+    UNIVERSAL_SERVICE("3. ТОВ УНІВЕРСАЛ-СЕРВІС"),
+    CHILDREN_ACTION_SERVICE("4. СЛУЖБА У СПРАВАХ ДІТЕЙ"),
+    ROHAN_COUNCIL("5. РОГАНСЬКА РАДА"),
     USER("Користувач");
 
     private final String departmentName;
