@@ -360,7 +360,7 @@ public class MessageHandler implements RequestHandler {
         userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
         chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
-        userRequest.setBodyOfMessage(userRequest.getDepartment() + "\nID " + userRequest.getMessageId() +
+        userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID " + userRequest.getMessageId() +
                 "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
                 "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
