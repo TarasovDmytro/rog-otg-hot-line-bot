@@ -39,7 +39,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<Notification> findAll() {
-        return repository.findAll(Sort.by("date"));
+        return repository.findAll(Sort.by("link"));
     }
 
     @Override

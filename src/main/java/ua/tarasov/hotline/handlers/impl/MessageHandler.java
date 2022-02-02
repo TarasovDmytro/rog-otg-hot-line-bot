@@ -116,7 +116,7 @@ public class MessageHandler implements RequestHandler {
 
     private List<BotApiMethod<?>> getNotifications(Message message) {
         List<BotApiMethod<?>> responseMessages = new ArrayList<>();
-        List<Notification> notifications = notificationService.findAll().stream().skip(10L).collect(Collectors.toList());
+        List<Notification> notifications = notificationService.findAll().stream().skip(10L).toList();
         notifications.forEach(notification -> {
             String messageText = notification.getDate() + "\n" + notification.getLink();
             responseMessages.add(getSimpleResponseToRequest(message, messageText).get(0));
