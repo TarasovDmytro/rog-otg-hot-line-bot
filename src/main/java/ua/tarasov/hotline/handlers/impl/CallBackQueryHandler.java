@@ -17,13 +17,16 @@ import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
-import ua.tarasov.hotline.service.*;
+import ua.tarasov.hotline.service.BotUserService;
+import ua.tarasov.hotline.service.ChatPropertyModeService;
+import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
 import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
@@ -118,11 +121,17 @@ public class CallBackQueryHandler implements RequestHandler {
             departments.add(department);
         }
         botUser.setDepartments(departments);
+        botUser.setRole(Role.ADMIN);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         botUserService.saveBotUser(this.botUser);
         return List.of(SendMessage.builder()
                         .chatId(botUser.getId().toString())
                         .text("Ваші права доступу встановлені")
+                        .replyMarkup(ReplyKeyboardMarkup.builder()
+                                .keyboard(keyboardService.getAdminReplyButtons())
+                                .resizeKeyboard(true)
+                                .oneTimeKeyboard(false)
+                                .build())
                         .build(),
                 SendMessage.builder()
                         .chatId(String.valueOf(superAdmin.getId()))
