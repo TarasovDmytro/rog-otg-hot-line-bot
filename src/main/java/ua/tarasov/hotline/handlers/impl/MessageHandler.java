@@ -140,7 +140,7 @@ public class MessageHandler implements RequestHandler {
             botUser = botUserService.findById(message.getChatId()).get();
         }
         String[] depText = message.getText().substring("*admin*".length()).split(":");
-        String dataStartText = "department" + jsonConverter.toJson(depText);
+        String dataStartText = "department" + message.getChatId() + ":" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))

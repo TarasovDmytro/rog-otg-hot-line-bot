@@ -29,10 +29,7 @@ import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
 import ua.tarasov.hotline.service.impl.UserRequestServiceImpl;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -106,12 +103,17 @@ public class CallBackQueryHandler implements RequestHandler {
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setBotUserDepartment(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
-        if (botUserService.findById(message.getChatId()).isPresent()) {
-            botUser = botUserService.findById(message.getChatId()).get();
-        }
+        log.info("chatId = " + message.getChatId());
+//        if (botUserService.findById(message.getChatId()).isPresent()) {
+//            botUser = botUserService.findById(message.getChatId()).get();
+//        }
         String[] depText = jsonConverter.fromJson(callbackQuery.getData().substring("yes-department".length()), String[].class);
+        if (botUserService.findById(Long.parseLong(depText[0])).isPresent()) {
+            botUser = botUserService.findById(Long.parseLong(depText[0])).get();
+        }
         Set<Department> departments = new HashSet<>();
-        for (String s : depText) {
+        List<String> departmentsNumber = Arrays.stream(depText).skip(1).toList();
+        for (String s : departmentsNumber) {
             Department department = Department.values()[Integer.parseInt(s) - 1];
             departments.add(department);
         }
@@ -119,7 +121,7 @@ public class CallBackQueryHandler implements RequestHandler {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         botUserService.saveBotUser(this.botUser);
         return List.of(SendMessage.builder()
-                        .chatId(String.valueOf(message.getChatId()))
+                        .chatId(botUser.getId().toString())
                         .text("Ваші права доступу встановлені")
                         .build(),
                 SendMessage.builder()
