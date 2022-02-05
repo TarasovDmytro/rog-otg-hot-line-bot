@@ -31,6 +31,7 @@ import ua.tarasov.hotline.service.impl.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -139,14 +140,16 @@ public class MessageHandler implements RequestHandler {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
         }
-        String[] depText = message.getText().substring("*admin*".length()).split(":");
-        String dataStartText = "department" + message.getChatId() + ":" + jsonConverter.toJson(depText);
+        List<String> depText = new ArrayList<>();
+        depText.add(message.getChatId().toString());
+        depText.add(Arrays.toString(message.getText().substring("*admin*".length()).split(":")));
+        String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
                         + "\n<b>ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
-                        "\nдепартаменти:" + Arrays.toString(depText) + "\nВстановити зв'язок?")
+                        "\nдепартаменти:" + depText.stream().skip(1).toList() + "\nВстановити зв'язок?")
                 .parseMode("HTML")
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
