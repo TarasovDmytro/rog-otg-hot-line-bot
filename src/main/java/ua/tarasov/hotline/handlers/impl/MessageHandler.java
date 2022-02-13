@@ -175,9 +175,12 @@ public class MessageHandler implements RequestHandler {
         if(!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
         botUserService.saveBotUser(botUser);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        StringBuilder builder = new StringBuilder();
+        botUser.getDepartments().forEach(department -> builder.append("\n").append(department.name()));
+        String departmentsText = builder.toString();
         return List.of(SendMessage.builder()
                         .chatId(botUser.getId().toString())
-                        .text("Ваші права доступу адміністратора встановлені")
+                        .text("Ваші права доступу адміністратора встановлені для департаментів: " + departmentsText)
                         .replyMarkup(ReplyKeyboardMarkup.builder()
                                 .keyboard(keyboardService.getAdminReplyButtons())
                                 .resizeKeyboard(true)
