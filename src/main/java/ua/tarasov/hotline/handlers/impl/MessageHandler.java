@@ -176,7 +176,7 @@ public class MessageHandler implements RequestHandler {
         botUserService.saveBotUser(botUser);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         StringBuilder builder = new StringBuilder();
-        botUser.getDepartments().forEach(department -> builder.append("\n").append(department.name()));
+        botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
         String departmentsText = builder.toString();
         return List.of(SendMessage.builder()
                         .chatId(botUser.getId().toString())
