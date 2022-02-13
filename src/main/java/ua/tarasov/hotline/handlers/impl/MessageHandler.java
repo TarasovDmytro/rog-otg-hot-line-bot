@@ -189,7 +189,7 @@ public class MessageHandler implements RequestHandler {
                 return List.of(setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора " + builder).get(0),
                         SendMessage.builder()
                                 .chatId(String.valueOf(superAdmin.getId()))
-                                .text("Права доступу адміністратора " + botUser.getFullName() + builder)
+                                .text("Права доступу адміністратора " + botUser.getFullName() + " " + builder)
                                 .build());
             } else {
                 return List.of(setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора онульовані").get(0),

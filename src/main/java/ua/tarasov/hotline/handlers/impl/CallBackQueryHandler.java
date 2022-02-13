@@ -121,9 +121,9 @@ public class CallBackQueryHandler implements RequestHandler {
             departments.add(department);
         }
         botUser.setDepartments(departments);
-        botUser.setRole(Role.ADMIN);
-        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        if (!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
         botUserService.saveBotUser(this.botUser);
+        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         StringBuilder builder = new StringBuilder("встановлені для департаментів: ");
         botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
         return List.of(SendMessage.builder()
@@ -137,7 +137,7 @@ public class CallBackQueryHandler implements RequestHandler {
                         .build(),
                 SendMessage.builder()
                         .chatId(String.valueOf(superAdmin.getId()))
-                        .text("Права доступу адміністратора " + botUser.getFullName() + builder)
+                        .text("Права доступу адміністратора " + botUser.getFullName() + " " + builder)
                         .build());
     }
 
