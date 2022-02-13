@@ -164,7 +164,7 @@ public class MessageHandler implements RequestHandler {
         if (botUserService.findByPhone(userPhone).isPresent()){
             botUser = botUserService.findByPhone(userPhone).get();
         } else return getSimpleResponseToRequest(message, "Користувача з телефонним номером: " + userPhone +
-                "не існує");
+                " не існує");
         Set<Department> departments = new HashSet<>();
         List<String> departmentsNumber = messageData.stream().skip(1).toList();
         for (String s : departmentsNumber) {
