@@ -172,12 +172,12 @@ public class MessageHandler implements RequestHandler {
             departments.add(department);
         }
         botUser.setDepartments(departments);
-        botUser.setRole(Role.ADMIN);
+        if(!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
         botUserService.saveBotUser(botUser);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
                         .chatId(botUser.getId().toString())
-                        .text("Ваші права доступу встановлені")
+                        .text("Ваші права доступу адміністратора встановлені")
                         .replyMarkup(ReplyKeyboardMarkup.builder()
                                 .keyboard(keyboardService.getAdminReplyButtons())
                                 .resizeKeyboard(true)
