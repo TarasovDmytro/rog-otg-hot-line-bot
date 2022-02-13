@@ -168,9 +168,10 @@ public class MessageHandler implements RequestHandler {
         StringBuilder builder = new StringBuilder("*admin*");
         messageData.stream().skip(1).toList().forEach(departmentNumber -> builder.append(departmentNumber).append(":"));
         String messageText = builder.toString();
-        message.setMigrateToChatId(botUser.getId());
-        message.setText(messageText);
-        return requestAdminRole(message);
+        Message message1 = new Message();
+        message1.setMigrateToChatId(botUser.getId());
+        message1.setText(messageText);
+        return requestAdminRole(message1);
     }
 
     private List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
