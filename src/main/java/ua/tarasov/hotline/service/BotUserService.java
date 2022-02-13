@@ -13,4 +13,6 @@ public interface BotUserService {
     List<BotUser> findAll ();
     List<BotUser> findAllByDepartment(Department department);
     BotUser findByRole(Role role);
+
+    Optional<BotUser> findByPhone(String userPhone);
 }

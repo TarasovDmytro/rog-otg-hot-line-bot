@@ -102,6 +102,7 @@ public class MessageHandler implements RequestHandler {
                         return sendMessageToAll(message);
                     }
                     if (message.getText().startsWith("*admin*")) return requestAdminRole(message);
+                    if (message.getText().startsWith("*add-role*")) return manualRequestAdminRole(message);
                     if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
                         return setRequestAddress(message);
                     } else return createRequestMessageHandler(message);
@@ -153,6 +154,23 @@ public class MessageHandler implements RequestHandler {
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
                         .build())
+                .build());
+    }
+
+    private List<BotApiMethod<?>> manualRequestAdminRole (Message message){
+        List<String> messageData = new ArrayList<>(Arrays.stream(message.getText().substring("*add-role*".length())
+                .split(":")).toList());
+        String userPhone = messageData.get(0);
+        log.info("phone = " + userPhone);
+        if (botUserService.findByPhone(userPhone).isPresent()){
+            botUser = botUserService.findByPhone(userPhone).get();
+        }
+        StringBuilder builder = new StringBuilder("*admin*");
+        messageData.stream().skip(1).toList().forEach(departmentNumber -> builder.append(departmentNumber).append(":"));
+        String messageText = builder.toString();
+        return Collections.singletonList(SendMessage.builder()
+                .chatId(String.valueOf(botUser.getId()))
+                .text(messageText)
                 .build());
     }
 

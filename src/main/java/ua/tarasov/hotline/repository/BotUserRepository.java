@@ -6,10 +6,13 @@ import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BotUserRepository extends JpaRepository<BotUser, Long> {
 
     List<BotUser> findAllByDepartmentsContains(Department department);
 
     BotUser findByRole(Role role);
+
+    Optional<BotUser> findByPhone (String phone);
 }
