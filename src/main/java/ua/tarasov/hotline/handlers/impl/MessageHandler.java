@@ -184,18 +184,18 @@ public class MessageHandler implements RequestHandler {
             }
             botUserService.saveBotUser(botUser);
             if (checkRoleService.checkIsAdmin(botUser.getId())) {
-                StringBuilder builder = new StringBuilder("Ваші права доступу адміністратора встановлені для департаментів: ");
+                StringBuilder builder = new StringBuilder("встановлені для департаментів: ");
                 botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
-                return List.of(setReplyKeyboard(botUser.getId(), builder.toString()).get(0),
+                return List.of(setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора " + builder).get(0),
                         SendMessage.builder()
                                 .chatId(String.valueOf(superAdmin.getId()))
-                                .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
+                                .text("Права доступу адміністратора " + botUser.getFullName() + builder)
                                 .build());
             } else {
                 return List.of(setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора онульовані").get(0),
                         SendMessage.builder()
                                 .chatId(String.valueOf(superAdmin.getId()))
-                                .text("Права доступу адміністратора " + botUser.getFullName() + " онульовані")
+                                .text("Права доступу адміністратора для " + botUser.getFullName() + " онульовані")
                                 .build());
             }
 
