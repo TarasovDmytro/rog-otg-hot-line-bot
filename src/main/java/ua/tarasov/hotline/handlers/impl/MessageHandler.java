@@ -192,7 +192,11 @@ public class MessageHandler implements RequestHandler {
                                 .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
                                 .build());
             } else {
-                return setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора онульовані");
+                return List.of(setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора онульовані").get(0),
+                        SendMessage.builder()
+                                .chatId(String.valueOf(superAdmin.getId()))
+                                .text("Права доступу користувача " + botUser.getFullName() + " онульовані")
+                                .build());
             }
 
         } else return getSimpleResponseToRequest(message, "You do not have enough access rights");
