@@ -105,11 +105,6 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> setBotUserDepartment(@NotNull CallbackQuery callbackQuery) {
-        Message message = callbackQuery.getMessage();
-        log.info("chatId = " + message.getChatId());
-//        if (botUserService.findById(message.getChatId()).isPresent()) {
-//            botUser = botUserService.findById(message.getChatId()).get();
-//        }
         String[] depText = jsonConverter.fromJson(callbackQuery.getData().substring("yes-department".length()), String[].class);
         if (botUserService.findById(Long.parseLong(depText[0])).isPresent()) {
             botUser = botUserService.findById(Long.parseLong(depText[0])).get();
