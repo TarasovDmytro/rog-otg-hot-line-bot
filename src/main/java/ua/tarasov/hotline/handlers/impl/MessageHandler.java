@@ -102,7 +102,7 @@ public class MessageHandler implements RequestHandler {
                         return sendMessageToAll(message);
                     }
                     if (message.getText().startsWith("*admin*")) return requestAdminRole(message);
-                    if (message.getText().startsWith("*set-role*")) return manualRequestAdminRole(message);
+                    if (message.getText().startsWith("*set-role*")) return handelRequestAdminRole(message);
                     if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
                         return setRequestAddress(message);
                     } else return createRequestMessageHandler(message);
@@ -157,14 +157,14 @@ public class MessageHandler implements RequestHandler {
                 .build());
     }
 
-    private List<BotApiMethod<?>> manualRequestAdminRole (Message message){
+    private List<BotApiMethod<?>> handelRequestAdminRole(Message message){
         List<String> messageData = new ArrayList<>(Arrays.stream(message.getText().substring("*set-role*".length())
                 .split(":")).toList());
         String userPhone = messageData.get(0);
-        log.info("phone = " + userPhone);
         if (botUserService.findByPhone(userPhone).isPresent()){
             botUser = botUserService.findByPhone(userPhone).get();
-        }
+        } else return getSimpleResponseToRequest(message, "Користувача з телефонним номером: " + userPhone +
+                "не існує");
         Set<Department> departments = new HashSet<>();
         List<String> departmentsNumber = messageData.stream().skip(1).toList();
         for (String s : departmentsNumber) {
