@@ -102,7 +102,7 @@ public class MessageHandler implements RequestHandler {
                         return sendMessageToAll(message);
                     }
                     if (message.getText().startsWith("*admin*")) return requestAdminRole(message);
-                    if (message.getText().startsWith("*add-role*")) return manualRequestAdminRole(message);
+                    if (message.getText().startsWith("*set-role*")) return manualRequestAdminRole(message);
                     if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
                         return setRequestAddress(message);
                     } else return createRequestMessageHandler(message);
@@ -158,7 +158,7 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> manualRequestAdminRole (Message message){
-        List<String> messageData = new ArrayList<>(Arrays.stream(message.getText().substring("*add-role*".length())
+        List<String> messageData = new ArrayList<>(Arrays.stream(message.getText().substring("*set-role*".length())
                 .split(":")).toList());
         String userPhone = messageData.get(0);
         log.info("phone = " + userPhone);
