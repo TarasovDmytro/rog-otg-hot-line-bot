@@ -158,39 +158,41 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> handelRequestAdminRole(Message message){
-        List<String> messageData = new ArrayList<>(Arrays.stream(message.getText().substring("*set-role*".length())
-                .split(":")).toList());
-        String userPhone = messageData.get(0);
-        if (botUserService.findByPhone(userPhone).isPresent()){
-            botUser = botUserService.findByPhone(userPhone).get();
-        } else return getSimpleResponseToRequest(message, "Користувача з телефонним номером: " + userPhone +
-                " не існує");
-        Set<Department> departments = new HashSet<>();
-        List<String> departmentsNumber = messageData.stream().skip(1).toList();
-        for (String s : departmentsNumber) {
-            Department department = Department.values()[Integer.parseInt(s) - 1];
-            departments.add(department);
-        }
-        botUser.setDepartments(departments);
-        if(!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
-        botUserService.saveBotUser(botUser);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
-        StringBuilder builder = new StringBuilder();
-        botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
-        String departmentsText = builder.toString();
-        return List.of(SendMessage.builder()
-                        .chatId(botUser.getId().toString())
-                        .text("Ваші права доступу адміністратора встановлені для департаментів: " + departmentsText)
-                        .replyMarkup(ReplyKeyboardMarkup.builder()
-                                .keyboard(keyboardService.getAdminReplyButtons())
-                                .resizeKeyboard(true)
-                                .oneTimeKeyboard(false)
-                                .build())
-                        .build(),
-                SendMessage.builder()
-                        .chatId(String.valueOf(superAdmin.getId()))
-                        .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
-                        .build());
+        if (message.getChatId().equals(superAdmin.getId())) {
+            List<String> messageData = new ArrayList<>(Arrays.stream(message.getText().substring("*set-role*".length())
+                    .split(":")).toList());
+            String userPhone = messageData.get(0);
+            if (botUserService.findByPhone(userPhone).isPresent()) {
+                botUser = botUserService.findByPhone(userPhone).get();
+            } else return getSimpleResponseToRequest(message, "Користувача з телефонним номером: " + userPhone +
+                    " не існує");
+            Set<Department> departments = new HashSet<>();
+            List<String> departmentsNumber = messageData.stream().skip(1).toList();
+            for (String s : departmentsNumber) {
+                Department department = Department.values()[Integer.parseInt(s) - 1];
+                departments.add(department);
+            }
+            botUser.setDepartments(departments);
+            if (!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
+            botUserService.saveBotUser(botUser);
+            StringBuilder builder = new StringBuilder();
+            botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
+            String departmentsText = builder.toString();
+            return List.of(SendMessage.builder()
+                            .chatId(botUser.getId().toString())
+                            .text("Ваші права доступу адміністратора встановлені для департаментів: " + departmentsText)
+                            .replyMarkup(ReplyKeyboardMarkup.builder()
+                                    .keyboard(keyboardService.getAdminReplyButtons())
+                                    .resizeKeyboard(true)
+                                    .oneTimeKeyboard(false)
+                                    .build())
+                            .build(),
+                    SendMessage.builder()
+                            .chatId(String.valueOf(superAdmin.getId()))
+                            .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
+                            .build());
+        } else return getSimpleResponseToRequest(message, "You do not have enough access rights");
     }
 
     private List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
