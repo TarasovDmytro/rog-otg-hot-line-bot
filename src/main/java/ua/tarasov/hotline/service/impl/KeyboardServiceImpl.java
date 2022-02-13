@@ -42,14 +42,14 @@ public class KeyboardServiceImpl implements KeyboardService {
     }
 
     @Override
-    public List<KeyboardRow> getUserReplyButtons(Message message) {
+    public List<KeyboardRow> getUserReplyButtons(Long userId) {
         var firstRow = new KeyboardRow();
         firstRow.add("Зробити заявку");
         firstRow.add("Мої заявки");
         firstRow.add("Мої не виконані заявки");
         var secondRow = new KeyboardRow();
         secondRow.add("Останні оголошення");
-        if (checkRoleServiceImpl.checkIsAdmin(message)) {
+        if (checkRoleServiceImpl.checkIsAdmin(userId)) {
             secondRow.add("Змінити меню");
         }
         return List.of(firstRow, secondRow);

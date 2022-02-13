@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface KeyboardService {
     List<KeyboardRow> getAdminReplyButtons();
-    List<KeyboardRow> getUserReplyButtons(Message message);
+    List<KeyboardRow> getUserReplyButtons(Long userId);
     List<KeyboardRow> getAgreeAddContactReplyButtons();
     List<List<InlineKeyboardButton>> getRefuseButton(Message message);
     List<List<InlineKeyboardButton>> getAgreeButtons(String dataStartText);

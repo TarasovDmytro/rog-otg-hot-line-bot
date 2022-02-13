@@ -17,18 +17,18 @@ public class CheckRoleServiceImpl implements CheckRoleService {
     }
 
     @Override
-    public boolean checkIsAdmin(@NotNull Message message) {
+    public boolean checkIsAdmin(@NotNull Long userId) {
         BotUser botUser = new BotUser();
-        if (botUserService.findById(message.getChatId()).isPresent()) {
-            botUser = botUserService.findById(message.getChatId()).get();
+        if (botUserService.findById(userId).isPresent()) {
+            botUser = botUserService.findById(userId).get();
         }
         return botUser.getRole().equals(Role.ADMIN)||botUser.getRole().equals(Role.SUPER_ADMIN);
     }
 
     @Override
-    public SendMessage getFalseAdminText(@NotNull Message message) {
+    public SendMessage getFalseAdminText(@NotNull Long userId) {
         return SendMessage.builder()
-                .chatId(String.valueOf(message.getChatId()))
+                .chatId(String.valueOf(userId))
                 .text("""
                         Вибачте,
                         Ви не можете виконати цю дію.

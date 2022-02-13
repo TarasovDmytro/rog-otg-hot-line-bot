@@ -4,6 +4,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 public interface CheckRoleService {
-    boolean checkIsAdmin(Message message);
-    SendMessage getFalseAdminText(Message message);
+    boolean checkIsAdmin(Long userId);
+    SendMessage getFalseAdminText(Long userId);
 }

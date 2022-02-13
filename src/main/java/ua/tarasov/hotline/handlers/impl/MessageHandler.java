@@ -92,7 +92,7 @@ public class MessageHandler implements RequestHandler {
                     return setMessageToAll(message);
                 }
                 case "❌ Відмовитись" -> {
-                    return setReplyKeyboard(message, START_TEXT);
+                    return setReplyKeyboard(message.getChatId(), START_TEXT);
                 }
                 case "Останні оголошення" -> {
                     return getNotifications(message);
@@ -174,24 +174,27 @@ public class MessageHandler implements RequestHandler {
                 departments.add(department);
             }
             botUser.setDepartments(departments);
-            if (!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
             botUserService.saveBotUser(botUser);
-            StringBuilder builder = new StringBuilder();
-            botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
-            String departmentsText = builder.toString();
-            return List.of(SendMessage.builder()
-                            .chatId(botUser.getId().toString())
-                            .text("Ваші права доступу адміністратора встановлені для департаментів: " + departmentsText)
-                            .replyMarkup(ReplyKeyboardMarkup.builder()
-                                    .keyboard(keyboardService.getAdminReplyButtons())
-                                    .resizeKeyboard(true)
-                                    .oneTimeKeyboard(false)
-                                    .build())
-                            .build(),
-                    SendMessage.builder()
-                            .chatId(String.valueOf(superAdmin.getId()))
-                            .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
-                            .build());
+            if (!botUser.getRole().equals(Role.SUPER_ADMIN)) {
+                botUser.setRole(Role.ADMIN);
+                chatPropertyModeService.setCurrentAdminKeyboardState(botUser.getId(), true);
+            }
+            if (departments.size() == 1 && departments.contains(Department.USER)) {
+                botUser.setRole(Role.USER);
+                chatPropertyModeService.setCurrentAdminKeyboardState(botUser.getId(), false);
+            }
+            if (checkRoleService.checkIsAdmin(botUser.getId())) {
+                StringBuilder builder = new StringBuilder("Ваші права доступу адміністратора встановлені для департаментів: ");
+                botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
+                return List.of(setReplyKeyboard(botUser.getId(), builder.toString()).get(0),
+                        SendMessage.builder()
+                                .chatId(String.valueOf(superAdmin.getId()))
+                                .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
+                                .build());
+            } else {
+                return setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора онульовані");
+            }
+
         } else return getSimpleResponseToRequest(message, "You do not have enough access rights");
     }
 
@@ -214,16 +217,16 @@ public class MessageHandler implements RequestHandler {
             if (!phone.startsWith("+")) phone = "+" + phone;
             botUser.setPhone(phone);
             botUserService.saveBotUser(botUser);
-            responseMessages = setReplyKeyboard(message, START_TEXT);
+            responseMessages = setReplyKeyboard(message.getChatId(), START_TEXT);
         }
         return responseMessages;
     }
 
-    private @NotNull @Unmodifiable List<BotApiMethod<?>> setReplyKeyboard(@NotNull Message message, String messageText) {
-        List<KeyboardRow> keyboardRows = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId()) ?
-                keyboardService.getAdminReplyButtons() : keyboardService.getUserReplyButtons(message);
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> setReplyKeyboard(@NotNull Long userId, String messageText) {
+        List<KeyboardRow> keyboardRows = chatPropertyModeService.getCurrentAdminKeyboardState(userId) ?
+                keyboardService.getAdminReplyButtons() : keyboardService.getUserReplyButtons(userId);
         return Collections.singletonList(SendMessage.builder()
-                .chatId(String.valueOf(message.getChatId()))
+                .chatId(String.valueOf(userId))
                 .text(messageText)
                 .replyMarkup(ReplyKeyboardMarkup.builder()
                         .keyboard(keyboardRows)
@@ -357,27 +360,27 @@ public class MessageHandler implements RequestHandler {
     }
 
     private List<BotApiMethod<?>> setChangeMenu(Message message) {
-        if (checkRoleService.checkIsAdmin(message)) {
+        if (checkRoleService.checkIsAdmin(message.getChatId())) {
             boolean state = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId());
             chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), !state);
             String messageText = "Меню змінено, приємного користування";
-            return setReplyKeyboard(message, messageText);
+            return setReplyKeyboard(message.getChatId(), messageText);
         }
-        return List.of(checkRoleService.getFalseAdminText(message));
+        return List.of(checkRoleService.getFalseAdminText(message.getChatId()));
     }
 
     private List<BotApiMethod<?>> setMessageToAll(Message message) {
-        if (checkRoleService.checkIsAdmin(message)) {
+        if (checkRoleService.checkIsAdmin(message.getChatId())) {
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
             return getSimpleResponseToRequest(message, """
                     Введіть, будьласка, повідомлення
                     для всіх користувачів""");
         }
-        return Collections.singletonList(checkRoleService.getFalseAdminText(message));
+        return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
     }
 
     private @NotNull List<BotApiMethod<?>> sendMessageToAll(Message message) {
-        if (checkRoleService.checkIsAdmin(message)) {
+        if (checkRoleService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
             botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
@@ -389,7 +392,7 @@ public class MessageHandler implements RequestHandler {
             return answerMessages;
         }
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
-        return Collections.singletonList(checkRoleService.getFalseAdminText(message));
+        return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
     }
 
     private List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
