@@ -165,13 +165,29 @@ public class MessageHandler implements RequestHandler {
         if (botUserService.findByPhone(userPhone).isPresent()){
             botUser = botUserService.findByPhone(userPhone).get();
         }
-        StringBuilder builder = new StringBuilder("*admin*");
-        messageData.stream().skip(1).toList().forEach(departmentNumber -> builder.append(departmentNumber).append(":"));
-        String messageText = builder.toString();
-        Message message1 = new Message();
-        message1.setMigrateToChatId(botUser.getId());
-        message1.setText(messageText);
-        return requestAdminRole(message1);
+        Set<Department> departments = new HashSet<>();
+        List<String> departmentsNumber = messageData.stream().skip(1).toList();
+        for (String s : departmentsNumber) {
+            Department department = Department.values()[Integer.parseInt(s) - 1];
+            departments.add(department);
+        }
+        botUser.setDepartments(departments);
+        botUser.setRole(Role.ADMIN);
+        botUserService.saveBotUser(botUser);
+        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        return List.of(SendMessage.builder()
+                        .chatId(botUser.getId().toString())
+                        .text("Ваші права доступу встановлені")
+                        .replyMarkup(ReplyKeyboardMarkup.builder()
+                                .keyboard(keyboardService.getAdminReplyButtons())
+                                .resizeKeyboard(true)
+                                .oneTimeKeyboard(false)
+                                .build())
+                        .build(),
+                SendMessage.builder()
+                        .chatId(String.valueOf(superAdmin.getId()))
+                        .text("Права доступу користувача " + botUser.getFullName() + " встановлені")
+                        .build());
     }
 
     private List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
