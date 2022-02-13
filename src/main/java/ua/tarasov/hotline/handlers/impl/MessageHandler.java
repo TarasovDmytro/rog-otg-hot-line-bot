@@ -174,7 +174,6 @@ public class MessageHandler implements RequestHandler {
                 departments.add(department);
             }
             botUser.setDepartments(departments);
-            botUserService.saveBotUser(botUser);
             if (!botUser.getRole().equals(Role.SUPER_ADMIN)) {
                 botUser.setRole(Role.ADMIN);
                 chatPropertyModeService.setCurrentAdminKeyboardState(botUser.getId(), true);
@@ -183,6 +182,7 @@ public class MessageHandler implements RequestHandler {
                 botUser.setRole(Role.USER);
                 chatPropertyModeService.setCurrentAdminKeyboardState(botUser.getId(), false);
             }
+            botUserService.saveBotUser(botUser);
             if (checkRoleService.checkIsAdmin(botUser.getId())) {
                 StringBuilder builder = new StringBuilder("Ваші права доступу адміністратора встановлені для департаментів: ");
                 botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
