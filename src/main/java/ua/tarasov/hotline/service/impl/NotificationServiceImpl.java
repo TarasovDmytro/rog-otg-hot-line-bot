@@ -2,6 +2,7 @@ package ua.tarasov.hotline.service.impl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.tarasov.hotline.entities.Notification;
@@ -10,6 +11,7 @@ import ua.tarasov.hotline.service.NotificationService;
 
 import java.util.List;
 
+@Log4j2
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationServiceImpl implements NotificationService {
@@ -31,8 +33,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void cleanNotificationDB(long countNotificationByPage){
-        while (repository.count() > countNotificationByPage * 3) {
+        while (repository.count() > countNotificationByPage * 2) {
             List<Notification> notifications = repository.findAll(Sort.by("id"));
+            log.info("all notification in the db: {}", notifications);
             repository.delete(notifications.get(0));
         }
     }
