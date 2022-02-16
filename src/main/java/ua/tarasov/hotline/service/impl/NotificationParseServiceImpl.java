@@ -66,7 +66,7 @@ public class NotificationParseServiceImpl implements NotificationParseService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        notificationService.cleanNotificationDB(10);
+//        notificationService.cleanNotificationDB(10);
         return updateNotifications;
     }
 }

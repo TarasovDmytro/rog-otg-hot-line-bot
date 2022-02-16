@@ -31,7 +31,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void cleanNotificationDB(long countNotificationByPage){
-        while (repository.count() > countNotificationByPage *3) {
+        while (repository.count() > countNotificationByPage * 3) {
             List<Notification> notifications = repository.findAll(Sort.by("id"));
             repository.delete(notifications.get(0));
         }
