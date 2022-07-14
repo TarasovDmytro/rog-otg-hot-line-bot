@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
@@ -54,9 +53,8 @@ public class MessageController implements Controller {
             List<BotUser> botUsers = botUserService.findAll();
             botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                     .chatId(String.valueOf(botUser.getId()))
-                    .text(message.getText())
+                    .text(message.getText() + message.getVideo())
                     .parseMode("HTML")
-                    .entities(message.getEntities())
                     .build()));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
