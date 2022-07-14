@@ -69,4 +69,42 @@ public class NotificationParseServiceImpl implements NotificationParseService {
         notificationService.cleanNotificationDB(10);
         return updateNotifications;
     }
+    public List<Notification> getEnemyLoss(String url){
+        updateNotifications = new ArrayList<>();
+        try {
+            Document doc = Jsoup.connect(url)
+                    .userAgent("Mozilla")
+                    .timeout(5000)
+                    .referrer("https://google.com")
+                    .get();
+            Elements newsTitles = doc.getElementsByClass("archive-item");
+            newsTitles.forEach(element -> {
+                String link = element.getElementsByClass("entry-title").get(0).html();
+                String title = element.getElementsByClass("entry-title").get(0).text();
+                String date = element.getElementsByClass("entry-title").get(0).text();
+//                log.info("link: " + link);
+//                log.info("title: " + title);
+//                log.info("date: {}", date);
+                if (notificationService.isExist(date, title)) {
+                    Notification updateNotification = notificationService.findByDateAndTitle(date, title);
+                    if (!updateNotification.getLink().equals(link)) {
+                        updateNotification.setLink(link);
+                        notificationService.saveUpdateNotification(updateNotification);
+                        updateNotifications.add(updateNotification);
+                    }
+                } else {
+                    Notification notification = new Notification();
+                    notification.setLink(link);
+                    notification.setTitle(title);
+                    notification.setDate(date);
+                    notificationService.saveUpdateNotification(notification);
+                    updateNotifications.add(notification);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        notificationService.cleanNotificationDB(10);
+        return updateNotifications;
+    }
 }

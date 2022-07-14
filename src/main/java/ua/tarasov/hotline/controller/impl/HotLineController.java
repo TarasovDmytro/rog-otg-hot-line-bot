@@ -1,4 +1,4 @@
-package ua.tarasov.hotline.controller;
+package ua.tarasov.hotline.controller.impl;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

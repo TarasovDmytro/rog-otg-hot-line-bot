@@ -1,5 +1,6 @@
 package ua.tarasov.hotline.service;
 
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -17,4 +18,6 @@ public interface KeyboardService {
     List<List<InlineKeyboardButton>> getDepartmentInlineButtons(Department currentDepartment);
     EditMessageReplyMarkup getCorrectReplyMarkup(Message message, List<List<InlineKeyboardButton>> buttons);
     List<List<InlineKeyboardButton>> getStateRequestButton(Integer messageId, String text);
+    List<BotApiMethod<?>> setReplyKeyboard(Long userId, String messageText);
+    List<BotApiMethod<?>> setChangeMenu(Message message);
 }
