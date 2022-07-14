@@ -82,9 +82,6 @@ public class NotificationParseServiceImpl implements NotificationParseService {
                 String link = element.getElementsByClass("entry-title").get(0).html();
                 String title = element.getElementsByClass("entry-title").get(0).text();
                 String date = element.getElementsByClass("entry-title").get(0).text();
-//                log.info("link: " + link);
-//                log.info("title: " + title);
-//                log.info("date: {}", date);
                 if (notificationService.isExist(date, title)) {
                     Notification updateNotification = notificationService.findByDateAndTitle(date, title);
                     if (!updateNotification.getLink().equals(link)) {
