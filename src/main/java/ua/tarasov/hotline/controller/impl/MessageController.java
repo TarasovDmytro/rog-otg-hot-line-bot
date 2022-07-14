@@ -103,5 +103,4 @@ public class MessageController implements Controller {
     public List<BotApiMethod<?>> refuseSetLocationOfRequestMessage (CallbackQuery callbackQuery) {
         return setRequestAddressMessage(callbackQuery);
     }
-
 }

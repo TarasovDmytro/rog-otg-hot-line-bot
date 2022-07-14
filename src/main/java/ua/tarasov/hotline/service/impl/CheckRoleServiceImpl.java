@@ -3,7 +3,6 @@ package ua.tarasov.hotline.service.impl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.service.CheckRoleService;

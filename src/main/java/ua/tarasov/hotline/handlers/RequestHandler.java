@@ -9,7 +9,5 @@ public interface RequestHandler {
     String START_TEXT = "\uD83D\uDC4C Дякую, давайте почнемо";
     String WRONG_ACTION_TEXT = "Вибачте, але Ви додали данні, які я не в змозі обробити, виконайте, будьласка коректну дію";
 
-//    Gson jsonConverter = new Gson();
-
     List<BotApiMethod<?>> getHandlerUpdate(Update update);
 }
