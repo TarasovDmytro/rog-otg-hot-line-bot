@@ -11,13 +11,22 @@ import java.util.List;
 
 public interface KeyboardService {
     List<KeyboardRow> getAdminReplyButtons();
+
     List<KeyboardRow> getUserReplyButtons(Long userId);
+
     List<KeyboardRow> getAgreeAddContactReplyButtons();
+
     List<List<InlineKeyboardButton>> getRefuseButton(Message message);
+
     List<List<InlineKeyboardButton>> getAgreeButtons(String dataStartText);
+
     List<List<InlineKeyboardButton>> getDepartmentInlineButtons(Department currentDepartment);
+
     EditMessageReplyMarkup getCorrectReplyMarkup(Message message, List<List<InlineKeyboardButton>> buttons);
+
     List<List<InlineKeyboardButton>> getStateRequestButton(Integer messageId, String text);
+
     List<BotApiMethod<?>> setReplyKeyboard(Long userId, String messageText);
+
     List<BotApiMethod<?>> setChangeMenu(Message message);
 }

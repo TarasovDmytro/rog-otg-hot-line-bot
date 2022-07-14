@@ -32,7 +32,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void cleanNotificationDB(long countNotificationByPage){
+    public void cleanNotificationDB(long countNotificationByPage) {
         while (repository.count() > countNotificationByPage * 2) {
             List<Notification> notifications = repository.findAll(Sort.by("id"));
             log.info("all notification in the db: {}", notifications);
