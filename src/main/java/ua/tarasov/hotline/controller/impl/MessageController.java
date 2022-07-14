@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
@@ -55,6 +56,7 @@ public class MessageController implements Controller {
                     .chatId(String.valueOf(botUser.getId()))
                     .text(message.getText())
                     .parseMode("HTML")
+                    .entities(message.getEntities())
                     .build()));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
@@ -63,7 +65,8 @@ public class MessageController implements Controller {
         return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
     }
 
-    @NotNull @Unmodifiable
+    @NotNull
+    @Unmodifiable
     public List<BotApiMethod<?>> setLocationMessage(@NotNull CallbackQuery callbackQuery) {
         chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
         return Collections.singletonList(SendMessage.builder()
@@ -87,7 +90,8 @@ public class MessageController implements Controller {
                 " за якою сталася проблема");
     }
 
-    @NotNull @Unmodifiable
+    @NotNull
+    @Unmodifiable
     public List<BotApiMethod<?>> setRefuseRequestMessage(@NotNull CallbackQuery callbackQuery) {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return (List.of(SendMessage.builder()
@@ -100,7 +104,7 @@ public class MessageController implements Controller {
                         .build()));
     }
 
-    public List<BotApiMethod<?>> refuseSetLocationOfRequestMessage (CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> refuseSetLocationOfRequestMessage(CallbackQuery callbackQuery) {
         return setRequestAddressMessage(callbackQuery);
     }
 }
