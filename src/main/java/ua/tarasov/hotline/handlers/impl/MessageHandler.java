@@ -91,7 +91,8 @@ public class MessageHandler implements RequestHandler {
                         return messageController.sendMessageToAll(message);
                     }
                     if (message.getText().startsWith("*admin*")) return superAdminController.requestAdminRole(message);
-                    if (message.getText().startsWith("*set*")) return superAdminController.handelRequestAdminRole(message);
+                    if (message.getText().startsWith("*set*"))
+                        return superAdminController.handelRequestAdminRole(message);
                     if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
                         return userRequestController.setRequestAddress(message);
                     } else return userRequestController.createRequestMessageHandler(message);
@@ -100,6 +101,7 @@ public class MessageHandler implements RequestHandler {
         }
         if (message.hasContact()) return botUserController.setBotUserPhone(message);
         if (message.hasLocation()) return userRequestController.setRequestLocation(message);
+        if (message.hasVideo()) return messageController.sendMessageToAll(message);
         return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
     }
 }
