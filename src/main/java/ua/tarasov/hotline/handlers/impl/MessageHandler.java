@@ -87,10 +87,6 @@ public class MessageHandler implements RequestHandler {
                     return notificationController.getNotifications(message);
                 }
                 default -> {
-                    if (message.hasVideo()) {
-                        return messageController.sendMessageToAll(message);
-                    }
-
                     if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
                         return messageController.sendMessageToAll(message);
                     }
