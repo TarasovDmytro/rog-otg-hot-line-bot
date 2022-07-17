@@ -1,9 +1,9 @@
 package ua.tarasov.hotline.listener;
 
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 
 import java.util.List;
 
 public interface WebSiteListener {
-    List<BotApiMethod<?>> getWebSiteUpdate(String url);
+    List<PartialBotApiMethod<?>> getWebSiteUpdate(String url);
 }

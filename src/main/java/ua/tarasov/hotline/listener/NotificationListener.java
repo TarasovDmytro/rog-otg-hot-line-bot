@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.Notification;
@@ -29,8 +30,8 @@ public class NotificationListener implements WebSiteListener {
     }
 
     @Override
-    public List<BotApiMethod<?>> getWebSiteUpdate(@NotNull String notificationUrl) {
-        List<BotApiMethod<?>> answerMessages = new ArrayList<>();
+    public List<PartialBotApiMethod<?>> getWebSiteUpdate(@NotNull String notificationUrl) {
+        List<PartialBotApiMethod<?>> answerMessages = new ArrayList<>();
         List<Notification> newNotifications = parser.getUpdateNotifications(notificationUrl);
         log.info("New notifications: {}", newNotifications);
         if (!newNotifications.isEmpty()) {

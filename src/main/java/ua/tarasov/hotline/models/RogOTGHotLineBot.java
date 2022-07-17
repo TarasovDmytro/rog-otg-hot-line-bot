@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -54,14 +56,14 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         log.info("getUpdate = {}", update);
-        List<BotApiMethod<?>> methods = hotLineFacade.handleUpdate(update);
+        List<PartialBotApiMethod<?>> methods = hotLineFacade.handleUpdate(update);
         log.info("getMethods = {}", methods);
         if (methods != null && !methods.isEmpty()) {
             if (methods.size() > 1) {
                 methods.forEach(botApiMethod -> {
                     try {
                         if (botApiMethod != methods.get(methods.size() - 1)) {
-                            execute(botApiMethod);
+                            execute((SendDocument) botApiMethod);
                             Thread.sleep(35);
                         }
                     } catch (TelegramApiException | InterruptedException e) {
@@ -69,7 +71,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                     }
                 });
             }
-            return methods.get(methods.size() - 1);
+            return (BotApiMethod<?>) methods.get(methods.size() - 1);
         } else return SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text("Something wrong...")
@@ -78,16 +80,16 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
 
     @Scheduled(fixedDelayString = "${notification.check.period}")
     public void sendNotification() {
-        List<BotApiMethod<?>> methods = hotLineFacade.notificationUpdate();
+        List<PartialBotApiMethod<?>> methods = hotLineFacade.notificationUpdate();
         log.info(String.valueOf(methods));
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         Long chatId = superAdmin.getId();
         BotState currentBotState = chatPropertyModeService.getCurrentBotState(chatId);
         if (methods != null && !methods.isEmpty()) {
             chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE_TO_ALL);
-            for (BotApiMethod<?> botApiMethod : methods) {
+            for (PartialBotApiMethod<?> botApiMethod : methods) {
                 try {
-                        execute(botApiMethod);
+                        execute((SendDocument) botApiMethod);
                         Thread.sleep(35);
                 } catch (TelegramApiException | InterruptedException e) {
                     e.printStackTrace();

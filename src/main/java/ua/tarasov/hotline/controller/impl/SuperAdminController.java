@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -36,7 +37,7 @@ public class SuperAdminController implements Controller {
     }
 
     @NotNull @Unmodifiable
-    public List<BotApiMethod<?>> requestAdminRole(@NotNull Message message) {
+    public List<PartialBotApiMethod<?>> requestAdminRole(@NotNull Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
         }
@@ -57,7 +58,7 @@ public class SuperAdminController implements Controller {
                 .build());
     }
 
-    public List<BotApiMethod<?>> handelRequestAdminRole(Message message){
+    public List<PartialBotApiMethod<?>> handelRequestAdminRole(Message message){
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         if (message.getChatId().equals(superAdmin.getId())) {
             List<String> messageData = new ArrayList<>(Arrays.stream(message.getText().substring("*set*".length())

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -162,7 +162,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         return buttons;
     }
 
-    public List<BotApiMethod<?>> setReplyKeyboard(Long userId, String messageText) {
+    public List<PartialBotApiMethod<?>> setReplyKeyboard(Long userId, String messageText) {
         List<KeyboardRow> keyboardRows = chatPropertyModeService.getCurrentAdminKeyboardState(userId) ?
                 getAdminReplyButtons() : getUserReplyButtons(userId);
         return Collections.singletonList(SendMessage.builder()
@@ -176,7 +176,7 @@ public class KeyboardServiceImpl implements KeyboardService {
                 .build());
     }
 
-    public List<BotApiMethod<?>> setChangeMenu(Message message) {
+    public List<PartialBotApiMethod<?>> setChangeMenu(Message message) {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
             boolean state = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId());
             chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), !state);

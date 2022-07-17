@@ -5,10 +5,13 @@ import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Video;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
@@ -36,7 +39,7 @@ public class MessageController implements Controller {
         this.keyboardService = keyboardService;
     }
 
-    public List<BotApiMethod<?>> setMessageToAll(Message message) {
+    public List<PartialBotApiMethod<?>> setMessageToAll(Message message) {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
             return Controller.getSimpleResponseToRequest(message, """
@@ -47,17 +50,26 @@ public class MessageController implements Controller {
     }
 
     @NotNull
-    public List<BotApiMethod<?>> sendMessageToAll(Message message) {
+    public List<PartialBotApiMethod<?>> sendMessageToAll(Message message) {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
-            List<BotApiMethod<?>> answerMessages = new ArrayList<>();
+            List<PartialBotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
-            if(message.hasText()){
+            if (message.hasText()) {
                 botUsers.forEach(botUser ->
-                answerMessages.add(SendMessage.builder()
-                    .chatId(String.valueOf(botUser.getId()))
-                    .text(message.getText())
-                    .parseMode("HTML")
-                    .build()));}
+                        answerMessages.add(SendMessage.builder()
+                                .chatId(String.valueOf(botUser.getId()))
+                                .text(message.getText())
+                                .parseMode("HTML")
+                                .build()));
+            }
+            if (message.hasVideo()) {
+                Video video = message.getVideo();
+                botUsers.forEach(botUser ->
+                        answerMessages.add(SendVideo.builder()
+                                .chatId(String.valueOf(botUser.getId()))
+                                .video(new InputFile(video.getFileId()))
+                                .build()));
+            }
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         }
@@ -67,7 +79,7 @@ public class MessageController implements Controller {
 
     @NotNull
     @Unmodifiable
-    public List<BotApiMethod<?>> setLocationMessage(@NotNull CallbackQuery callbackQuery) {
+    public List<PartialBotApiMethod<?>> setLocationMessage(@NotNull CallbackQuery callbackQuery) {
         chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(callbackQuery.getMessage().getChatId().toString())
@@ -84,7 +96,7 @@ public class MessageController implements Controller {
                 .build());
     }
 
-    public List<BotApiMethod<?>> setRequestAddressMessage(@NotNull CallbackQuery callbackQuery) {
+    public List<PartialBotApiMethod<?>> setRequestAddressMessage(@NotNull CallbackQuery callbackQuery) {
         chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_ADDRESS);
         return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Добре. Введіть, будьласка, адресу," +
                 " за якою сталася проблема");
@@ -92,7 +104,7 @@ public class MessageController implements Controller {
 
     @NotNull
     @Unmodifiable
-    public List<BotApiMethod<?>> setRefuseRequestMessage(@NotNull CallbackQuery callbackQuery) {
+    public List<PartialBotApiMethod<?>> setRefuseRequestMessage(@NotNull CallbackQuery callbackQuery) {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return (List.of(SendMessage.builder()
                         .chatId(String.valueOf(callbackQuery.getMessage().getChatId()))
@@ -104,7 +116,7 @@ public class MessageController implements Controller {
                         .build()));
     }
 
-    public List<BotApiMethod<?>> refuseSetLocationOfRequestMessage(CallbackQuery callbackQuery) {
+    public List<PartialBotApiMethod<?>> refuseSetLocationOfRequestMessage(CallbackQuery callbackQuery) {
         return setRequestAddressMessage(callbackQuery);
     }
 }

@@ -5,7 +5,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.controller.Controller;
@@ -35,7 +35,7 @@ public class CallBackQueryHandler implements RequestHandler {
     }
 
     @Override
-    public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
+    public List<PartialBotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         if (callbackQuery.getData().startsWith("department")) {
             return departmentController.getButtonDepartmentHandler(callbackQuery);
