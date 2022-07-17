@@ -57,14 +57,14 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         log.info("getUpdate = {}", update);
-        List<PartialBotApiMethod<?>> methods = hotLineFacade.handleUpdate(update);
+        List<BotApiMethod<?>> methods = hotLineFacade.handleUpdate(update);
         log.info("getMethods = {}", methods);
         if (methods != null && !methods.isEmpty()) {
             if (methods.size() > 1) {
                 methods.forEach(botApiMethod -> {
                     try {
                         if (botApiMethod != methods.get(methods.size() - 1)) {
-                            execute((SendVideo) botApiMethod);
+                            execute(botApiMethod);
                             Thread.sleep(35);
                         }
                     } catch (TelegramApiException | InterruptedException e) {
@@ -72,7 +72,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                     }
                 });
             }
-            return (BotApiMethod<?>) methods.get(methods.size() - 1);
+            return methods.get(methods.size() - 1);
         } else return SendMessage.builder()
                 .chatId(update.getMessage().getChatId().toString())
                 .text("Something wrong...")
@@ -81,16 +81,16 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
 
     @Scheduled(fixedDelayString = "${notification.check.period}")
     public void sendNotification() {
-        List<PartialBotApiMethod<?>> methods = hotLineFacade.notificationUpdate();
+        List<BotApiMethod<?>> methods = hotLineFacade.notificationUpdate();
         log.info(String.valueOf(methods));
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         Long chatId = superAdmin.getId();
         BotState currentBotState = chatPropertyModeService.getCurrentBotState(chatId);
         if (methods != null && !methods.isEmpty()) {
             chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE_TO_ALL);
-            for (PartialBotApiMethod<?> botApiMethod : methods) {
+            for (BotApiMethod<?> botApiMethod : methods) {
                 try {
-                        execute((SendDocument) botApiMethod);
+                        execute(botApiMethod);
                         Thread.sleep(35);
                 } catch (TelegramApiException | InterruptedException e) {
                     e.printStackTrace();

@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.handlers.impl.CallBackQueryHandler;
@@ -35,7 +35,7 @@ public class HotLineFacadeImpl implements HotLineFacade {
     }
 
     @Override
-    public List<PartialBotApiMethod<?>> handleUpdate(@NotNull Update update) {
+    public List<BotApiMethod<?>> handleUpdate(@NotNull Update update) {
         log.info("facade get update = {}", update);
         if (update.hasCallbackQuery()) {
             return callBackQueryHandler.getHandlerUpdate(update);
@@ -46,7 +46,7 @@ public class HotLineFacadeImpl implements HotLineFacade {
     }
 
     @Override
-    public List<PartialBotApiMethod<?>> notificationUpdate() {
+    public List<BotApiMethod<?>> notificationUpdate() {
         return webSiteListener.getWebSiteUpdate(notificationUrl);
     }
 }

@@ -19,7 +19,7 @@ private  final RogOTGHotLineBot bot;
     }
 
     @PostMapping("/")
-    public PartialBotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
+    public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
         return bot.onWebhookUpdateReceived(update);
     }
 

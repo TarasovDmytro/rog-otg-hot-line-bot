@@ -35,7 +35,7 @@ public class UserRequestController implements Controller {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
 
-    List<PartialBotApiMethod<?>> answerMessages = new ArrayList<>();
+    List<BotApiMethod<?>> answerMessages = new ArrayList<>();
     UserRequest userRequest = new UserRequest();
 
     public UserRequestController(UserRequestService requestService, BotUserService botUserService, KeyboardService keyboardService) {
@@ -44,14 +44,14 @@ public class UserRequestController implements Controller {
         this.keyboardService = keyboardService;
     }
 
-    public List<PartialBotApiMethod<?>> getAllStateRequests(@NotNull Message message) {
+    public List<BotApiMethod<?>> getAllStateRequests(@NotNull Message message) {
         List<UserRequest> messages = requestService.findMessagesByBotUser(message.getChatId());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return sendUserListOfMessages(message, messages);
     }
 
-    private List<PartialBotApiMethod<?>> sendUserListOfMessages(Message message, @NotNull List<UserRequest> messages) {
-        List<PartialBotApiMethod<?>> answerMessages = new ArrayList<>();
+    private List<BotApiMethod<?>> sendUserListOfMessages(Message message, @NotNull List<UserRequest> messages) {
+        List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         if (!messages.isEmpty()) {
             messages.sort(Comparator.comparing(UserRequest::getId));
             messages.forEach(currentMessage -> {
@@ -68,7 +68,7 @@ public class UserRequestController implements Controller {
         return answerMessages;
     }
 
-    public List<PartialBotApiMethod<?>> getAdminAllStateRequests(@NotNull Message message) {
+    public List<BotApiMethod<?>> getAdminAllStateRequests(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
             BotUser botUser = botUserService.findById(message.getChatId()).get();
@@ -80,9 +80,9 @@ public class UserRequestController implements Controller {
         return answerMessages;
     }
 
-    private List<PartialBotApiMethod<?>> sendAdminListOfMessages(Message message, @NotNull List<UserRequest> messages) {
+    private List<BotApiMethod<?>> sendAdminListOfMessages(Message message, @NotNull List<UserRequest> messages) {
         if (!messages.isEmpty()) {
-            List<PartialBotApiMethod<?>> answerMessages = new ArrayList<>();
+            List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             messages.sort(Comparator.comparing(UserRequest::getId));
             messages.forEach(currentMessage -> {
                 stateText.set(currentMessage.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
@@ -101,13 +101,13 @@ public class UserRequestController implements Controller {
         return Controller.getSimpleResponseToRequest(message, "Наразі не існує таких заявок");
     }
 
-    public List<PartialBotApiMethod<?>> getFalseStateRequests(@NotNull Message message) {
+    public List<BotApiMethod<?>> getFalseStateRequests(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         List<UserRequest> messages = requestService.findMessagesByBotUserAndState(message.getChatId(), false);
         return sendUserListOfMessages(message, messages);
     }
 
-    public List<PartialBotApiMethod<?>> getAdminFalseStateRequests(@NotNull Message message) {
+    public List<BotApiMethod<?>> getAdminFalseStateRequests(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
             BotUser botUser = botUserService.findById(message.getChatId()).get();
@@ -119,11 +119,11 @@ public class UserRequestController implements Controller {
         }
         return answerMessages;
     }
-    public List<PartialBotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
+    public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             UserRequest userRequest = createNewUserRequest(message);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
-            List<PartialBotApiMethod<?>> answerMessages = new ArrayList<>();
+            List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             if (!botUsers.isEmpty()) {
                 botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(botUser.getId()))
@@ -158,14 +158,14 @@ public class UserRequestController implements Controller {
         return userRequest;
     }
 
-    public List<PartialBotApiMethod<?>> setRequestAddress(@NotNull Message message) {
+    public List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         return Controller.getSimpleResponseToRequest(message, "Адресу додано до заявки" +
                 "\nВведіть, будьласка, текст заявки");
     }
 
-    public List<PartialBotApiMethod<?>> setRequestLocation(@NotNull Message message) {
+    public List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
@@ -177,7 +177,7 @@ public class UserRequestController implements Controller {
     }
 
     @NotNull @Unmodifiable
-    public List<PartialBotApiMethod<?>> setStateRequest(@NotNull CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> setStateRequest(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
@@ -196,7 +196,7 @@ public class UserRequestController implements Controller {
     }
 
     @NotNull @Unmodifiable
-    public List<PartialBotApiMethod<?>> setRefuseRequest(@NotNull CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> setRefuseRequest(@NotNull CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("refuse_request".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
         if (userRequest != null) {
@@ -213,7 +213,7 @@ public class UserRequestController implements Controller {
         } else return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
     }
 
-    public List<PartialBotApiMethod<?>> getContactOfRequest(@NotNull CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> getContactOfRequest(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("contact".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
@@ -243,7 +243,7 @@ public class UserRequestController implements Controller {
                 " бо, на теперішній час її вже не існує");
     }
 
-    public List<PartialBotApiMethod<?>> getLocationOfRequest(@NotNull CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> getLocationOfRequest(@NotNull CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery
                 .getData().substring("location".length()), Integer.class);
         Message message = callbackQuery.getMessage();

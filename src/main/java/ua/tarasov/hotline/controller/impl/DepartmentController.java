@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -31,7 +31,7 @@ public class DepartmentController implements Controller {
 
     @Contract("_ -> new")
     @NotNull @Unmodifiable
-    public List<PartialBotApiMethod<?>> setDepartmentOfRequest(@NotNull Message message) {
+    public List<BotApiMethod<?>> setDepartmentOfRequest(@NotNull Message message) {
         Department currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return Collections.singletonList(SendMessage.builder()
@@ -44,13 +44,13 @@ public class DepartmentController implements Controller {
     }
 
     @NotNull @Unmodifiable
-    public List<PartialBotApiMethod<?>> getButtonDepartmentHandler(@NotNull CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> getButtonDepartmentHandler(@NotNull CallbackQuery callbackQuery) {
         chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_BUTTON);
         String textMessage = "Департамент обрано.\nЧи бажаєте Ви додати до заявки геолокацію?";
         return buttonDepartmentHandler(callbackQuery, textMessage);
     }
 
-    private @NotNull @Unmodifiable List<PartialBotApiMethod<?>> buttonDepartmentHandler(@NotNull CallbackQuery callbackQuery, String textMessage) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> buttonDepartmentHandler(@NotNull CallbackQuery callbackQuery, String textMessage) {
         Message message = callbackQuery.getMessage();
         Department department = jsonConverter.fromJson(callbackQuery
                 .getData().substring("department".length()), Department.class);

@@ -3,6 +3,7 @@ package ua.tarasov.hotline.controller.impl;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ua.tarasov.hotline.controller.Controller;
@@ -22,8 +23,8 @@ public class NotificationController implements Controller {
         this.notificationService = notificationService;
     }
 
-    public List<PartialBotApiMethod<?>> getNotifications(Message message) {
-        List<PartialBotApiMethod<?>> responseMessages = new ArrayList<>();
+    public List<BotApiMethod<?>> getNotifications(Message message) {
+        List<BotApiMethod<?>> responseMessages = new ArrayList<>();
         List<Notification> notifications = notificationService.findAll();
         long countLastNotifications = 10;
         if (notifications.size() > countLastNotifications){

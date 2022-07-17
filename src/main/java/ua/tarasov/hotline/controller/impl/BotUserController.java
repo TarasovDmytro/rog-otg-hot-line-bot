@@ -39,7 +39,7 @@ public class BotUserController implements Controller {
     }
 
     @NotNull @Unmodifiable
-    public List<PartialBotApiMethod<?>> setStartProperties(@NotNull Message message) {
+    public List<BotApiMethod<?>> setStartProperties(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         User user = message.getFrom();
         botUser.setId(message.getChatId());
@@ -73,8 +73,8 @@ public class BotUserController implements Controller {
                 .build());
     }
 
-    public List<PartialBotApiMethod<?>> setBotUserPhone(Message message) {
-        List<PartialBotApiMethod<?>> responseMessages = Controller.getSimpleResponseToRequest(message, "Something wrong...");
+    public List<BotApiMethod<?>> setBotUserPhone(Message message) {
+        List<BotApiMethod<?>> responseMessages = Controller.getSimpleResponseToRequest(message, "Something wrong...");
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
             String phone = message.getContact().getPhoneNumber();
@@ -87,7 +87,7 @@ public class BotUserController implements Controller {
     }
 
     @NotNull @Unmodifiable
-    public List<PartialBotApiMethod<?>> setBotUserDepartment(@NotNull CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> setBotUserDepartment(@NotNull CallbackQuery callbackQuery) {
         String[] depText = jsonConverter.fromJson(callbackQuery.getData().substring("yes-department".length()), String[].class);
         if (botUserService.findById(Long.parseLong(depText[0])).isPresent()) {
             botUser = botUserService.findById(Long.parseLong(depText[0])).get();

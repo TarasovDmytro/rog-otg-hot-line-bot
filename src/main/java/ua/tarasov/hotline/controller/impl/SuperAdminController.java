@@ -37,7 +37,7 @@ public class SuperAdminController implements Controller {
     }
 
     @NotNull @Unmodifiable
-    public List<PartialBotApiMethod<?>> requestAdminRole(@NotNull Message message) {
+    public List<BotApiMethod<?>> requestAdminRole(@NotNull Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
         }
@@ -58,7 +58,7 @@ public class SuperAdminController implements Controller {
                 .build());
     }
 
-    public List<PartialBotApiMethod<?>> handelRequestAdminRole(Message message){
+    public List<BotApiMethod<?>> handelRequestAdminRole(Message message){
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         if (message.getChatId().equals(superAdmin.getId())) {
             List<String> messageData = new ArrayList<>(Arrays.stream(message.getText().substring("*set*".length())
