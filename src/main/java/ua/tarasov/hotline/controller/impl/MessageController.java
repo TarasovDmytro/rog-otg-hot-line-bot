@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.CopyMessage;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -62,6 +63,12 @@ public class MessageController implements Controller {
                                 .text(message.getText())
                                 .parseMode("HTML")
                                 .build()));
+            }
+            if (message.hasVideo()) {
+                botUsers.forEach(botUser ->
+                        answerMessages.add(CopyMessage.builder()
+                        .chatId(String.valueOf(botUser.getId()))
+                        .build()));
             }
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
