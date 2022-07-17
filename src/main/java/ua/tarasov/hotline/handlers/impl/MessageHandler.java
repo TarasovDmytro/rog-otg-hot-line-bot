@@ -53,7 +53,7 @@ public class MessageHandler implements RequestHandler {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
         log.info("update has message = {}", message);
-        if (message.hasText()||message.hasVideo()) {
+        if (message.hasText()) {
             log.info("message has text = {}", message.getText());
             switch (message.getText()) {
                 case "/start" -> {
