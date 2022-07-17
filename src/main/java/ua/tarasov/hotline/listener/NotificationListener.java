@@ -30,8 +30,8 @@ public class NotificationListener implements WebSiteListener {
     }
 
     @Override
-    public List<PartialBotApiMethod<?>> getWebSiteUpdate(@NotNull String notificationUrl) {
-        List<PartialBotApiMethod<?>> answerMessages = new ArrayList<>();
+    public List<BotApiMethod<?>> getWebSiteUpdate(@NotNull String notificationUrl) {
+        List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         List<Notification> newNotifications = parser.getUpdateNotifications(notificationUrl);
         log.info("New notifications: {}", newNotifications);
         if (!newNotifications.isEmpty()) {
