@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -63,7 +64,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
                 methods.forEach(botApiMethod -> {
                     try {
                         if (botApiMethod != methods.get(methods.size() - 1)) {
-                            execute((SendDocument) botApiMethod);
+                            execute((SendVideo) botApiMethod);
                             Thread.sleep(35);
                         }
                     } catch (TelegramApiException | InterruptedException e) {
