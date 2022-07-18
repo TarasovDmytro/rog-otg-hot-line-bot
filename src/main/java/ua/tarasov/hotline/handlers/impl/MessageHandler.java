@@ -52,6 +52,10 @@ public class MessageHandler implements RequestHandler {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
         log.info("update has message = {}", message);
+        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
+            log.info("video id = {}", message.getVideo().getFileId());
+            return messageController.sendMessageToAll(message);
+        }
         if (message.hasText()) {
             log.info("message has text = {}", message.getText());
             switch (message.getText()) {
@@ -88,9 +92,6 @@ public class MessageHandler implements RequestHandler {
                 default -> {
                     if (message.getText().startsWith("*admin*")) return superAdminController.requestAdminRole(message);
                     if (message.getText().startsWith("*set*")) return superAdminController.handelRequestAdminRole(message);
-                    if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
-                        return messageController.sendMessageToAll(message);
-                    }
                     if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
                         return userRequestController.setRequestAddress(message);
                     } else return userRequestController.createRequestMessageHandler(message);
