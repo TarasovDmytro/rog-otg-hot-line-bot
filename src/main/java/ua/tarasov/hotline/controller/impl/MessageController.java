@@ -65,6 +65,7 @@ public class MessageController implements Controller {
 //                            .build()));
             answerMessages.add(ForwardMessage.builder()
                     .chatId(String.valueOf(botUser.getId()))
+                            .fromChatId(String.valueOf(message.getChatId()))
                     .messageId(message.getMessageId())
                     .build());});
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
