@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.CopyMessage;
+import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -53,18 +54,20 @@ public class MessageController implements Controller {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
-            botUsers.forEach(botUser ->{
-                if (message.hasText()){
+            botUsers.forEach(botUser -> {
+                if (message.hasText()) {
                     answerMessages.add(SendMessage.builder()
                             .chatId(String.valueOf(botUser.getId()))
                             .text(message.getText())
 //                            .parseMode("HTML")
-                            .build());}
-            if (message.hasVideo()){
-            answerMessages.add(SendMessage.builder()
-                    .chatId(String.valueOf(botUser.getId()))
-                    .text(message.getVideo().getFileId())
-                    .build());}
+                            .build());
+                }
+                if (message.hasVideo()) {
+                    answerMessages.add(ForwardMessage.builder()
+                            .chatId(String.valueOf(botUser.getId()))
+                            .messageId(message.getMessageId())
+                            .build());
+                }
             });
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
