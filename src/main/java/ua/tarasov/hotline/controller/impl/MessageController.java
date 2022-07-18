@@ -2,6 +2,7 @@ package ua.tarasov.hotline.controller.impl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MessageController implements Controller {
 
@@ -54,13 +56,13 @@ public class MessageController implements Controller {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
+            log.info("message Id = {}", message.getMessageId());
             botUsers.forEach(botUser ->
 //                    answerMessages.add(SendMessage.builder()
 //                            .chatId(String.valueOf(botUser.getId()))
 //                            .text(message.getText())
 //                            .parseMode("HTML")
 //                            .build()));
-
             answerMessages.add(ForwardMessage.builder()
                     .chatId(String.valueOf(botUser.getId()))
                     .messageId(message.getMessageId())
