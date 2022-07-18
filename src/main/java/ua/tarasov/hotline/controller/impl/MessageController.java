@@ -53,12 +53,19 @@ public class MessageController implements Controller {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
-            botUsers.forEach(botUser ->
+            botUsers.forEach(botUser ->{
+                if (message.hasText()){
                     answerMessages.add(SendMessage.builder()
                             .chatId(String.valueOf(botUser.getId()))
                             .text(message.getText())
 //                            .parseMode("HTML")
-                            .build()));
+                            .build());}
+            if (message.hasVideo()){
+            answerMessages.add(SendMessage.builder()
+                    .chatId(String.valueOf(botUser.getId()))
+                    .text(message.getVideo().getFileId())
+                    .build());}
+            });
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         }
