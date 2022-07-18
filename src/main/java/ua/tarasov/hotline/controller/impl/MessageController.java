@@ -56,18 +56,12 @@ public class MessageController implements Controller {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
-            botUsers.forEach(botUser ->{
-                    log.info("update has message = {}", message);
-//                    answerMessages.add(SendMessage.builder()
-//                            .chatId(String.valueOf(botUser.getId()))
-//                            .text(message.getText())
-//                            .parseMode("HTML")
-//                            .build()));
-            answerMessages.add(ForwardMessage.builder()
-                    .chatId(String.valueOf(botUser.getId()))
+            botUsers.forEach(botUser ->
+                    answerMessages.add(ForwardMessage.builder()
+                            .chatId(String.valueOf(botUser.getId()))
                             .fromChatId(String.valueOf(message.getChatId()))
-                    .messageId(message.getMessageId())
-                    .build());});
+                            .messageId(message.getMessageId())
+                            .build()));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         }

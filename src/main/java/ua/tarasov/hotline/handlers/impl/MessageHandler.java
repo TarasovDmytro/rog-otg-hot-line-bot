@@ -51,9 +51,7 @@ public class MessageHandler implements RequestHandler {
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
-        log.info("update has message = {}", message);
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
-            log.info("message Id = {}", message.getMessageId());
             return messageController.sendMessageToAll(message);
         }
         if (message.hasText()) {
