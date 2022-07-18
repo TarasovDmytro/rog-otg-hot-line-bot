@@ -59,8 +59,8 @@ public class MessageController implements Controller {
             botUsers.forEach(botUser ->
                     answerMessages.add(SendMessage.builder()
                             .chatId(String.valueOf(botUser.getId()))
-                            .text(message.getText())
-                            .parseMode("HTML")
+                            .text(message.getText() + message.getVideo())
+//                            .parseMode("HTML")
                             .build()));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
