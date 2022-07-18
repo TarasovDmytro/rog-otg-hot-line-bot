@@ -52,7 +52,7 @@ public class MessageController implements Controller {
     }
 
     @NotNull
-    public List<BotApiMethod<?>> sendMessageToAll(Message message) {
+    public List<BotApiMethod<?>> sendMessageToAll(Message message, Integer messageId) {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
@@ -65,7 +65,7 @@ public class MessageController implements Controller {
 //                            .build()));
             answerMessages.add(ForwardMessage.builder()
                     .chatId(String.valueOf(botUser.getId()))
-                    .messageId(message.getMessageId())
+                    .messageId(messageId)
                     .build()));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
