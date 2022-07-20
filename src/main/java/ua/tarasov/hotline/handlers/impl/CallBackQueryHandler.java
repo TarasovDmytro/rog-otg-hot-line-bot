@@ -43,9 +43,10 @@ public class CallBackQueryHandler implements RequestHandler {
     @Override
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
-        if (chatPropertyModeService.getStateOfRequest(update.getMessage().getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
+//        if (chatPropertyModeService.getStateOfRequest(update.getMessage().getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
             if (callbackQuery.getData().startsWith("department")) {
-                return departmentController.getButtonDepartmentHandler(callbackQuery);
+                return departmentController.setDepartment(callbackQuery);
+//                return departmentController.getButtonDepartmentHandler(callbackQuery);
             }
             if (callbackQuery.getData().startsWith("message_id")) {
                 return userRequestController.setStateRequest(callbackQuery);
@@ -75,7 +76,7 @@ public class CallBackQueryHandler implements RequestHandler {
             if (callbackQuery.getData().startsWith("refuse")) {
                 return messageController.refuseSetLocationOfRequestMessage(callbackQuery);
             }
-        } else return userRequestController.createRequest(update);
+//        } else return userRequestController.createRequest(update);
         return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), WRONG_ACTION_TEXT);
     }
 }
