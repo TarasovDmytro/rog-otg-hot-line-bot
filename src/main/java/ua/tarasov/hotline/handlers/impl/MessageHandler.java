@@ -13,6 +13,7 @@ import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.BotState;
+import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
 import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.*;
@@ -55,25 +56,27 @@ public class MessageHandler implements RequestHandler {
             return messageController.sendMessageToAll(message);
         }
         if (message.hasText()) {
+            if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)){
             log.info("message has text = {}", message.getText());
             switch (message.getText()) {
                 case "/start" -> {
                     return botUserController.setStartProperties(message);
                 }
                 case "Зробити заявку" -> {
-                    return departmentController.setDepartmentOfRequest(message);
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.NEW_REQUEST);
+                    return departmentController.getMenuOfDepartments(message);
                 }
                 case "Мої заявки" -> {
-                    return userRequestController.getAllStateRequests(message);
+                    return userRequestController.getAllStatesRequestsOfUser(message);
                 }
                 case "Всі заявки" -> {
-                    return userRequestController.getAdminAllStateRequests(message);
+                    return userRequestController.getAllStatesRequestsOfAdmin(message);
                 }
                 case "Мої не виконані заявки" -> {
-                    return userRequestController.getFalseStateRequests(message);
+                    return userRequestController.getFalseStateRequestsOfUser(message);
                 }
                 case "Не виконані заявки" -> {
-                    return userRequestController.getAdminFalseStateRequests(message);
+                    return userRequestController.getFalseStateRequestsOfAdmin(message);
                 }
                 case "Змінити меню" -> {
                     return keyboardService.setChangeMenu(message);
@@ -95,6 +98,7 @@ public class MessageHandler implements RequestHandler {
                     } else return userRequestController.createRequestMessageHandler(message);
                 }
             }
+        } else return userRequestController.createRequest(update);
         }
         if (message.hasContact()) return botUserController.setBotUserPhone(message);
         if (message.hasLocation()) return userRequestController.setRequestLocation(message);

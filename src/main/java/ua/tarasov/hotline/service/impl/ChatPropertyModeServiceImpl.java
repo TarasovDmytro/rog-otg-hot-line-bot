@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
+import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
 
 @Service
@@ -50,6 +51,16 @@ public class ChatPropertyModeServiceImpl implements ChatPropertyModeService {
     @Override
     public BotState getCurrentBotState(long chatId) {
         return currentBotState.getOrDefault(chatId, BotState.WAIT_BUTTON);
+    }
+
+    @Override
+    public void setCurrentStateOfRequest(long chatId, StateOfRequest stateOfRequest) {
+        currentStateOfRequest.put(chatId, stateOfRequest);
+    }
+
+    @Override
+    public StateOfRequest getStateOfRequest(Long chatId) {
+        return currentStateOfRequest.getOrDefault(chatId, StateOfRequest.REQUEST_CREATED);
     }
 
     @Override

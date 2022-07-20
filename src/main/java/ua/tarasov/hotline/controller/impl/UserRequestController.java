@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ua.tarasov.hotline.controller.Controller;
@@ -20,6 +20,7 @@ import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
+import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.UserRequestService;
@@ -34,23 +35,83 @@ public class UserRequestController implements Controller {
     final UserRequestService requestService;
     final BotUserService botUserService;
     final KeyboardService keyboardService;
+    final DepartmentController departmentController;
+    final MessageController messageController;
 
     List<BotApiMethod<?>> answerMessages = new ArrayList<>();
     UserRequest userRequest = new UserRequest();
 
-    public UserRequestController(UserRequestService requestService, BotUserService botUserService, KeyboardService keyboardService) {
+    public UserRequestController(UserRequestService requestService, BotUserService botUserService, KeyboardService keyboardService, DepartmentController departmentController, MessageController messageController) {
         this.requestService = requestService;
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
+        this.departmentController = departmentController;
+        this.messageController = messageController;
     }
 
-    public List<BotApiMethod<?>> getAllStateRequests(@NotNull Message message) {
+    public List<BotApiMethod<?>> createRequest (Update update){
+        Message message = update.getMessage();
+        CallbackQuery callbackQuery = update.getCallbackQuery();
+        switch (chatPropertyModeService.getStateOfRequest(message.getChatId())){
+            case NEW_REQUEST -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
+                return departmentController.getMenuOfDepartments(message);
+            }
+            case SET_DEPARTMENT -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.MENU_LOCATION);
+                return departmentController.setDepartment(callbackQuery);
+            }
+            case MENU_LOCATION -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
+                return getLocationMenu(message);
+            }
+            case WAIT_AGREE_LOCATION -> {
+                if (callbackQuery.getData().startsWith("yes-location")) {
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_LOCATION);
+                    return messageController.setLocationMessage(callbackQuery);
+                } else {
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_ADDRESS);
+                    return messageController.setRequestAddressMessage(callbackQuery);
+                }
+            }
+            case WAIT_LOCATION -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
+                return setRequestLocation(message);
+            }
+            case SET_LOCATION -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
+                return messageController.setRequestAddressMessage(callbackQuery);
+            }
+            case SET_ADDRESS -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
+                return setRequestAddress(message);
+            }
+            case SET_TEXT -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                return createRequestMessageHandler(message);
+            }
+        } return createRequestMessageHandler(message);
+    }
+
+    public List<BotApiMethod<?>> getLocationMenu(Message message){
+        return List.of(
+                SendMessage.builder()
+                        .chatId(String.valueOf(message.getChatId()))
+                        .text("Чи бажаєте Ви додати геолокацію?")
+                        .replyMarkup(InlineKeyboardMarkup.builder()
+                                .keyboard(keyboardService.getAgreeButtons("location"))
+                                .build())
+                        .build()
+        );
+    }
+
+    public List<BotApiMethod<?>> getAllStatesRequestsOfUser(@NotNull Message message) {
         List<UserRequest> messages = requestService.findMessagesByBotUser(message.getChatId());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
-        return sendUserListOfMessages(message, messages);
+        return sendListOfMessagesToUser(message, messages);
     }
 
-    private List<BotApiMethod<?>> sendUserListOfMessages(Message message, @NotNull List<UserRequest> messages) {
+    private List<BotApiMethod<?>> sendListOfMessagesToUser(Message message, @NotNull List<UserRequest> messages) {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         if (!messages.isEmpty()) {
             messages.sort(Comparator.comparing(UserRequest::getId));
@@ -68,19 +129,19 @@ public class UserRequestController implements Controller {
         return answerMessages;
     }
 
-    public List<BotApiMethod<?>> getAdminAllStateRequests(@NotNull Message message) {
+    public List<BotApiMethod<?>> getAllStatesRequestsOfAdmin(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
             BotUser botUser = botUserService.findById(message.getChatId()).get();
             Set<Department> departments = botUser.getDepartments();
             List<UserRequest> messages = new ArrayList<>();
             departments.forEach(department -> messages.addAll(requestService.findAllByDepartment(department)));
-            answerMessages = sendAdminListOfMessages(message, messages);
+            answerMessages = sendListOfMessagesToAdmin(message, messages);
         }
         return answerMessages;
     }
 
-    private List<BotApiMethod<?>> sendAdminListOfMessages(Message message, @NotNull List<UserRequest> messages) {
+    private List<BotApiMethod<?>> sendListOfMessagesToAdmin(Message message, @NotNull List<UserRequest> messages) {
         if (!messages.isEmpty()) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             messages.sort(Comparator.comparing(UserRequest::getId));
@@ -101,13 +162,13 @@ public class UserRequestController implements Controller {
         return Controller.getSimpleResponseToRequest(message, "Наразі не існує таких заявок");
     }
 
-    public List<BotApiMethod<?>> getFalseStateRequests(@NotNull Message message) {
+    public List<BotApiMethod<?>> getFalseStateRequestsOfUser(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         List<UserRequest> messages = requestService.findMessagesByBotUserAndState(message.getChatId(), false);
-        return sendUserListOfMessages(message, messages);
+        return sendListOfMessagesToUser(message, messages);
     }
 
-    public List<BotApiMethod<?>> getAdminFalseStateRequests(@NotNull Message message) {
+    public List<BotApiMethod<?>> getFalseStateRequestsOfAdmin(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
             BotUser botUser = botUserService.findById(message.getChatId()).get();
@@ -115,7 +176,7 @@ public class UserRequestController implements Controller {
             List<UserRequest> messages = new ArrayList<>();
             departments.forEach(department -> messages.addAll
                     (requestService.findMessagesByDepartmentAndState(department, false)));
-            answerMessages = sendAdminListOfMessages(message, messages);
+            answerMessages = sendListOfMessagesToAdmin(message, messages);
         }
         return answerMessages;
     }
@@ -139,6 +200,14 @@ public class UserRequestController implements Controller {
         } else return Controller.getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
                 "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");
     }
+
+//    private @NotNull List<BotApiMethod> setDepartmentOfRequest(CallbackQuery callbackQuery){
+//        Message message = callbackQuery.getMessage();
+//        List<BotApiMethod> methods = new ArrayList<>();
+//        methods.addAll(departmentController.getMenuOfDepartments(message));
+//        methods.addAll(departmentController.setDepartment(callbackQuery));
+//        return methods;
+//    }
 
     private UserRequest createNewUserRequest(@NotNull Message message) {
         userRequest.setId(0L);
