@@ -75,7 +75,7 @@ public class CallBackQueryHandler implements RequestHandler {
             if (callbackQuery.getData().startsWith("refuse")) {
                 return messageController.refuseSetLocationOfRequestMessage(callbackQuery);
             }
-        }
+        } else return userRequestController.createRequest(update);
         return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), WRONG_ACTION_TEXT);
     }
 }
