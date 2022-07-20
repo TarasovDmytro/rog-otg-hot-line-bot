@@ -64,7 +64,7 @@ public class MessageHandler implements RequestHandler {
                 }
                 case "Зробити заявку" -> {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.NEW_REQUEST);
-                    return departmentController.getMenuOfDepartments(message);
+                    return userRequestController.createRequest(update);
                 }
                 case "Мої заявки" -> {
                     return userRequestController.getAllStatesRequestsOfUser(message);

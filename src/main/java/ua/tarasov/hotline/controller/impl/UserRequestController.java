@@ -70,7 +70,7 @@ public class UserRequestController implements Controller {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_LOCATION);
                     return messageController.setLocationMessage(callbackQuery);
                 } else {
-                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_ADDRESS);
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
                     return messageController.setRequestAddressMessage(callbackQuery);
                 }
             }
