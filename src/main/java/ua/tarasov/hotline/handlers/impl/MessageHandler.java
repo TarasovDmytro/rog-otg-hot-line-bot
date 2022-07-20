@@ -101,7 +101,7 @@ public class MessageHandler implements RequestHandler {
         } else return userRequestController.createRequest(update);
         }
         if (message.hasContact()) return botUserController.setBotUserPhone(message);
-        if (message.hasLocation()) return userRequestController.setRequestLocation(message);
+//        if (message.hasLocation()) return userRequestController.setRequestLocation(message);
         return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
     }
 }
