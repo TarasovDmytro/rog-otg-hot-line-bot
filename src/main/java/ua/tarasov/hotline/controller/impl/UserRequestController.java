@@ -58,8 +58,10 @@ public class UserRequestController implements Controller {
                 return departmentController.getMenuOfDepartments(message);
             }
             case SET_DEPARTMENT -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.MENU_LOCATION);
-                return departmentController.setDepartment(callbackQuery);
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
+                return getLocationMenu(message);
+//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.MENU_LOCATION);
+//                return departmentController.setDepartment(callbackQuery);
             }
             case MENU_LOCATION -> {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
