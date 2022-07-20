@@ -67,7 +67,7 @@ public class UserRequestController implements Controller {
             }
             case WAIT_AGREE_LOCATION -> {
                 if (callbackQuery.getData().startsWith("yes-location")) {
-                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_LOCATION);
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
                     return messageController.setLocationMessage(callbackQuery);
                 } else {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
@@ -200,14 +200,6 @@ public class UserRequestController implements Controller {
         } else return Controller.getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
                 "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");
     }
-
-//    private @NotNull List<BotApiMethod> setDepartmentOfRequest(CallbackQuery callbackQuery){
-//        Message message = callbackQuery.getMessage();
-//        List<BotApiMethod> methods = new ArrayList<>();
-//        methods.addAll(departmentController.getMenuOfDepartments(message));
-//        methods.addAll(departmentController.setDepartment(callbackQuery));
-//        return methods;
-//    }
 
     private UserRequest createNewUserRequest(@NotNull Message message) {
         userRequest.setId(0L);
