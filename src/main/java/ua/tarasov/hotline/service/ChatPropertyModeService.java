@@ -12,7 +12,7 @@ public interface ChatPropertyModeService {
     Map<Long, Department> currentDepartment = new HashMap<>();
     Map<Long, Boolean> currentAdminKeyboardState = new HashMap<>();
     Map<Long, BotState> currentBotState = new HashMap<>();
-    Map<Long, StateOfRequest> currentStateOfRequest = new HashMap<Long, StateOfRequest>();
+    Map<Long, StateOfRequest> currentStateOfRequest = new HashMap<>();
     Map<Long, String> currentRequestAddress = new HashMap<>();
     Map<Long, Location> currentLocation = new HashMap<>();
 
