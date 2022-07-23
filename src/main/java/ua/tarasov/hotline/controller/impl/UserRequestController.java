@@ -80,24 +80,24 @@ public class UserRequestController implements Controller {
 //                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
                     return messageController.setLocationMessage(callbackQuery);
                 } else {
-                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
+//                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
                     return messageController.setRequestAddressMessage(callbackQuery);
                 }
             }
             case WAIT_LOCATION -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
+//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
                 return setRequestLocation(message);
             }
             case SET_LOCATION -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
+//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
                 return messageController.setRequestAddressMessage(callbackQuery);
             }
             case SET_ADDRESS -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
+//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
                 return setRequestAddress(message);
             }
             case SET_TEXT -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 return createRequestMessageHandler(message);
             }
         }
