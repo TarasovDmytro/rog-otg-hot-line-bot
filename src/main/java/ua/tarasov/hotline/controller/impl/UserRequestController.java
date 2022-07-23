@@ -64,6 +64,8 @@ public class UserRequestController implements Controller {
             if (message.getText().equals("Скасувати")) {
                 chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
                 chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
+                log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
+                log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
                 return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
             }
         }
