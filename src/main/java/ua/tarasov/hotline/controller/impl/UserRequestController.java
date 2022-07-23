@@ -55,7 +55,7 @@ public class UserRequestController implements Controller {
         Message message = update.getMessage();
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Long chatId = message.getChatId();
-        log.info("message has text = {}", message.getText());
+        log.info("message has text = {}", message.hasText());
         log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
         log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
         if (message.hasLocation()) return setRequestLocation(message);
