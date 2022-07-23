@@ -88,7 +88,7 @@ public class MessageController implements Controller {
 
     public List<BotApiMethod<?>> setRequestAddressMessage(@NotNull CallbackQuery callbackQuery) {
         chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_ADDRESS);
-        return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Добре. Введіть, будьласка, адресу," +
+        return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Введіть, будьласка, адресу," +
                 " за якою сталася проблема");
     }
 

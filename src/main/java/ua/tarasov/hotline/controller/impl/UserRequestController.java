@@ -53,6 +53,7 @@ public class UserRequestController implements Controller {
         Message message = update.getMessage();
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Long chatId = message.getChatId();
+        if (message.hasLocation()) return setRequestLocation(message);
         if (message.hasText()) {
             if (message.getText().equals("Далі")) {
                 switchStateOfRequest(chatId);
@@ -88,14 +89,16 @@ public class UserRequestController implements Controller {
 //                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
                 return setRequestLocation(message);
             }
-//            case SET_LOCATION -> {
-////                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
-//                return messageController.setRequestAddressMessage(callbackQuery);
-//            }
+            case WAIT_ADDRESS -> {
+
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
+                return messageController.setRequestAddressMessage(callbackQuery);
+            }
             case SET_ADDRESS -> {
-//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
+//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
                 return setRequestAddress(message);
             }
+
             case SET_TEXT -> {
 //                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 return createRequestMessageHandler(message);
@@ -109,7 +112,8 @@ public class UserRequestController implements Controller {
             case NEW_REQUEST -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_DEPARTMENT);
             case SET_DEPARTMENT ->
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
-            case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_ADDRESS);
+            case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
+            case WAIT_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_ADDRESS);
             case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
             case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
         }
@@ -254,8 +258,7 @@ public class UserRequestController implements Controller {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_ADDRESS);
-            return Controller.getSimpleResponseToRequest(message, "Локацію установлено" +
-                    "\nВведіть, будьласка, адресу, за якою сталася проблема");
+            return Controller.getSimpleResponseToRequest(message, "Локацію установлено");
         } else return Controller.getSimpleResponseToRequest(message,
                 "Вибачте, але локацію має сенс додавати тільки при створенні заявки.");
     }
