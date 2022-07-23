@@ -55,7 +55,10 @@ public class UserRequestController implements Controller {
         switch (chatPropertyModeService.getStateOfRequest(message.getChatId())){
             case NEW_REQUEST -> {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
-                return departmentController.getMenuOfDepartments(message);
+                List<BotApiMethod<?>> methods =new ArrayList<>();
+                methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо"));
+                methods.addAll(departmentController.getMenuOfDepartments(message));
+                return methods;
             }
             case SET_DEPARTMENT -> {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
