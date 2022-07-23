@@ -29,4 +29,5 @@ public interface KeyboardService {
     List<BotApiMethod<?>> setReplyKeyboard(Long userId, String messageText);
 
     List<BotApiMethod<?>> setChangeMenu(Message message);
+    List<List<InlineKeyboardButton>> getContinueButton(Message message);
 }

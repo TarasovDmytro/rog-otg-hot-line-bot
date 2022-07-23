@@ -185,4 +185,16 @@ public class KeyboardServiceImpl implements KeyboardService {
         }
         return List.of(checkRoleService.getFalseAdminText(message.getChatId()));
     }
+
+    @Override
+    public List<List<InlineKeyboardButton>> getContinueButton(Message message) {
+        Integer messageId = message.getMessageId();
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        buttons.add(List.of(
+                InlineKeyboardButton.builder()
+                        .text("Продовжити")
+//                        .callbackData("refuse" + jsonConverter.toJson(messageId))
+                        .build()));
+        return buttons;
+    }
 }
