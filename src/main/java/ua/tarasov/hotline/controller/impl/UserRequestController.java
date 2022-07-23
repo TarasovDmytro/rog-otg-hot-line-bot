@@ -95,7 +95,12 @@ public class UserRequestController implements Controller {
                 return createRequestMessageHandler(message);
             }
         }
-        return createRequestMessageHandler(message);
+//        return createRequestMessageHandler(message);
+        chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
+        log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
+        log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
+        return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
     }
 
     private void switchStateOfRequest(Long chatId) {
