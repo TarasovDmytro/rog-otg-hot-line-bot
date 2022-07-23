@@ -244,7 +244,7 @@ public class UserRequestController implements Controller {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
-            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_ADDRESS);
+            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
             return Controller.getSimpleResponseToRequest(message, "Локацію установлено");
         } else return Controller.getSimpleResponseToRequest(message,
                 "Вибачте, але локацію має сенс додавати тільки при створенні заявки.");
