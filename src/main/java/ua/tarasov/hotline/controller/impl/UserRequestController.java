@@ -56,13 +56,8 @@ public class UserRequestController implements Controller {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Long chatId = message.getChatId();
         log.info("message has text = {}", message.getText());
-        if (message.getText().equals("Скасувати")) {
-            chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
-            chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
-            log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
-            log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
-            return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
-        }
+        log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
+        log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
         if (message.hasLocation()) return setRequestLocation(message);
         if (message.hasText()) {
             if (message.getText().equals("Далі")) {
