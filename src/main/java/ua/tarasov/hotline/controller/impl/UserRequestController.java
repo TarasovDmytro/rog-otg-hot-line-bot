@@ -222,6 +222,8 @@ public class UserRequestController implements Controller {
                     "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
                             "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+            answerMessages.addAll(keyboardService.setReplyKeyboard(message.getChatId(), "ok"));
             return answerMessages;
         } else return Controller.getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
                 "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");
