@@ -64,9 +64,9 @@ public class DepartmentController implements Controller {
                 SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
                         .text(textMessage)
-//                        .replyMarkup(InlineKeyboardMarkup.builder()
-//                                .keyboard(keyboardService.getContinueButton(message))
-//                                .build())
+                        .replyMarkup(InlineKeyboardMarkup.builder()
+                                .keyboard(keyboardService.getContinueButton(message))
+                                .build())
                         .build());
     }
 
@@ -83,8 +83,7 @@ public class DepartmentController implements Controller {
                         .replyMarkup(InlineKeyboardMarkup.builder()
                                 .keyboard(keyboardService.getAgreeButtons("location"))
                                 .build())
-                        .build()
-        );
+                        .build());
     }
 
     private @NotNull @Unmodifiable List<BotApiMethod<?>> requestOfLocation(Message message) {
