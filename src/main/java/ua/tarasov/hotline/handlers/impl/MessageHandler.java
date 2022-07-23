@@ -52,12 +52,13 @@ public class MessageHandler implements RequestHandler {
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
+        if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
+            return userRequestController.createRequest(update);
+        }
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
             return messageController.sendMessageToAll(message);
         }
         if (message.hasText()) {
-            if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)){
-            log.info("message has text = {}", message.getText());
             switch (message.getText()) {
                 case "/start" -> {
                     return botUserController.setStartProperties(message);
@@ -91,17 +92,17 @@ public class MessageHandler implements RequestHandler {
                     return notificationController.getNotifications(message);
                 }
                 default -> {
-                    if (message.getText().startsWith("*admin*")) return superAdminController.requestAdminRole(message);
-                    if (message.getText().startsWith("*set*")) return superAdminController.handelRequestAdminRole(message);
+                    if (message.getText().startsWith("*admin*"))
+                        return superAdminController.requestAdminRole(message);
+                    if (message.getText().startsWith("*set*"))
+                        return superAdminController.handelRequestAdminRole(message);
                     if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
                         return userRequestController.setRequestAddress(message);
                     } else return userRequestController.createRequestMessageHandler(message);
                 }
             }
-        } else return userRequestController.createRequest(update);
         }
         if (message.hasContact()) return botUserController.setBotUserPhone(message);
-//        if (message.hasLocation()) return userRequestController.createRequest(update);
         return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
     }
 }
