@@ -54,7 +54,7 @@ public class DepartmentController implements Controller {
 
     public List<BotApiMethod<?>> setDepartment(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
-        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         Department department = jsonConverter.fromJson(callbackQuery
                 .getData().substring("department".length()), Department.class);
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
