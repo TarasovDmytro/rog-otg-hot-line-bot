@@ -88,7 +88,7 @@ public class UserRequestController implements Controller {
                 return messageController.setRequestAddressMessage(callbackQuery);
             }
             case SET_ADDRESS -> {
-//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
+                chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_ADDRESS);
                 return setRequestAddress(message);
             }
 
