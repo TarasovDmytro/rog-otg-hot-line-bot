@@ -96,9 +96,9 @@ public class MessageHandler implements RequestHandler {
                         return superAdminController.requestAdminRole(message);
                     if (message.getText().startsWith("*set*"))
                         return superAdminController.handelRequestAdminRole(message);
-                    if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
-                        return userRequestController.setRequestAddress(message);
-                    } else return userRequestController.createRequestMessageHandler(message);
+//                    if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_ADDRESS)) {
+//                        return userRequestController.setRequestAddress(message);
+//                    } else return userRequestController.createRequestMessageHandler(message);
                 }
             }
         }

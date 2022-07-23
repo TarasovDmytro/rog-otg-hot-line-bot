@@ -2,6 +2,7 @@ package ua.tarasov.hotline.controller.impl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 @Component
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRequestController implements Controller {
     final UserRequestService requestService;
@@ -53,6 +55,7 @@ public class UserRequestController implements Controller {
         Message message = update.getMessage();
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Long chatId = message.getChatId();
+        log.info("message has text = {}", message.getText());
         if (message.hasLocation()) return setRequestLocation(message);
         if (message.hasText()) {
             if (message.getText().equals("Далі")) {
@@ -70,11 +73,8 @@ public class UserRequestController implements Controller {
             }
             case SET_DEPARTMENT -> {
                 return departmentController.getMenuOfDepartments(message);
-//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.MENU_LOCATION);
-//                return departmentController.setDepartment(callbackQuery);
             }
             case SET_LOCATION -> {
-//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
                 return getLocationMenu(message);
             }
             case WAIT_ADDRESS -> {
