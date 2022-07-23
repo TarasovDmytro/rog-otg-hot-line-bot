@@ -85,7 +85,6 @@ public class UserRequestController implements Controller {
                 return getLocationMenu(message);
             }
             case WAIT_ADDRESS -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
                 return messageController.setRequestAddressMessage(callbackQuery);
             }
             case SET_ADDRESS -> {
@@ -108,7 +107,6 @@ public class UserRequestController implements Controller {
 
     public void switchStateOfRequest(Long chatId) {
         switch (chatPropertyModeService.getStateOfRequest(chatId)) {
-            case NEW_REQUEST -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_DEPARTMENT);
             case SET_DEPARTMENT ->
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
             case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
