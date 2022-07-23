@@ -53,6 +53,18 @@ public class MessageHandler implements RequestHandler {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
         if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
+            if (message.hasText()) {
+                if (message.getText().equals("Далі")) {
+                    userRequestController.switchStateOfRequest(message.getChatId());
+                }
+                if (message.getText().equals("Скасувати")) {
+//                chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                    log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(message.getChatId()));
+                    log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(message.getChatId()));
+                    return keyboardService.setReplyKeyboard(message.getChatId(), "Заявку скасовано");
+                }
+            }
             return userRequestController.createRequest(update);
         }
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {

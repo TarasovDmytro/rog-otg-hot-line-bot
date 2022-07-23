@@ -103,7 +103,7 @@ public class UserRequestController implements Controller {
         return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
     }
 
-    private void switchStateOfRequest(Long chatId) {
+    public void switchStateOfRequest(Long chatId) {
         switch (chatPropertyModeService.getStateOfRequest(chatId)) {
             case NEW_REQUEST -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_DEPARTMENT);
             case SET_DEPARTMENT ->
