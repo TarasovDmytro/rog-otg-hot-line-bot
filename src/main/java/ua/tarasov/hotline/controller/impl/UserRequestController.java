@@ -49,18 +49,20 @@ public class UserRequestController implements Controller {
         this.messageController = messageController;
     }
 
-    public List<BotApiMethod<?>> createRequest (Update update){
+    public List<BotApiMethod<?>> createRequest(Update update) {
         Message message = update.getMessage();
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Long chatId = message.getChatId();
-        if (message.getText().equals("Далі")){
-            switchStateOfRequest(chatId);
+        if (message.hasText()) {
+            if (message.getText().equals("Далі")) {
+                switchStateOfRequest(chatId);
+            }
+            if (message.getText().equals("Скасувати")) {
+                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
+                return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
+            }
         }
-        if (message.getText().equals("Скасувати")){
-            chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
-            return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
-        }
-        switch (chatPropertyModeService.getStateOfRequest(message.getChatId())){
+        switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
             case NEW_REQUEST -> {
                 return keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо");
             }
@@ -98,20 +100,22 @@ public class UserRequestController implements Controller {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 return createRequestMessageHandler(message);
             }
-        } return createRequestMessageHandler(message);
+        }
+        return createRequestMessageHandler(message);
     }
 
     private void switchStateOfRequest(Long chatId) {
-        switch (chatPropertyModeService.getStateOfRequest(chatId)){
+        switch (chatPropertyModeService.getStateOfRequest(chatId)) {
             case NEW_REQUEST -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_DEPARTMENT);
-            case SET_DEPARTMENT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
+            case SET_DEPARTMENT ->
+                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
             case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_ADDRESS);
             case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
             case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
         }
     }
 
-    public List<BotApiMethod<?>> getLocationMenu(Message message){
+    public List<BotApiMethod<?>> getLocationMenu(Message message) {
         return List.of(
                 SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
@@ -198,6 +202,7 @@ public class UserRequestController implements Controller {
         }
         return answerMessages;
     }
+
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             UserRequest userRequest = createNewUserRequest(message);
@@ -255,7 +260,8 @@ public class UserRequestController implements Controller {
                 "Вибачте, але локацію має сенс додавати тільки при створенні заявки.");
     }
 
-    @NotNull @Unmodifiable
+    @NotNull
+    @Unmodifiable
     public List<BotApiMethod<?>> setStateRequest(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
@@ -271,10 +277,12 @@ public class UserRequestController implements Controller {
                             .replyToMessageId(messageId)
                             .text("Ваша заявка\nID " + messageId + "\nвід " + userRequest.getDateTimeToString() + "\n" + stateText)
                             .build());
-        } else return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
+        } else
+            return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
     }
 
-    @NotNull @Unmodifiable
+    @NotNull
+    @Unmodifiable
     public List<BotApiMethod<?>> setRefuseRequest(@NotNull CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("refuse_request".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
@@ -289,7 +297,8 @@ public class UserRequestController implements Controller {
                             "\n\nВаша заявка не є в компетенції нашого департаменту," +
                             "\nабо її не можливо виконати з незалежних від нас причин")
                     .build());
-        } else return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
+        } else
+            return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
     }
 
     public List<BotApiMethod<?>> getContactOfRequest(@NotNull CallbackQuery callbackQuery) {
