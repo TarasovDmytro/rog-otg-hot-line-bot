@@ -16,6 +16,7 @@ import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Role;
+import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.CheckRoleService;
 import ua.tarasov.hotline.service.KeyboardService;
@@ -88,6 +89,7 @@ public class MessageController implements Controller {
 
     public List<BotApiMethod<?>> setRequestAddressMessage(@NotNull CallbackQuery callbackQuery) {
         chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_ADDRESS);
+        chatPropertyModeService.setCurrentStateOfRequest(callbackQuery.getMessage().getChatId(), StateOfRequest.SET_ADDRESS);
         return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Введіть, будьласка, адресу," +
                 " за якою сталася проблема");
     }
