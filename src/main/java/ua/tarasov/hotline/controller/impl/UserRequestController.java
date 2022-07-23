@@ -71,7 +71,7 @@ public class UserRequestController implements Controller {
 //                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.MENU_LOCATION);
 //                return departmentController.setDepartment(callbackQuery);
             }
-            case MENU_LOCATION -> {
+            case SET_LOCATION -> {
 //                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
                 return getLocationMenu(message);
             }
@@ -88,10 +88,10 @@ public class UserRequestController implements Controller {
 //                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
                 return setRequestLocation(message);
             }
-            case SET_LOCATION -> {
-//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
-                return messageController.setRequestAddressMessage(callbackQuery);
-            }
+//            case SET_LOCATION -> {
+////                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
+//                return messageController.setRequestAddressMessage(callbackQuery);
+//            }
             case SET_ADDRESS -> {
 //                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
                 return setRequestAddress(message);
