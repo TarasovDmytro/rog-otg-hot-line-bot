@@ -52,27 +52,30 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> createRequest (Update update){
         Message message = update.getMessage();
         CallbackQuery callbackQuery = update.getCallbackQuery();
+        Long chatId = message.getChatId();
+        if (message.getText().equals("Далі")){
+            switchStateOfRequest(chatId);
+        }
+        if (message.getText().equals("Скасувати")){
+            chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
+            return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
+        }
         switch (chatPropertyModeService.getStateOfRequest(message.getChatId())){
             case NEW_REQUEST -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
-                List<BotApiMethod<?>> methods =new ArrayList<>();
-                methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо"));
-                methods.addAll(departmentController.getMenuOfDepartments(message));
-                return methods;
+                return keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо");
             }
             case SET_DEPARTMENT -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
-                return getLocationMenu(message);
+                return departmentController.getMenuOfDepartments(message);
 //                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.MENU_LOCATION);
 //                return departmentController.setDepartment(callbackQuery);
             }
             case MENU_LOCATION -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
+//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_AGREE_LOCATION);
                 return getLocationMenu(message);
             }
             case WAIT_AGREE_LOCATION -> {
                 if (callbackQuery.getData().startsWith("yes-location")) {
-                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
+//                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
                     return messageController.setLocationMessage(callbackQuery);
                 } else {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
@@ -96,6 +99,16 @@ public class UserRequestController implements Controller {
                 return createRequestMessageHandler(message);
             }
         } return createRequestMessageHandler(message);
+    }
+
+    private void switchStateOfRequest(Long chatId) {
+        switch (chatPropertyModeService.getStateOfRequest(chatId)){
+            case NEW_REQUEST -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_DEPARTMENT);
+            case SET_DEPARTMENT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
+            case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_ADDRESS);
+            case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
+            case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
+        }
     }
 
     public List<BotApiMethod<?>> getLocationMenu(Message message){
