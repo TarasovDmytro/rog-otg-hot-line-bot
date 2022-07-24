@@ -84,7 +84,7 @@ public class UserRequestController implements Controller {
             }
             case WAIT_ADDRESS -> {
                 log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                return messageController.setRequestAddressMessage(callbackQuery);
+                return messageController.setRequestAddressMessage(message);
             }
             case SET_ADDRESS -> {
                 log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));

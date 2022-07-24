@@ -87,10 +87,10 @@ public class MessageController implements Controller {
                 .build());
     }
 
-    public List<BotApiMethod<?>> setRequestAddressMessage(@NotNull CallbackQuery callbackQuery) {
-        chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_ADDRESS);
+    public List<BotApiMethod<?>> setRequestAddressMessage(@NotNull Message message) {
+        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_ADDRESS);
 //        chatPropertyModeService.setCurrentStateOfRequest(callbackQuery.getMessage().getChatId(), StateOfRequest.SET_ADDRESS);
-        return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Введіть, будьласка, адресу," +
+        return Controller.getSimpleResponseToRequest(message, "Введіть, будьласка, адресу," +
                 " за якою сталася проблема");
     }
 
@@ -109,6 +109,6 @@ public class MessageController implements Controller {
     }
 
     public List<BotApiMethod<?>> refuseSetLocationOfRequestMessage(CallbackQuery callbackQuery) {
-        return setRequestAddressMessage(callbackQuery);
+        return setRequestAddressMessage(callbackQuery.getMessage());
     }
 }

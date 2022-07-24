@@ -62,7 +62,7 @@ public class CallBackQueryHandler implements RequestHandler {
                 return botUserController.setBotUserDepartment(callbackQuery);
             }
             if (callbackQuery.getData().startsWith("no-location")) {
-                return messageController.setRequestAddressMessage(callbackQuery);
+                return messageController.setRequestAddressMessage(callbackQuery.getMessage());
             }
             if (callbackQuery.getData().startsWith("no-department")) {
                 return messageController.setRefuseRequestMessage(callbackQuery);
