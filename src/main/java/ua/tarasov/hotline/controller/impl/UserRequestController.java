@@ -76,6 +76,7 @@ public class UserRequestController implements Controller {
                 List<BotApiMethod<?>> methods = new ArrayList<>();
                 methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо"));
                 methods.addAll(departmentController.getMenuOfDepartments(message));
+                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
                 return methods;
             }
             case SET_LOCATION -> {
