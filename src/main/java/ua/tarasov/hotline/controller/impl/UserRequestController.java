@@ -74,7 +74,7 @@ public class UserRequestController implements Controller {
         switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
             case SET_DEPARTMENT -> {
                 List<BotApiMethod<?>> methods = new ArrayList<>();
-                methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо"));
+                methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Почнемо"));
                 methods.addAll(departmentController.getMenuOfDepartments(message));
                 return methods;
             }
@@ -97,7 +97,7 @@ public class UserRequestController implements Controller {
             }
             case SET_TEXT -> {
                 log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                return createRequestMessageHandler(message);
+                return createNewUserRequest(message);
             }
         }
         return createRequestMessageHandler(message);
@@ -205,7 +205,7 @@ public class UserRequestController implements Controller {
 
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
-            UserRequest userRequest = createNewUserRequest(message);
+            requestService.saveRequest(userRequest);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             if (!botUsers.isEmpty()) {
@@ -228,7 +228,7 @@ public class UserRequestController implements Controller {
                 "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");
     }
 
-    private UserRequest createNewUserRequest(@NotNull Message message) {
+    private List<BotApiMethod<?>> createNewUserRequest(@NotNull Message message) {
         userRequest.setId(0L);
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         userRequest.setChatId(message.getChatId());
@@ -242,8 +242,7 @@ public class UserRequestController implements Controller {
                 "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
                 "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
-        requestService.saveRequest(userRequest);
-        return userRequest;
+        return keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку", userRequest.getBodyOfMessage());
     }
 
     public List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
