@@ -60,17 +60,19 @@ public class UserRequestController implements Controller {
         log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
         if (message.hasLocation()) return setRequestLocation(message);
         if (message.hasText()) {
-            if (message.getText().equals("Далі")) {
-                switchStateOfRequest(chatId);
+            switch (message.getText()) {
+                case "Далі" -> {
+                    switchStateOfRequest(chatId);
+                }
+                case "Скасувати" -> {
+                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
+                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
+                    log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
+                    log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                    return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
+                }
             }
-            if (message.getText().equals("Скасувати")) {
-                chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
-                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
-                log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
-                log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
-            }else {
-
+        }
         switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
             case SET_DEPARTMENT -> {
                 List<BotApiMethod<?>> methods = new ArrayList<>();
@@ -99,7 +101,7 @@ public class UserRequestController implements Controller {
                 log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
                 chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 return createNewUserRequest(message);
-            }}}
+            }
         }
         return createRequestMessageHandler(message);
     }
