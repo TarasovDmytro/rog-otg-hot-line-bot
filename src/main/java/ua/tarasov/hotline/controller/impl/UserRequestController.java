@@ -76,7 +76,6 @@ public class UserRequestController implements Controller {
                 List<BotApiMethod<?>> methods = new ArrayList<>();
                 methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо"));
                 methods.addAll(departmentController.getMenuOfDepartments(message));
-                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
                 return methods;
             }
             case SET_LOCATION -> {
@@ -244,7 +243,7 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
-        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
+//        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
         return Controller.getSimpleResponseToRequest(message, "Адресу додано до заявки" +
                 "\nВведіть, будьласка, текст заявки");
     }
