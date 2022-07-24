@@ -61,9 +61,7 @@ public class UserRequestController implements Controller {
         if (message.hasLocation()) return setRequestLocation(message);
         if (message.hasText()) {
             switch (message.getText()) {
-                case "Далі" -> {
-                    switchStateOfRequest(chatId);
-                }
+                case "Далі" -> switchStateOfRequest(chatId);
                 case "Скасувати" -> {
                     chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
@@ -252,7 +250,7 @@ public class UserRequestController implements Controller {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
 //        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
-        return Controller.getSimpleResponseToRequest(message, "Адресу додано до заявки");
+        return keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Адресу додано до заявки");
     }
 
     public List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
