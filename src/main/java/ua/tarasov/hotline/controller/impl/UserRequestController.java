@@ -93,7 +93,7 @@ public class UserRequestController implements Controller {
             }
             case WAIT_TEXT -> {
                 chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
-                return Controller.getSimpleResponseToRequest(message,  "Введіть, будьласка, текст заявки");
+                return Controller.getSimpleResponseToRequest(message, "Введіть, будьласка, текст заявки");
             }
             case SET_TEXT -> {
                 log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
@@ -215,12 +215,14 @@ public class UserRequestController implements Controller {
                                 "\n\n" + FALSE_ACTION_STATE_TEXT)
                         .build()));
             }
-            answerMessages.addAll(Controller.getSimpleResponseToRequest(message,
-                    "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
-                            "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
+//            answerMessages.addAll(Controller.getSimpleResponseToRequest(message,
+//                    "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
+//                            "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-            answerMessages.addAll(keyboardService.setReplyKeyboard(message.getChatId(), "ok"));
+            answerMessages.addAll(keyboardService.setReplyKeyboard(message.getChatId(),
+                    "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
+                            "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             return answerMessages;
         } else return Controller.getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
                 "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");
