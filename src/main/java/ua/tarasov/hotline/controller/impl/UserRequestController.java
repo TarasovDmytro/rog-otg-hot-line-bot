@@ -91,7 +91,10 @@ public class UserRequestController implements Controller {
                 chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_ADDRESS);
                 return setRequestAddress(message);
             }
-
+            case WAIT_TEXT -> {
+                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
+                return Controller.getSimpleResponseToRequest(message,  "Введіть, будьласка, текст заявки");
+            }
             case SET_TEXT -> {
                 log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
                 return createRequestMessageHandler(message);
@@ -106,7 +109,8 @@ public class UserRequestController implements Controller {
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
             case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
             case WAIT_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_ADDRESS);
-            case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
+            case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_TEXT);
+            case WAIT_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
             case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
         }
     }
@@ -244,8 +248,7 @@ public class UserRequestController implements Controller {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
 //        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
-        return Controller.getSimpleResponseToRequest(message, "Адресу додано до заявки" +
-                "\nВведіть, будьласка, текст заявки");
+        return Controller.getSimpleResponseToRequest(message, "Адресу додано до заявки");
     }
 
     public List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
