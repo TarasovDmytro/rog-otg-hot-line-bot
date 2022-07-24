@@ -13,7 +13,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ua.tarasov.hotline.controller.Controller;
@@ -51,9 +50,7 @@ public class UserRequestController implements Controller {
         this.messageController = messageController;
     }
 
-    public List<BotApiMethod<?>> createRequest(Update update) {
-        Message message = update.getMessage();
-        CallbackQuery callbackQuery = update.getCallbackQuery();
+    public List<BotApiMethod<?>> createRequest(Message message) {
         Long chatId = message.getChatId();
         log.info("message has text = {}", message.hasText());
         log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
@@ -215,9 +212,6 @@ public class UserRequestController implements Controller {
                                 "\n\n" + FALSE_ACTION_STATE_TEXT)
                         .build()));
             }
-//            answerMessages.addAll(Controller.getSimpleResponseToRequest(message,
-//                    "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
-//                            "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
             answerMessages.addAll(keyboardService.setReplyKeyboard(message.getChatId(),

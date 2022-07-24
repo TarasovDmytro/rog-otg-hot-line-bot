@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -15,8 +14,6 @@ import ua.tarasov.hotline.controller.impl.DepartmentController;
 import ua.tarasov.hotline.controller.impl.MessageController;
 import ua.tarasov.hotline.controller.impl.UserRequestController;
 import ua.tarasov.hotline.handlers.RequestHandler;
-import ua.tarasov.hotline.models.StateOfRequest;
-import ua.tarasov.hotline.service.ChatPropertyModeService;
 
 import java.util.List;
 
@@ -28,16 +25,13 @@ public class CallBackQueryHandler implements RequestHandler {
     final UserRequestController userRequestController;
     final MessageController messageController;
     final BotUserController botUserController;
-    final ChatPropertyModeService chatPropertyModeService;
 
     public CallBackQueryHandler(DepartmentController departmentController, UserRequestController userRequestController,
-                                MessageController messageController, BotUserController botUserController,
-                                @Qualifier("chatPropertyModeServiceImpl") ChatPropertyModeService chatPropertyModeService) {
+                                MessageController messageController, BotUserController botUserController) {
         this.departmentController = departmentController;
         this.userRequestController = userRequestController;
         this.messageController = messageController;
         this.botUserController = botUserController;
-        this.chatPropertyModeService = chatPropertyModeService;
     }
 
     @Override

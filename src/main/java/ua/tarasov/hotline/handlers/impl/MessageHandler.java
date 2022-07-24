@@ -28,20 +28,19 @@ public class MessageHandler implements RequestHandler {
     final ChatPropertyModeService chatPropertyModeService;
 
     final BotUserController botUserController;
-    final DepartmentController departmentController;
     final UserRequestController userRequestController;
     final NotificationController notificationController;
     final SuperAdminController superAdminController;
     final MessageController messageController;
 
-    public MessageHandler(KeyboardServiceImpl keyboardService, @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService,
-                          BotUserController botUserController, DepartmentController departmentController,
-                          UserRequestController userRequestController, NotificationController notificationController,
-                          SuperAdminController superAdminController, MessageController messageController) {
+    public MessageHandler(KeyboardServiceImpl keyboardService,
+                          @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService,
+                          BotUserController botUserController, UserRequestController userRequestController,
+                          NotificationController notificationController, SuperAdminController superAdminController,
+                          MessageController messageController) {
         this.keyboardService = keyboardService;
         this.chatPropertyModeService = chatPropertyModeService;
         this.botUserController = botUserController;
-        this.departmentController = departmentController;
         this.userRequestController = userRequestController;
         this.notificationController = notificationController;
         this.superAdminController = superAdminController;
@@ -53,7 +52,7 @@ public class MessageHandler implements RequestHandler {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
         if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
-            return userRequestController.createRequest(update);
+            return userRequestController.createRequest(message);
         }
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
             return messageController.sendMessageToAll(message);
@@ -65,7 +64,7 @@ public class MessageHandler implements RequestHandler {
                 }
                 case "Зробити заявку" -> {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
-                    return userRequestController.createRequest(update);
+                    return userRequestController.createRequest(message);
                 }
                 case "Мої заявки" -> {
                     return userRequestController.getAllStatesRequestsOfUser(message);

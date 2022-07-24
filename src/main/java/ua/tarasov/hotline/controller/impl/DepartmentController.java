@@ -44,14 +44,6 @@ public class DepartmentController implements Controller {
                 .build());
     }
 
-    @NotNull
-    @Unmodifiable
-    public List<BotApiMethod<?>> getButtonDepartmentHandler(@NotNull CallbackQuery callbackQuery) {
-        chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_BUTTON);
-        String textMessage = "Департамент обрано.\nЧи бажаєте Ви додати до заявки геолокацію?";
-        return buttonDepartmentHandler(callbackQuery, textMessage);
-    }
-
     public List<BotApiMethod<?>> setDepartment(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
@@ -66,31 +58,4 @@ public class DepartmentController implements Controller {
                         .text(textMessage)
                         .build());
     }
-
-    private @NotNull @Unmodifiable List<BotApiMethod<?>> buttonDepartmentHandler(@NotNull CallbackQuery callbackQuery, String textMessage) {
-        Message message = callbackQuery.getMessage();
-        Department department = jsonConverter.fromJson(callbackQuery
-                .getData().substring("department".length()), Department.class);
-        chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);
-        return List.of(
-                keyboardService.getCorrectReplyMarkup(message, keyboardService.getDepartmentInlineButtons(department)),
-                SendMessage.builder()
-                        .chatId(String.valueOf(message.getChatId()))
-                        .text(textMessage)
-                        .replyMarkup(InlineKeyboardMarkup.builder()
-                                .keyboard(keyboardService.getAgreeButtons("location"))
-                                .build())
-                        .build());
-    }
-
-    private @NotNull @Unmodifiable List<BotApiMethod<?>> requestOfLocation(Message message) {
-        return List.of(SendMessage.builder()
-                .chatId(String.valueOf(message.getChatId()))
-                .text("Чи бажаєте Ви додати геолокацію?")
-                .replyMarkup(InlineKeyboardMarkup.builder()
-                        .keyboard(keyboardService.getAgreeButtons("location"))
-                        .build())
-                .build());
-    }
-
 }

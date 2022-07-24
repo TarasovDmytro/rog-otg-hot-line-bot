@@ -187,18 +187,6 @@ public class KeyboardServiceImpl implements KeyboardService {
     }
 
     @Override
-    public List<List<InlineKeyboardButton>> getContinueButton(Message message) {
-        Integer messageId = message.getMessageId();
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        buttons.add(List.of(
-                InlineKeyboardButton.builder()
-                        .text("Продовжити")
-//                        .callbackData("refuse" + jsonConverter.toJson(messageId))
-                        .build()));
-        return buttons;
-    }
-
-    @Override
     public List<KeyboardRow> getRequestReplyButtons(Long userId, String nameOfButton) {
         var firstRow = new KeyboardRow();
         firstRow.add(nameOfButton);
