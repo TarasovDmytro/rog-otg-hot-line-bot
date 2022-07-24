@@ -62,8 +62,7 @@ public class UserRequestController implements Controller {
         if (message.hasText()) {
             if (message.getText().equals("Далі")) {
                 switchStateOfRequest(chatId);
-            }
-            if (message.getText().equals("Скасувати")) {
+            } else  {
                 chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
                 chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
                 log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
