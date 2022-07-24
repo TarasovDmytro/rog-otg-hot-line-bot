@@ -72,9 +72,6 @@ public class UserRequestController implements Controller {
             }
         }
         switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
-//            case NEW_REQUEST -> {
-//                return keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо");
-//            }
             case SET_DEPARTMENT -> {
                 List<BotApiMethod<?>> methods = new ArrayList<>();
                 methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Почнемо"));
