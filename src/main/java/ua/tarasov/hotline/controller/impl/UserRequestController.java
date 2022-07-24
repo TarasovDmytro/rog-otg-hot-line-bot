@@ -62,7 +62,7 @@ public class UserRequestController implements Controller {
         if (message.hasText()) {
             switch (message.getText()) {
                 case "Далі" -> switchStateOfRequest(chatId);
-                case "Скасувати" -> {
+                case "Скасувати заявку" -> {
                     chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
                     log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
@@ -124,8 +124,7 @@ public class UserRequestController implements Controller {
                         .replyMarkup(InlineKeyboardMarkup.builder()
                                 .keyboard(keyboardService.getAgreeButtons("location"))
                                 .build())
-                        .build()
-        );
+                        .build());
     }
 
     public List<BotApiMethod<?>> getAllStatesRequestsOfUser(@NotNull Message message) {
