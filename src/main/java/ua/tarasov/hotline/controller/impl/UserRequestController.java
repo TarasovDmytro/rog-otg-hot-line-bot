@@ -97,6 +97,7 @@ public class UserRequestController implements Controller {
             }
             case SET_TEXT -> {
                 log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 return createNewUserRequest(message);
             }
         }
