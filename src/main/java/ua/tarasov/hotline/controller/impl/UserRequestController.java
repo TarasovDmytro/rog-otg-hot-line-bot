@@ -90,7 +90,7 @@ public class UserRequestController implements Controller {
             }
             case WAIT_TEXT -> {
                 chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
-                return Controller.getSimpleResponseToRequest(message, "Введіть, будьласка, текст заявки");
+                return Controller.getSimpleResponseToRequest(message, "Введіть, будьласка, докладний опис існуючої проблеми");
             }
             case SET_TEXT -> {
                 log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
