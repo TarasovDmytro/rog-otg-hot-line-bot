@@ -79,27 +79,25 @@ public class UserRequestController implements Controller {
                 return methods;
             }
             case SET_LOCATION -> {
+                log.info("case SET_LOCATION = {}", chatPropertyModeService.getStateOfRequest(chatId));
                 return getLocationMenu(message);
             }
             case WAIT_ADDRESS -> {
+                log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
                 return messageController.setRequestAddressMessage(callbackQuery);
             }
             case SET_ADDRESS -> {
+                log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
                 chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_ADDRESS);
                 return setRequestAddress(message);
             }
 
             case SET_TEXT -> {
-//                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
                 return createRequestMessageHandler(message);
             }
         }
         return createRequestMessageHandler(message);
-//        chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
-//        chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
-//        log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
-//        log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
-//        return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
     }
 
     public void switchStateOfRequest(Long chatId) {
