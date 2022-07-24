@@ -106,9 +106,9 @@ public class UserRequestController implements Controller {
             case SET_DEPARTMENT ->
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
             case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
-            case WAIT_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_ADDRESS);
+//            case WAIT_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_ADDRESS);
             case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_TEXT);
-            case WAIT_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
+//            case WAIT_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
             case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
         }
     }
