@@ -92,7 +92,7 @@ public class UserRequestController implements Controller {
                 }
                 case WAIT_TEXT -> {
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
-                    return Controller.getSimpleResponseToRequest(message, "Введіть, будьласка, докладний опис існуючої проблеми");
+                    return Controller.getSimpleResponseToRequest(message, "Введіть, будь ласка, докладний опис існуючої проблеми");
                 }
                 case SET_TEXT -> {
                     log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
@@ -222,7 +222,7 @@ public class UserRequestController implements Controller {
                             "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             return answerMessages;
         } else return Controller.getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
-                "\n<b>Виконайте, будьласка, коректну дію за допомогою кнопок</b>");
+                "\n<b>Виконайте, будь ласка, коректну дію за допомогою кнопок</b>");
     }
 
     private List<BotApiMethod<?>> createNewUserRequest(@NotNull Message message) {
@@ -285,8 +285,11 @@ public class UserRequestController implements Controller {
                             .replyToMessageId(messageId)
                             .text("Ваша заявка\nID " + messageId + "\nвід " + userRequest.getDateTimeToString() + "\n" + stateText)
                             .build());
-        } else
-            return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
+        } else return List.of(AnswerCallbackQuery.builder()
+                .callbackQueryId(callbackQuery.getId())
+                .text("Цю заявку було видалено раніше")
+                .showAlert(true)
+                .build());
     }
 
     @NotNull
@@ -307,10 +310,10 @@ public class UserRequestController implements Controller {
                                 "\nабо її не можливо виконати з незалежних від нас причин")
                         .build());
             } else return List.of(AnswerCallbackQuery.builder()
-                        .callbackQueryId(callbackQuery.getId())
-                        .text("Ця заявка має статус 'Виконана' і не може бути видалена примусово")
-                        .showAlert(true)
-                        .build());
+                    .callbackQueryId(callbackQuery.getId())
+                    .text("Ця заявка має статус 'Виконана' і не може бути видалена примусово")
+                    .showAlert(true)
+                    .build());
         } else return List.of(AnswerCallbackQuery.builder()
                 .callbackQueryId(callbackQuery.getId())
                 .text("Цю заявку було видалено раніше")
@@ -338,17 +341,21 @@ public class UserRequestController implements Controller {
                             "\n\nІз користувачем можна зв'язатись за телефоном:\n"
                             + phone;
                     return Controller.getSimpleResponseToRequest(message, messageText);
-                } else {
-                    return Collections.singletonList(AnswerCallbackQuery.builder()
-                            .callbackQueryId(callbackQuery.getId())
-                            .text("Користувач відмовився надати свій номер телефону")
-                            .showAlert(true)
-                            .build());
-                }
+                } else return List.of(AnswerCallbackQuery.builder()
+                        .callbackQueryId(callbackQuery.getId())
+                        .text("Користувач відмовився надати свій номер телефону")
+                        .showAlert(true)
+                        .build());
+
             }
         }
-        return Controller.getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану" +
-                " із цією заявкою, бо її вже не існує");
+        return List.of(AnswerCallbackQuery.builder()
+                .callbackQueryId(callbackQuery.getId())
+                .text("Ви не можете отримати інформацію, пов'язану із цією заявкою, бо її вже не існує")
+                .showAlert(true)
+                .build());
+//                Controller.getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану" +
+//                " із цією заявкою, бо її вже не існує");
     }
 
     public List<BotApiMethod<?>> getLocationOfRequest(@NotNull CallbackQuery callbackQuery) {
@@ -359,7 +366,7 @@ public class UserRequestController implements Controller {
         if (userRequest != null) {
             Location messageLocation = userRequest.getLocation();
             if (messageLocation != null) {
-                return Collections.singletonList(SendLocation.builder()
+                return List.of(SendLocation.builder()
                         .chatId(String.valueOf(message.getChatId()))
                         .replyToMessageId(message.getMessageId())
                         .heading(messageLocation.getHeading())
@@ -370,13 +377,23 @@ public class UserRequestController implements Controller {
                         .proximityAlertRadius(messageLocation.getProximityAlertRadius())
                         .build());
             } else
-                return List.of(SendMessage.builder()
-                        .chatId(String.valueOf(message.getChatId()))
-                        .replyToMessageId(message.getMessageId())
+                return List.of(AnswerCallbackQuery.builder()
+                        .callbackQueryId(callbackQuery.getId())
                         .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
+                        .showAlert(true)
                         .build());
+//                        List.of(SendMessage.builder()
+//                        .chatId(String.valueOf(message.getChatId()))
+//                        .replyToMessageId(message.getMessageId())
+//                        .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
+//                        .build());
         }
-        return Controller.getSimpleResponseToRequest(message, "Ви не можете отримати шнформацію, пов'язану" +
-                " із цією заявкою, бо її вже не існує");
+        return List.of(AnswerCallbackQuery.builder()
+                .callbackQueryId(callbackQuery.getId())
+                .text("Ви не можете отримати інформацію, пов'язану із цією заявкою, бо її вже не існує")
+                .showAlert(true)
+                .build());
+//                Controller.getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану" +
+//                " із цією заявкою, бо її вже не існує");
     }
 }
