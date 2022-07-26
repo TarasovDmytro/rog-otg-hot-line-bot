@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.UserRequest;
+import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -264,7 +265,7 @@ public class UserRequestController implements Controller {
             methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                     " або натисніть кнопку 'Далі'"));
             return methods;
-        } else return createRequest(message);
+        } else return Controller.getSimpleResponseToRequest(message, RequestHandler.WRONG_ACTION_TEXT);
     }
 
     @NotNull
