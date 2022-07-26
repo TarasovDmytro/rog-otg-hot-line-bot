@@ -52,9 +52,6 @@ public class UserRequestController implements Controller {
 
     public List<BotApiMethod<?>> createRequest(Message message) {
         Long chatId = message.getChatId();
-        log.info("message has text = {}", message.hasText());
-        log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
-        log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
         if (message.hasLocation()) return setRequestLocation(message);
         if (message.hasText()) {
             switch (message.getText()) {
@@ -62,8 +59,6 @@ public class UserRequestController implements Controller {
                 case "Скасувати заявку" -> {
                     chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
-                    log.info("Bot state = {}", chatPropertyModeService.getCurrentBotState(chatId));
-                    log.info("Request State = {}", chatPropertyModeService.getStateOfRequest(chatId));
                     return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
                 }
             }
@@ -73,6 +68,8 @@ public class UserRequestController implements Controller {
                 List<BotApiMethod<?>> methods = new ArrayList<>();
                 methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Почнемо"));
                 methods.addAll(departmentController.getMenuOfDepartments(message));
+                methods.addAll(Controller.getSimpleResponseToRequest(message,"Ви можете змінити ці данні," +
+                        " або натисніть кнопку 'Далі'"));
                 return methods;
             }
             case SET_LOCATION -> {
@@ -106,9 +103,7 @@ public class UserRequestController implements Controller {
             case SET_DEPARTMENT ->
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
             case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
-//            case WAIT_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_ADDRESS);
             case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_TEXT);
-//            case WAIT_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
             case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
         }
     }
