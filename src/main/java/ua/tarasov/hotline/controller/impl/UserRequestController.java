@@ -104,14 +104,13 @@ public class UserRequestController implements Controller {
 
     public void switchStateOfRequest(Long chatId) {
         switch (chatPropertyModeService.getStateOfRequest(chatId)) {
-            case SET_DEPARTMENT ->
-                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
+            case SET_DEPARTMENT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
             case SET_LOCATION -> {
                 chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE);
                 chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
             }
             case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_TEXT);
-            case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
+//            case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
         }
     }
 
