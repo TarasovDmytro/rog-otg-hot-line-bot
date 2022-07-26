@@ -307,8 +307,13 @@ public class UserRequestController implements Controller {
                                 "\nабо її не можливо виконати з незалежних від нас причин")
                         .build());
             } else
-                return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Ця заявка має статус" +
-                        " 'Виконана' і не може бути видалена примусово");
+                return List.of(AnswerCallbackQuery.builder()
+                        .text("Ця заявка має статус" +
+                        " 'Виконана' і не може бути видалена примусово")
+                        .showAlert(true)
+                        .build());
+//                        Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Ця заявка має статус" +
+//                        " 'Виконана' і не може бути видалена примусово");
         } else
             return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було" +
                     " видалено раніше");
