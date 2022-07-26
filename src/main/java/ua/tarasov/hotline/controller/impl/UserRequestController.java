@@ -260,9 +260,7 @@ public class UserRequestController implements Controller {
             methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                     " або натисніть кнопку 'Далі'"));
             return methods;
-        } else {
-            return createRequest(message);
-        }
+        } else return createRequest(message);
     }
 
     @NotNull
