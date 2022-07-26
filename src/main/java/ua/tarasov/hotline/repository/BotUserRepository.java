@@ -14,5 +14,5 @@ public interface BotUserRepository extends JpaRepository<BotUser, Long> {
 
     BotUser findByRole(Role role);
 
-    Optional<BotUser> findByPhone (String phone);
+    Optional<BotUser> findByPhone(String phone);
 }

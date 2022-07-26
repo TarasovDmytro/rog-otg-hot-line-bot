@@ -27,7 +27,9 @@ public interface ChatPropertyModeService {
     void setCurrentBotState(long chatId, BotState botState);
 
     BotState getCurrentBotState(long chatId);
+
     void setCurrentStateOfRequest(long chatId, StateOfRequest stateOfRequest);
+
     StateOfRequest getStateOfRequest(Long chatId);
 
     void setCurrentRequestAddress(long chatId, String address);

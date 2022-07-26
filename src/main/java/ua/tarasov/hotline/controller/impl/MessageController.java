@@ -44,7 +44,7 @@ public class MessageController implements Controller {
         if (checkRoleService.checkIsAdmin(message.getChatId())) {
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
             return Controller.getSimpleResponseToRequest(message, """
-                    Введіть, будьласка, повідомлення
+                    Введіть, будь ласка, повідомлення
                     для всіх користувачів""");
         }
         return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
@@ -75,12 +75,12 @@ public class MessageController implements Controller {
         return Collections.singletonList(SendMessage.builder()
                 .chatId(callbackQuery.getMessage().getChatId().toString())
                 .text("""
-                        Дякую, відправте, будьласка, Вашу поточну геолокацію.
-                        Це можна зробити, натиснув на позначку 'скрепки' поруч
-                        із полем для вводу текста.\s
+                        Дякую, відправте, будь ласка, Вашу поточну геолокацію.
+                        Це можна зробити, натиснув на позначку 'скріпки' поруч
+                        із полем для вводу тексту.\s
                         Увага! Телеграм підтримує цю послугу тільки у версії для
                         смартфонів, якщо Ви використовуєте інший пристрій, або
-                        передумали - натиснить кнопку 'відмовитись'""")
+                        передумали - натисніть кнопку 'відмовитись'""")
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getRefuseButton(callbackQuery.getMessage()))
                         .build())
@@ -90,7 +90,7 @@ public class MessageController implements Controller {
     public List<BotApiMethod<?>> setRequestAddressMessage(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_ADDRESS);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
-        return Controller.getSimpleResponseToRequest(message, "Введіть, будьласка, адресу," +
+        return Controller.getSimpleResponseToRequest(message, "Введіть, будь ласка, адресу," +
                 " за якою сталася проблема");
     }
 

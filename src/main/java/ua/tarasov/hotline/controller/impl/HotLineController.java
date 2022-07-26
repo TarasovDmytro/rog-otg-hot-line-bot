@@ -6,13 +6,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.models.RogOTGHotLineBot;
 
 @RestController
 public class HotLineController {
-private  final RogOTGHotLineBot bot;
+    private final RogOTGHotLineBot bot;
 
     public HotLineController(RogOTGHotLineBot bot) {
         this.bot = bot;

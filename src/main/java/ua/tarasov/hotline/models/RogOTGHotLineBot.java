@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -31,12 +28,11 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RogOTGHotLineBot extends SpringWebhookBot {
+    @Autowired
+    final HotLineFacade hotLineFacade;
     String botPath;
     String botUsername;
     String botToken;
-
-    @Autowired
-    final HotLineFacade hotLineFacade;
     @Qualifier("getChatProperties")
     @Autowired
     ChatPropertyModeService chatPropertyModeService;
@@ -90,8 +86,8 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
             chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE_TO_ALL);
             for (BotApiMethod<?> botApiMethod : methods) {
                 try {
-                        execute(botApiMethod);
-                        Thread.sleep(35);
+                    execute(botApiMethod);
+                    Thread.sleep(35);
                 } catch (TelegramApiException | InterruptedException e) {
                     e.printStackTrace();
                 }

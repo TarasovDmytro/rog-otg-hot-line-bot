@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface HotLineFacade {
     List<BotApiMethod<?>> handleUpdate(Update update);
+
     List<BotApiMethod<?>> notificationUpdate();
 }

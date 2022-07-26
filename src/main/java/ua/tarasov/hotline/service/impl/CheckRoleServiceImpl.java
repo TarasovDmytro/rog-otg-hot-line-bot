@@ -21,7 +21,7 @@ public class CheckRoleServiceImpl implements CheckRoleService {
         if (botUserService.findById(userId).isPresent()) {
             botUser = botUserService.findById(userId).get();
         }
-        return botUser.getRole().equals(Role.ADMIN)||botUser.getRole().equals(Role.SUPER_ADMIN);
+        return botUser.getRole().equals(Role.ADMIN) || botUser.getRole().equals(Role.SUPER_ADMIN);
     }
 
     @Override

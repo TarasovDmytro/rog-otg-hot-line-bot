@@ -25,7 +25,7 @@ public class UserRequestServiceImpl implements UserRequestService {
     }
 
     @Override
-    public void saveRequest(UserRequest request){
+    public void saveRequest(UserRequest request) {
         requestRepository.save(request);
         cleanRequestDB();
     }

@@ -37,37 +37,37 @@ public class CallBackQueryHandler implements RequestHandler {
     @Override
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
-            if (callbackQuery.getData().startsWith("department")) {
-                return departmentController.setDepartment(callbackQuery);
-            }
-            if (callbackQuery.getData().startsWith("message_id")) {
-                return userRequestController.setStateRequest(callbackQuery);
-            }
-            if (callbackQuery.getData().startsWith("refuse_request")) {
-                return userRequestController.setRefuseRequest(callbackQuery);
-            }
-            if (callbackQuery.getData().startsWith("contact")) {
-                return userRequestController.getContactOfRequest(callbackQuery);
-            }
-            if (callbackQuery.getData().startsWith("yes-location")) {
-                return messageController.setLocationMessage(callbackQuery);
-            }
-            if (callbackQuery.getData().startsWith("yes-department")) {
-                return botUserController.setBotUserDepartment(callbackQuery);
-            }
-            if (callbackQuery.getData().startsWith("no-location")) {
-                return messageController.setRequestAddressMessage(callbackQuery.getMessage());
-            }
-            if (callbackQuery.getData().startsWith("no-department")) {
-                return messageController.setRefuseRequestMessage(callbackQuery);
-            }
+        if (callbackQuery.getData().startsWith("department")) {
+            return departmentController.setDepartment(callbackQuery);
+        }
+        if (callbackQuery.getData().startsWith("message_id")) {
+            return userRequestController.setStateRequest(callbackQuery);
+        }
+        if (callbackQuery.getData().startsWith("refuse_request")) {
+            return userRequestController.setRefuseRequest(callbackQuery);
+        }
+        if (callbackQuery.getData().startsWith("contact")) {
+            return userRequestController.getContactOfRequest(callbackQuery);
+        }
+        if (callbackQuery.getData().startsWith("yes-location")) {
+            return messageController.setLocationMessage(callbackQuery);
+        }
+        if (callbackQuery.getData().startsWith("yes-department")) {
+            return botUserController.setBotUserDepartment(callbackQuery);
+        }
+        if (callbackQuery.getData().startsWith("no-location")) {
+            return messageController.setRequestAddressMessage(callbackQuery.getMessage());
+        }
+        if (callbackQuery.getData().startsWith("no-department")) {
+            return messageController.setRefuseRequestMessage(callbackQuery);
+        }
 
-            if (callbackQuery.getData().startsWith("location")) {
-                return userRequestController.getLocationOfRequest(callbackQuery);
-            }
-            if (callbackQuery.getData().startsWith("refuse")) {
-                return messageController.refuseSetLocationOfRequestMessage(callbackQuery);
-            }
+        if (callbackQuery.getData().startsWith("location")) {
+            return userRequestController.getLocationOfRequest(callbackQuery);
+        }
+        if (callbackQuery.getData().startsWith("refuse")) {
+            return messageController.refuseSetLocationOfRequestMessage(callbackQuery);
+        }
         return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), WRONG_ACTION_TEXT);
     }
 }

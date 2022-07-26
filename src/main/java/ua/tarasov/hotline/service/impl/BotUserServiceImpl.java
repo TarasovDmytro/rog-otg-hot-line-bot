@@ -19,17 +19,17 @@ public class BotUserServiceImpl implements BotUserService {
     }
 
     @Override
-    public void saveBotUser (BotUser botUser){
+    public void saveBotUser(BotUser botUser) {
         botUserRepository.save(botUser);
     }
 
     @Override
-    public Optional<BotUser> findById (Long botUserId){
+    public Optional<BotUser> findById(Long botUserId) {
         return botUserRepository.findById(botUserId);
     }
 
     @Override
-    public List<BotUser> findAll (){
+    public List<BotUser> findAll() {
         return botUserRepository.findAll();
     }
 

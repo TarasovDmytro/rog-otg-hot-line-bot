@@ -74,8 +74,6 @@ public class UserRequestController implements Controller {
                     methods.addAll(departmentController.getMenuOfDepartments(message));
                     methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі",
                             "Ви можете змінити ці данні, або натисніть кнопку 'Далі'"));
-//                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
-//                            " або натисніть кнопку 'Далі'"));
                     return methods;
                 }
                 case SET_LOCATION -> {

@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -38,7 +37,8 @@ public class BotUserController implements Controller {
         this.keyboardService = keyboardService;
     }
 
-    @NotNull @Unmodifiable
+    @NotNull
+    @Unmodifiable
     public List<BotApiMethod<?>> setStartProperties(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         User user = message.getFrom();
@@ -86,7 +86,8 @@ public class BotUserController implements Controller {
         return responseMessages;
     }
 
-    @NotNull @Unmodifiable
+    @NotNull
+    @Unmodifiable
     public List<BotApiMethod<?>> setBotUserDepartment(@NotNull CallbackQuery callbackQuery) {
         String[] depText = jsonConverter.fromJson(callbackQuery.getData().substring("yes-department".length()), String[].class);
         if (botUserService.findById(Long.parseLong(depText[0])).isPresent()) {
