@@ -58,6 +58,7 @@ public class UserRequestController implements Controller {
                 switch (message.getText()) {
                     case "Далі" -> switchStateOfRequest(chatId);
                     case "Скасувати заявку" -> {
+                        chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
                         chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
                         chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
                         return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
@@ -204,6 +205,7 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             requestService.saveRequest(userRequest);
+            chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             if (!botUsers.isEmpty()) {
@@ -231,7 +233,7 @@ public class UserRequestController implements Controller {
         userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
         userRequest.setAddress(chatPropertyModeService.getCurrentRequestAddress(message.getChatId()));
         userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
-        chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
+//        chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID "
                 + userRequest.getMessageId() + "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
