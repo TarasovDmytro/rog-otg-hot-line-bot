@@ -52,6 +52,7 @@ public class UserRequestController implements Controller {
 
     public List<BotApiMethod<?>> createRequest(Message message) {
         Long chatId = message.getChatId();
+        if (!chatPropertyModeService.getStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)){
         if (message.hasLocation()) return setRequestLocation(message);
         if (message.hasText()) {
             switch (message.getText()) {
@@ -61,6 +62,7 @@ public class UserRequestController implements Controller {
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
                     return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
                 }
+                case "Відправити заявку" -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
             }
         }
         switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
@@ -78,11 +80,7 @@ public class UserRequestController implements Controller {
             }
             case WAIT_ADDRESS -> {
                 log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                List<BotApiMethod<?>> methods = new ArrayList<>();
-                methods.addAll(messageController.setRequestAddressMessage(message));
-                methods.addAll(Controller.getSimpleResponseToRequest(message,"Ви можете змінити ці данні," +
-                        " або натисніть кнопку 'Далі'"));
-                return methods;
+                return messageController.setRequestAddressMessage(message);
             }
             case SET_ADDRESS -> {
                 log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
@@ -98,6 +96,7 @@ public class UserRequestController implements Controller {
                 chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 return createNewUserRequest(message);
             }
+        }
         }
         return createRequestMessageHandler(message);
     }
@@ -241,8 +240,11 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
-//        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_TEXT);
-        return keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Адресу додано до заявки");
+        List<BotApiMethod<?>> methods = new ArrayList<>();
+        methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Адресу додано до заявки"));
+        methods.addAll(Controller.getSimpleResponseToRequest(message,"Ви можете змінити ці данні," +
+                " або натисніть кнопку 'Далі'"));
+        return methods;
     }
 
     public List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
@@ -250,9 +252,9 @@ public class UserRequestController implements Controller {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
-            return Controller.getSimpleResponseToRequest(message, "Локацію установлено");
+            return Controller.getSimpleResponseToRequest(message, "Локацію установлено, натисніть кнопку 'Далі'");
         } else return Controller.getSimpleResponseToRequest(message,
-                "Вибачте, але локацію має сенс додавати тільки при створенні заявки.");
+                "Вибачте, але локацію до заявки можна додати тільки один раз");
     }
 
     @NotNull
