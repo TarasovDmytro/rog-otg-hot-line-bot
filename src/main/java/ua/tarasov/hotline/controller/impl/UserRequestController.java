@@ -71,10 +71,11 @@ public class UserRequestController implements Controller {
             switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
                 case SET_DEPARTMENT -> {
                     List<BotApiMethod<?>> methods = new ArrayList<>();
-                    methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Почнемо"));
                     methods.addAll(departmentController.getMenuOfDepartments(message));
-                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
-                            " або натисніть кнопку 'Далі'"));
+                    methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі",
+                            "Ви можете змінити ці данні, або натисніть кнопку 'Далі'"));
+//                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
+//                            " або натисніть кнопку 'Далі'"));
                     return methods;
                 }
                 case SET_LOCATION -> {
@@ -319,9 +320,6 @@ public class UserRequestController implements Controller {
                 .text("Цю заявку було видалено раніше")
                 .showAlert(true)
                 .build());
-//                Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було" +
-//                    " видалено раніше");
-
     }
 
     public List<BotApiMethod<?>> getContactOfRequest(@NotNull CallbackQuery callbackQuery) {
@@ -340,17 +338,12 @@ public class UserRequestController implements Controller {
                     String messageText = userRequest.getBodyOfMessage() +
                             "\n\nІз користувачем можна зв'язатись за телефоном:\n"
                             + phone;
-                    return List.of(AnswerCallbackQuery.builder()
-                            .callbackQueryId(callbackQuery.getId())
-                            .text(messageText)
-                            .showAlert(true)
-                            .build());
+                    return Controller.getSimpleResponseToRequest(message, messageText);
                 } else return List.of(AnswerCallbackQuery.builder()
                         .callbackQueryId(callbackQuery.getId())
                         .text("Користувач відмовився надати свій номер телефону")
                         .showAlert(true)
                         .build());
-
             }
         }
         return List.of(AnswerCallbackQuery.builder()
@@ -390,7 +383,5 @@ public class UserRequestController implements Controller {
                 .text("Ви не можете отримати інформацію, пов'язану із цією заявкою, бо її вже не існує")
                 .showAlert(true)
                 .build());
-//                Controller.getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану" +
-//                " із цією заявкою, бо її вже не існує");
     }
 }
