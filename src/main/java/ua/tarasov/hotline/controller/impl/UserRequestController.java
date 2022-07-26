@@ -52,51 +52,52 @@ public class UserRequestController implements Controller {
 
     public List<BotApiMethod<?>> createRequest(Message message) {
         Long chatId = message.getChatId();
-        if (!chatPropertyModeService.getStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)){
-        if (message.hasLocation()) return setRequestLocation(message);
-        if (message.hasText()) {
-            switch (message.getText()) {
-                case "Далі" -> switchStateOfRequest(chatId);
-                case "Скасувати заявку" -> {
-                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
-                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
-                    return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
+        if (!chatPropertyModeService.getStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)) {
+            if (message.hasLocation()) return setRequestLocation(message);
+            if (message.hasText()) {
+                switch (message.getText()) {
+                    case "Далі" -> switchStateOfRequest(chatId);
+                    case "Скасувати заявку" -> {
+                        chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
+                        chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
+                        return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
+                    }
+                    case "Відправити заявку" ->
+                            chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 }
-                case "Відправити заявку" -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
             }
-        }
-        switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
-            case SET_DEPARTMENT -> {
-                List<BotApiMethod<?>> methods = new ArrayList<>();
-                methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Почнемо"));
-                methods.addAll(departmentController.getMenuOfDepartments(message));
-                methods.addAll(Controller.getSimpleResponseToRequest(message,"Ви можете змінити ці данні," +
-                        " або натисніть кнопку 'Далі'"));
-                return methods;
-            }
-            case SET_LOCATION -> {
-                log.info("case SET_LOCATION = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                return getLocationMenu(message);
-            }
-            case WAIT_ADDRESS -> {
-                log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                return messageController.setRequestAddressMessage(message);
-            }
-            case SET_ADDRESS -> {
-                log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_ADDRESS);
-                return setRequestAddress(message);
-            }
-            case WAIT_TEXT -> {
-                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
-                return Controller.getSimpleResponseToRequest(message, "Введіть, будьласка, докладний опис існуючої проблеми");
-            }
-            case SET_TEXT -> {
-                log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
+            switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
+                case SET_DEPARTMENT -> {
+                    List<BotApiMethod<?>> methods = new ArrayList<>();
+                    methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Почнемо"));
+                    methods.addAll(departmentController.getMenuOfDepartments(message));
+                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
+                            " або натисніть кнопку 'Далі'"));
+                    return methods;
+                }
+                case SET_LOCATION -> {
+                    log.info("case SET_LOCATION = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                    return getLocationMenu(message);
+                }
+                case WAIT_ADDRESS -> {
+                    log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                    return messageController.setRequestAddressMessage(message);
+                }
+                case SET_ADDRESS -> {
+                    log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_ADDRESS);
+                    return setRequestAddress(message);
+                }
+                case WAIT_TEXT -> {
+                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
+                    return Controller.getSimpleResponseToRequest(message, "Введіть, будьласка, докладний опис існуючої проблеми");
+                }
+                case SET_TEXT -> {
+                    log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
 //                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
-                return createNewUserRequest(message);
+                    return createNewUserRequest(message);
+                }
             }
-        }
         }
         return createRequestMessageHandler(message);
     }
@@ -242,7 +243,7 @@ public class UserRequestController implements Controller {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         List<BotApiMethod<?>> methods = new ArrayList<>();
         methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Адресу додано до заявки"));
-        methods.addAll(Controller.getSimpleResponseToRequest(message,"Ви можете змінити ці данні," +
+        methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                 " або натисніть кнопку 'Далі'"));
         return methods;
     }
