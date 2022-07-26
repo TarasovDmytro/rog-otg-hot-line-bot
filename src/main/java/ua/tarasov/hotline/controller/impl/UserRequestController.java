@@ -78,7 +78,11 @@ public class UserRequestController implements Controller {
             }
             case WAIT_ADDRESS -> {
                 log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                return messageController.setRequestAddressMessage(message);
+                List<BotApiMethod<?>> methods = new ArrayList<>();
+                methods.addAll(messageController.setRequestAddressMessage(message));
+                methods.addAll(Controller.getSimpleResponseToRequest(message,"Ви можете змінити ці данні," +
+                        " або натисніть кнопку 'Далі'"));
+                return methods;
             }
             case SET_ADDRESS -> {
                 log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
