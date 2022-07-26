@@ -94,7 +94,6 @@ public class UserRequestController implements Controller {
                 }
                 case SET_TEXT -> {
                     log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
-//                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                     return createNewUserRequest(message);
                 }
             }
@@ -234,11 +233,16 @@ public class UserRequestController implements Controller {
         userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
         chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
-        userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID " + userRequest.getMessageId() +
-                "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
+        userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID "
+                + userRequest.getMessageId() + "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
                 "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
-        return keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку", userRequest.getBodyOfMessage());
+        List<BotApiMethod<?>> methods = new ArrayList<>();
+        methods.addAll(Controller.getSimpleResponseToRequest(message, "Адресу додано до заявки,\nВи можете" +
+                " змінити ці данні,або натисніть кнопку 'Відправити заявку'"));
+        methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку",
+                userRequest.getBodyOfMessage()));
+        return methods;
     }
 
     public List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
