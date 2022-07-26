@@ -233,17 +233,16 @@ public class UserRequestController implements Controller {
         userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
         userRequest.setAddress(chatPropertyModeService.getCurrentRequestAddress(message.getChatId()));
         userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
-//        chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID "
                 + userRequest.getMessageId() + "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
                 "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
         List<BotApiMethod<?>> methods = new ArrayList<>();
-        methods.addAll(Controller.getSimpleResponseToRequest(message, "Адресу додано до заявки,\nВи можете" +
-                " змінити ці данні,або натисніть кнопку 'Відправити заявку'"));
+        methods.addAll(Controller.getSimpleResponseToRequest(message, "Опис проблеми додано до заявки,\nВи можете" +
+                " його змінити,або натисніть кнопку 'Відправити заявку'"));
         methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку",
-                userRequest.getBodyOfMessage()));
+                "Ваша заявка\n" + userRequest.getBodyOfMessage()));
         return methods;
     }
 
