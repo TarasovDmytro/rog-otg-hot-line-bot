@@ -105,13 +105,13 @@ public class UserRequestController implements Controller {
 
     public void switchStateOfRequest(Long chatId) {
         switch (chatPropertyModeService.getStateOfRequest(chatId)) {
-            case SET_DEPARTMENT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
+            case SET_DEPARTMENT ->
+                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
             case SET_LOCATION -> {
                 chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE);
                 chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
             }
             case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_TEXT);
-//            case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
         }
     }
 
@@ -308,8 +308,9 @@ public class UserRequestController implements Controller {
                         .build());
             } else
                 return List.of(AnswerCallbackQuery.builder()
+                        .callbackQueryId(callbackQuery.getId())
                         .text("Ця заявка має статус" +
-                        " 'Виконана' і не може бути видалена примусово")
+                                " 'Виконана' і не може бути видалена примусово")
                         .showAlert(true)
                         .build());
 //                        Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Ця заявка має статус" +
