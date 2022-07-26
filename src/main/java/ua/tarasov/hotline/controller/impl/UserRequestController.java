@@ -260,8 +260,9 @@ public class UserRequestController implements Controller {
             methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                     " або натисніть кнопку 'Далі'"));
             return methods;
-        } else return Controller.getSimpleResponseToRequest(message,
-                "Вибачте, але локацію до заявки можна додати тільки один раз");
+        } else {
+            return createRequest(message);
+        }
     }
 
     @NotNull
