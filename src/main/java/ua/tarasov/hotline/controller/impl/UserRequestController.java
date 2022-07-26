@@ -284,17 +284,23 @@ public class UserRequestController implements Controller {
         userRequest = requestService.findByMessageId(messageId);
         if (userRequest != null) {
             long chatId = userRequest.getChatId();
-            requestService.deleteUserRequest(userRequest);
-            return List.of(SendMessage.builder()
-                    .chatId(String.valueOf(chatId))
-                    .replyToMessageId(messageId)
-                    .text("Нажаль, ми вимушені відмовити Вам у виконанні заявки" +
-                            "\nID " + messageId + "\nвід " + userRequest.getDateTimeToString() +
-                            "\n\nВаша заявка не є в компетенції нашого департаменту," +
-                            "\nабо її не можливо виконати з незалежних від нас причин")
-                    .build());
+            if (!userRequest.isState()) {
+                requestService.deleteUserRequest(userRequest);
+                return List.of(SendMessage.builder()
+                        .chatId(String.valueOf(chatId))
+                        .replyToMessageId(messageId)
+                        .text("Нажаль, ми вимушені відмовити Вам у виконанні заявки" +
+                                "\nID " + messageId + "\nвід " + userRequest.getDateTimeToString() +
+                                "\n\nВаша заявка не є в компетенції нашого департаменту," +
+                                "\nабо її не можливо виконати з незалежних від нас причин")
+                        .build());
+            } else
+                return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Ця заявка має статус" +
+                        " 'Виконана' і не може бути видалена примусово");
         } else
-            return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було видалено раніше");
+            return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було" +
+                    " видалено раніше");
+
     }
 
     public List<BotApiMethod<?>> getContactOfRequest(@NotNull CallbackQuery callbackQuery) {
@@ -323,8 +329,8 @@ public class UserRequestController implements Controller {
                 }
             }
         }
-        return Controller.getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану із цією заявкою," +
-                " бо, на теперішній час її вже не існує");
+        return Controller.getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану" +
+                " із цією заявкою, бо її вже не існує");
     }
 
     public List<BotApiMethod<?>> getLocationOfRequest(@NotNull CallbackQuery callbackQuery) {
@@ -352,7 +358,7 @@ public class UserRequestController implements Controller {
                         .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
                         .build());
         }
-        return Controller.getSimpleResponseToRequest(message, "Ви не можете отримати шнформацію, пов'язану із цією заявкою," +
-                " бо, на теперішній час її вже не існує");
+        return Controller.getSimpleResponseToRequest(message, "Ви не можете отримати шнформацію, пов'язану" +
+                " із цією заявкою, бо її вже не існує");
     }
 }
