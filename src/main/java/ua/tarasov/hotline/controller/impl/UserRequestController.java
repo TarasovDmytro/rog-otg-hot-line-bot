@@ -340,7 +340,11 @@ public class UserRequestController implements Controller {
                     String messageText = userRequest.getBodyOfMessage() +
                             "\n\nІз користувачем можна зв'язатись за телефоном:\n"
                             + phone;
-                    return Controller.getSimpleResponseToRequest(message, messageText);
+                    return List.of(AnswerCallbackQuery.builder()
+                            .callbackQueryId(callbackQuery.getId())
+                            .text(messageText)
+                            .showAlert(true)
+                            .build());
                 } else return List.of(AnswerCallbackQuery.builder()
                         .callbackQueryId(callbackQuery.getId())
                         .text("Користувач відмовився надати свій номер телефону")
@@ -354,8 +358,6 @@ public class UserRequestController implements Controller {
                 .text("Ви не можете отримати інформацію, пов'язану із цією заявкою, бо її вже не існує")
                 .showAlert(true)
                 .build());
-//                Controller.getSimpleResponseToRequest(message, "Ви не можете отримати інформацію, пов'язану" +
-//                " із цією заявкою, бо її вже не існує");
     }
 
     public List<BotApiMethod<?>> getLocationOfRequest(@NotNull CallbackQuery callbackQuery) {
@@ -382,11 +384,6 @@ public class UserRequestController implements Controller {
                         .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
                         .showAlert(true)
                         .build());
-//                        List.of(SendMessage.builder()
-//                        .chatId(String.valueOf(message.getChatId()))
-//                        .replyToMessageId(message.getMessageId())
-//                        .text("Вибачте, але до заявки ID:" + messageId + " локацію не додавали")
-//                        .build());
         }
         return List.of(AnswerCallbackQuery.builder()
                 .callbackQueryId(callbackQuery.getId())
