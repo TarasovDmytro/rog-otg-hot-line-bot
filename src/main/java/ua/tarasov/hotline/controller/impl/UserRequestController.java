@@ -255,7 +255,11 @@ public class UserRequestController implements Controller {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
-            return Controller.getSimpleResponseToRequest(message, "Локацію установлено, натисніть кнопку 'Далі'");
+            List<BotApiMethod<?>> methods = new ArrayList<>();
+            methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Далі", "Локацію додано до заявки"));
+            methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
+                    " або натисніть кнопку 'Далі'"));
+            return methods;
         } else return Controller.getSimpleResponseToRequest(message,
                 "Вибачте, але локацію до заявки можна додати тільки один раз");
     }
