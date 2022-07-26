@@ -106,7 +106,10 @@ public class UserRequestController implements Controller {
         switch (chatPropertyModeService.getStateOfRequest(chatId)) {
             case SET_DEPARTMENT ->
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
-            case SET_LOCATION -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
+            case SET_LOCATION -> {
+                chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE);
+                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
+            }
             case SET_ADDRESS -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_TEXT);
             case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
         }
@@ -252,7 +255,6 @@ public class UserRequestController implements Controller {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
-            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
             return Controller.getSimpleResponseToRequest(message, "Локацію установлено, натисніть кнопку 'Далі'");
         } else return Controller.getSimpleResponseToRequest(message,
                 "Вибачте, але локацію до заявки можна додати тільки один раз");
