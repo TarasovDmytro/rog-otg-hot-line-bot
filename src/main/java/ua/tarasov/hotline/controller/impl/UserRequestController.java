@@ -306,18 +306,18 @@ public class UserRequestController implements Controller {
                                 "\n\nВаша заявка не є в компетенції нашого департаменту," +
                                 "\nабо її не можливо виконати з незалежних від нас причин")
                         .build());
-            } else
-                return List.of(AnswerCallbackQuery.builder()
+            } else return List.of(AnswerCallbackQuery.builder()
                         .callbackQueryId(callbackQuery.getId())
-                        .text("Ця заявка має статус" +
-                                " 'Виконана' і не може бути видалена примусово")
+                        .text("Ця заявка має статус 'Виконана' і не може бути видалена примусово")
                         .showAlert(true)
                         .build());
-//                        Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Ця заявка має статус" +
-//                        " 'Виконана' і не може бути видалена примусово");
-        } else
-            return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було" +
-                    " видалено раніше");
+        } else return List.of(AnswerCallbackQuery.builder()
+                .callbackQueryId(callbackQuery.getId())
+                .text("Цю заявку було видалено раніше")
+                .showAlert(true)
+                .build());
+//                Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цю заявку було" +
+//                    " видалено раніше");
 
     }
 
