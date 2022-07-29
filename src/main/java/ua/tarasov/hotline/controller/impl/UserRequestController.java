@@ -62,7 +62,7 @@ public class UserRequestController implements Controller {
                         chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
                         chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_BUTTON);
                         chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
-                        return keyboardService.setReplyKeyboard(chatId, "Заявку скасовано");
+                        return keyboardService.setReplyKeyboardOfUser(chatId, "Заявку скасовано");
                     }
                     case "Відправити заявку" ->
                             chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
@@ -216,7 +216,7 @@ public class UserRequestController implements Controller {
             }
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-            answerMessages.addAll(keyboardService.setReplyKeyboard(message.getChatId(),
+            answerMessages.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
                     "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
                             "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             return answerMessages;

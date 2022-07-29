@@ -162,7 +162,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         return buttons;
     }
 
-    public List<BotApiMethod<?>> setReplyKeyboard(Long userId, String messageText) {
+    public List<BotApiMethod<?>> setReplyKeyboardOfUser(Long userId, String messageText) {
         List<KeyboardRow> keyboardRows = chatPropertyModeService.getCurrentAdminKeyboardState(userId) ?
                 getAdminReplyButtons() : getUserReplyButtons(userId);
         return Collections.singletonList(SendMessage.builder()
@@ -181,7 +181,7 @@ public class KeyboardServiceImpl implements KeyboardService {
             boolean state = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId());
             chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), !state);
             String messageText = "Меню змінено, приємного користування";
-            return setReplyKeyboard(message.getChatId(), messageText);
+            return setReplyKeyboardOfUser(message.getChatId(), messageText);
         }
         return List.of(checkRoleService.getFalseAdminText(message.getChatId()));
     }

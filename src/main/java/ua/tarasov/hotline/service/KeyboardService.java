@@ -26,7 +26,7 @@ public interface KeyboardService {
 
     List<List<InlineKeyboardButton>> getStateRequestButton(Integer messageId, String text);
 
-    List<BotApiMethod<?>> setReplyKeyboard(Long userId, String messageText);
+    List<BotApiMethod<?>> setReplyKeyboardOfUser(Long userId, String messageText);
 
     List<BotApiMethod<?>> setChangeMenu(Message message);
 

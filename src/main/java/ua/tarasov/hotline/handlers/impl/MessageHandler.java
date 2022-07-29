@@ -85,7 +85,7 @@ public class MessageHandler implements RequestHandler {
                     return messageController.setMessageToAll(message);
                 }
                 case "❌ Відмовитись" -> {
-                    return keyboardService.setReplyKeyboard(message.getChatId(), START_TEXT);
+                    return keyboardService.setReplyKeyboardOfUser(message.getChatId(), START_TEXT);
                 }
                 case "Останні оголошення" -> {
                     return notificationController.getNotifications(message);
@@ -95,6 +95,8 @@ public class MessageHandler implements RequestHandler {
                         return superAdminController.requestAdminRole(message);
                     if (message.getText().startsWith("*set*"))
                         return superAdminController.handelRequestAdminRole(message);
+                    if (message.getText().startsWith("*role*"))
+                        return superAdminController.changeRoleRequest(message);
                 }
             }
         }

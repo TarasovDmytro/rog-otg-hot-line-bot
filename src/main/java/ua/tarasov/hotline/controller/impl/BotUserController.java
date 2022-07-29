@@ -81,7 +81,7 @@ public class BotUserController implements Controller {
             if (!phone.startsWith("+")) phone = "+" + phone;
             botUser.setPhone(phone);
             botUserService.saveBotUser(botUser);
-            responseMessages = keyboardService.setReplyKeyboard(message.getChatId(), START_TEXT);
+            responseMessages = keyboardService.setReplyKeyboardOfUser(message.getChatId(), START_TEXT);
         }
         return responseMessages;
     }

@@ -28,11 +28,13 @@ public class SuperAdminController implements Controller {
     final CheckRoleService checkRoleService;
 
     BotUser botUser = new BotUser();
+    private final DepartmentController departmentController;
 
-    public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService, CheckRoleService checkRoleService) {
+    public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService, CheckRoleService checkRoleService, DepartmentController departmentController) {
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
         this.checkRoleService = checkRoleService;
+        this.departmentController = departmentController;
     }
 
     @NotNull
@@ -51,6 +53,28 @@ public class SuperAdminController implements Controller {
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
                         + "\n<b>ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
                         "\nдепартаменти:" + depText.stream().skip(1).toList() + "\nВстановити зв'язок?")
+                .parseMode("HTML")
+                .replyMarkup(InlineKeyboardMarkup.builder()
+                        .keyboard(keyboardService.getAgreeButtons(dataStartText))
+                        .build())
+                .build());
+    }
+
+    public List<BotApiMethod<?>> requestRole(@NotNull Message message, List<Department> departments) {
+        if (botUserService.findById(message.getChatId()).isPresent()) {
+            botUser = botUserService.findById(message.getChatId()).get();
+        }
+        List<String> depText = new ArrayList<>();
+        depText.add(message.getChatId().toString());
+        departments.forEach(department -> depText.add(Arrays.toString(Department.values())));
+//        depText.addAll(Arrays.stream(message.getText().substring("*admin*".length()).split(":")).toList());
+        String dataStartText = "department" + jsonConverter.toJson(depText);
+        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        return List.of(SendMessage.builder()
+                .chatId(String.valueOf(superAdmin.getId()))
+                .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
+                        + "\n<b>ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
+                        "\nдепартаменти:" + departments.stream().toList() + "\nВстановити зв'язок?")
                 .parseMode("HTML")
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
@@ -90,18 +114,32 @@ public class SuperAdminController implements Controller {
             if (checkRoleService.checkIsAdmin(botUser.getId())) {
                 StringBuilder builder = new StringBuilder("встановлені для департаментів: ");
                 botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
-                return List.of(keyboardService.setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора " + builder).get(0),
+                return List.of(keyboardService.setReplyKeyboardOfUser(botUser.getId(), "Ваші права доступу адміністратора " + builder).get(0),
                         SendMessage.builder()
                                 .chatId(String.valueOf(superAdmin.getId()))
                                 .text("Права доступу адміністратора " + botUser.getFullName() + " " + builder)
                                 .build());
             } else {
-                return List.of(keyboardService.setReplyKeyboard(botUser.getId(), "Ваші права доступу адміністратора анульовані").get(0),
+                return List.of(keyboardService.setReplyKeyboardOfUser(botUser.getId(), "Ваші права доступу адміністратора анульовані").get(0),
                         SendMessage.builder()
                                 .chatId(String.valueOf(superAdmin.getId()))
                                 .text("Права доступу адміністратора для " + botUser.getFullName() + " анульовані")
                                 .build());
             }
         } else return Controller.getSimpleResponseToRequest(message, "You do not have enough access rights");
+    }
+
+    public List<BotApiMethod<?>> changeRoleRequest(Message message){
+        List <Department> departments = new ArrayList<>();
+        if (!message.getText().equals("Відправити заявку")){
+            List<BotApiMethod<?>> methods = new ArrayList<>();
+            methods.addAll(departmentController.getMenuOfDepartments(message));
+            methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку",
+                    "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
+            departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+            return methods;
+        } else {
+            return requestRole(message, departments);
+        }
     }
 }
