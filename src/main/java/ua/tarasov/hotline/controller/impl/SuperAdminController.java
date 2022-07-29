@@ -134,7 +134,7 @@ public class SuperAdminController implements Controller {
         } else return Controller.getSimpleResponseToRequest(message, "You do not have enough access rights");
     }
 
-    public List<BotApiMethod<?>> changeRoleRequest(Message message){
+    public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message){
         List <Department> departments = new ArrayList<>();
         if (message.getText().equals("Скасувати заявку")){
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.ROLES_CREATED);
