@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -133,6 +134,11 @@ public class SuperAdminController implements Controller {
 
     public List<BotApiMethod<?>> changeRoleRequest(Message message){
         List <Department> departments = new ArrayList<>();
+        if (message.getText().equals("Скасувати заявку")){
+            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.ROLES_CREATED);
+            return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
+        }
         if (!message.getText().equals("Відправити заявку")){
             List<BotApiMethod<?>> methods = new ArrayList<>();
             methods.addAll(departmentController.getMenuOfDepartments(message));
