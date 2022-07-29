@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
-import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -79,7 +78,7 @@ public class SuperAdminController implements Controller {
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
                         + "\n<b>ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
-                        "\nдепартаменти:" + departments.stream().toString() + "\nВстановити зв'язок?")
+                        "\nдепартаменти:" + departments + "\nВстановити зв'язок?")
                 .parseMode("HTML")
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
