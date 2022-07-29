@@ -76,7 +76,7 @@ public class SuperAdminController implements Controller {
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
                         + "\n<b>ID:</b>" + botUser.getId() + "\nна встановлення зв'язку адмін-департамент" +
-                        "\nдепартаменти:" + departments.stream().toList() + "\nВстановити зв'язок?")
+                        "\nдепартаменти:" + departments.stream().toString() + "\nВстановити зв'язок?")
                 .parseMode("HTML")
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
