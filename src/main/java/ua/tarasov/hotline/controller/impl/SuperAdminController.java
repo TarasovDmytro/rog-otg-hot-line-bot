@@ -72,8 +72,10 @@ public class SuperAdminController implements Controller {
             Set<Department> departments = new HashSet<>();
             List<String> departmentsNumber = messageData.stream().skip(1).toList();
             for (String s : departmentsNumber) {
-                Department department = Department.values()[Integer.parseInt(s) - 1];
-                departments.add(department);
+                if (Integer.parseInt(s) > 0) {
+                    Department department = Department.values()[Integer.parseInt(s) - 1];
+                    departments.add(department);
+                }
             }
             botUser.setDepartments(departments);
             if (!botUser.getRole().equals(Role.SUPER_ADMIN)) {
