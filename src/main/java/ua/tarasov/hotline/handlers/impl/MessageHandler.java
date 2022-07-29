@@ -54,6 +54,9 @@ public class MessageHandler implements RequestHandler {
         if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
             return userRequestController.createRequest(message);
         }
+        if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.ROLES_CREATED)){
+            return superAdminController.changeRoleRequest(message);
+        }
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
             return messageController.sendMessageToAll(message);
         }
@@ -95,8 +98,10 @@ public class MessageHandler implements RequestHandler {
                         return superAdminController.requestAdminRole(message);
                     if (message.getText().startsWith("*set*"))
                         return superAdminController.handelRequestAdminRole(message);
-                    if (message.getText().startsWith("*role*"))
+                    if (message.getText().startsWith("*role*")) {
+                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
                         return superAdminController.changeRoleRequest(message);
+                    }
                 }
             }
         }

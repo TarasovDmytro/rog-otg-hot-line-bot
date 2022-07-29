@@ -13,6 +13,7 @@ import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
+import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.CheckRoleService;
 import ua.tarasov.hotline.service.KeyboardService;
@@ -70,6 +71,7 @@ public class SuperAdminController implements Controller {
 //        depText.addAll(Arrays.stream(message.getText().substring("*admin*".length()).split(":")).toList());
         String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.ROLES_CREATED);
         return List.of(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
