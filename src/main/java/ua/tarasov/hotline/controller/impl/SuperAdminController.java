@@ -71,7 +71,7 @@ public class SuperAdminController implements Controller {
 //        depText.addAll(Arrays.stream(message.getText().substring("*admin*".length()).split(":")).toList());
         String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
-        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.ROLES_CREATED);
+        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
         List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
                 "Заявку прийнято"));
         methods.add(SendMessage.builder()
@@ -137,7 +137,7 @@ public class SuperAdminController implements Controller {
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message){
         List <Department> departments = new ArrayList<>();
         if (message.getText().equals("Скасувати заявку")){
-            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.ROLES_CREATED);
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
             return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
         }
         if (!message.getText().equals("Відправити заявку")){

@@ -51,11 +51,11 @@ public class MessageHandler implements RequestHandler {
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
+        if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES)){
+            return superAdminController.changeRoleRequest(message);
+        }
         if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
             return userRequestController.createRequest(message);
-        }
-        if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.ROLES_CREATED)){
-            return superAdminController.changeRoleRequest(message);
         }
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
             return messageController.sendMessageToAll(message);
