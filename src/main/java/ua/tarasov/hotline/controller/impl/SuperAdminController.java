@@ -143,12 +143,14 @@ public class SuperAdminController implements Controller {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
             return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
         }
+        if (message.getText().equals("Додати")){
+            departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+        }
         if (!message.getText().equals("Відправити заявку")){
             List<BotApiMethod<?>> methods = new ArrayList<>();
             methods.addAll(departmentController.getMenuOfDepartments(message));
-            methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку",
+            methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), "Відправити заявку",
                     "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
-            departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
             return methods;
         } else {
             return requestRole(message, departments);

@@ -195,9 +195,32 @@ public class KeyboardServiceImpl implements KeyboardService {
         return List.of(firstRow, secondRow);
     }
 
+    public List<KeyboardRow> getRoleReplyButtons(String nameOfButton) {
+        var firstRow = new KeyboardRow();
+        firstRow.add(nameOfButton);
+        var secondRow = new KeyboardRow();
+        secondRow.add("Скасувати заявку");
+        var thirdRow = new KeyboardRow();
+        thirdRow.add("Додати");
+        return List.of(firstRow, secondRow, thirdRow);
+    }
+
     @Override
     public List<BotApiMethod<?>> setRequestReplyKeyboard(Long userId, String nameOfButton, String messageText) {
         List<KeyboardRow> keyboardRows = getRequestReplyButtons(userId, nameOfButton);
+        return Collections.singletonList(SendMessage.builder()
+                .chatId(String.valueOf(userId))
+                .text(messageText)
+                .replyMarkup(ReplyKeyboardMarkup.builder()
+                        .keyboard(keyboardRows)
+                        .resizeKeyboard(true)
+                        .oneTimeKeyboard(false)
+                        .build())
+                .build());
+    }
+
+    public List<BotApiMethod<?>> setRoleReplyKeyboard(Long userId, String nameOfButton, String messageText) {
+        List<KeyboardRow> keyboardRows = getRoleReplyButtons(nameOfButton);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(userId))
                 .text(messageText)
