@@ -78,6 +78,7 @@ public class SuperAdminController implements Controller {
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
         List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
                 "Заявку прийнято"));
+        log.info("super admin = {}", superAdmin.getFullName());
         methods.add(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
