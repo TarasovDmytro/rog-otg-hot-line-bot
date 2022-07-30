@@ -2,6 +2,7 @@ package ua.tarasov.hotline.controller.impl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
 
 import java.util.*;
 
+@Slf4j
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SuperAdminController implements Controller {
@@ -68,7 +70,6 @@ public class SuperAdminController implements Controller {
         List<String> depText = new ArrayList<>();
         depText.add(message.getChatId().toString());
         departments.forEach(department -> depText.add(Arrays.toString(Department.values())));
-//        depText.addAll(Arrays.stream(message.getText().substring("*admin*".length()).split(":")).toList());
         String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
@@ -146,6 +147,7 @@ public class SuperAdminController implements Controller {
             methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку",
                     "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
             departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+            log.info("DEPARTMENT = {}", chatPropertyModeService.getCurrentDepartment(message.getChatId()));
             return methods;
         } else {
             return requestRole(message, departments);
