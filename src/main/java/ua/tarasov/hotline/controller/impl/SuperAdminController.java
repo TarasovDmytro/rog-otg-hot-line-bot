@@ -31,7 +31,7 @@ public class SuperAdminController implements Controller {
     final CheckRoleService checkRoleService;
 
     BotUser botUser = new BotUser();
-    List <Department> departments = new ArrayList<>();
+    final List <Department> departments = new ArrayList<>();
     final DepartmentController departmentController;
 
     public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService, CheckRoleService checkRoleService, DepartmentController departmentController) {
@@ -70,13 +70,14 @@ public class SuperAdminController implements Controller {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
         }
+        List<BotApiMethod<?>> methods = new ArrayList<>();
         List<String> depText = new ArrayList<>();
         depText.add(message.getChatId().toString());
         departments.forEach(department -> depText.add(Arrays.toString(Department.values())));
         String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-        List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
+        methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
                 "Заявку прийнято"));
         methods.add(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
@@ -88,7 +89,8 @@ public class SuperAdminController implements Controller {
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
                         .build())
                 .build());
-        this.departments = new ArrayList<>();
+        departments.clear();
+//        this.departments = new ArrayList<>();
         return methods;
     }
 
