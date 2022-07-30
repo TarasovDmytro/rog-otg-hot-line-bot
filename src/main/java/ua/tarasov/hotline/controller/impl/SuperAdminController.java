@@ -31,7 +31,8 @@ public class SuperAdminController implements Controller {
     final CheckRoleService checkRoleService;
 
     BotUser botUser = new BotUser();
-    private final DepartmentController departmentController;
+    List <Department> departments = new ArrayList<>();
+    final DepartmentController departmentController;
 
     public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService, CheckRoleService checkRoleService, DepartmentController departmentController) {
         this.botUserService = botUserService;
@@ -87,6 +88,7 @@ public class SuperAdminController implements Controller {
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
                         .build())
                 .build());
+        this.departments = new ArrayList<>();
         return methods;
     }
 
@@ -138,7 +140,6 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message){
-        List <Department> departments = new ArrayList<>();
         if (message.getText().equals("Скасувати заявку")){
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
             return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
