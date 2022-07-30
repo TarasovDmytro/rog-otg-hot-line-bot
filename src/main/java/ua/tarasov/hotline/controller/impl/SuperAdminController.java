@@ -145,6 +145,7 @@ public class SuperAdminController implements Controller {
         }
         if (message.getText().equals("Додати")){
             departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+            log.info("DEPARTMENTS = {}", departments);
         }
         if (!message.getText().equals("Відправити заявку")){
             List<BotApiMethod<?>> methods = new ArrayList<>();
