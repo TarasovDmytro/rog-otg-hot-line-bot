@@ -77,8 +77,8 @@ public class SuperAdminController implements Controller {
         String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-        methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
-                "Заявку прийнято"));
+//        methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
+//                "Заявку прийнято"));
         methods.add(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
