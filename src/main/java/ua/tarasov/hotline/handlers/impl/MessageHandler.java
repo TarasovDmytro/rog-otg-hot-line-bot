@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -95,7 +96,7 @@ public class MessageHandler implements RequestHandler {
                     if (message.getText().startsWith("*set*"))
                         return superAdminController.handelRequestAdminRole(message);
                     if (message.getText().startsWith("*role*")) {
-                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
+                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
                         return superAdminController.changeRoleRequest(message);
                     }
                 }

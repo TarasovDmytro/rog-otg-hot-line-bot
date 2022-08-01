@@ -4,6 +4,7 @@ public enum StateOfRequest {
     SET_DEPARTMENT,
     SET_LOCATION,
     SET_ROLES,
+    SET_PHONE,
     WAIT_ADDRESS,
     SET_ADDRESS,
     WAIT_TEXT,

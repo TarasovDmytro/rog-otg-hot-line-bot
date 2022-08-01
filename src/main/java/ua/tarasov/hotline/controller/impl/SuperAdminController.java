@@ -137,37 +137,48 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
-        List<BotApiMethod<?>> methods = new ArrayList<>();
+        if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES)) {
+            return getDepartmentsOfAdmin(message);
+        }
+        if (botUser.getPhone() == null) {
+            return Controller.getSimpleResponseToRequest(message, "PHONE");
+        }
         if (message.getText().startsWith("+")) {
-            String phoneNumber = message.getText();
-            botUser.setPhone(phoneNumber);
-            return getDepartmentsOfAdmin(message, methods);
+            return setPhoneOfAdmin(message);
         } else {
-            methods.addAll(Controller.getSimpleResponseToRequest(message, "Невірний формат телефонного номеру," +
-                    " спробуйте ще раз"));
-            methods.addAll(Controller.getSimpleResponseToRequest(message, "role"));
-            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-            return methods;
+            //            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+            return Controller.getSimpleResponseToRequest(message, "Невірний формат телефонного номеру," +
+                            " спробуйте ще раз");
         }
     }
 
     @NotNull
-    private List<BotApiMethod<?>> getDepartmentsOfAdmin(@NotNull Message message, List<BotApiMethod<?>> methods) {
+    private List<BotApiMethod<?>> setPhoneOfAdmin(@NotNull Message message) {
+            String phoneNumber = message.getText();
+            botUser.setPhone(phoneNumber);
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
+            return getDepartmentsOfAdmin(message);
+    }
+
+    @NotNull
+    public List<BotApiMethod<?>> getDepartmentsOfAdmin(@NotNull Message message) {
         log.info("PHONE = {}", botUser.getPhone());
+        List<BotApiMethod<?>> methods = new ArrayList<>();
         switch (message.getText()) {
             case "Скасувати заявку" -> {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано"));
             }
             case "Відправити заявку" -> methods.addAll(requestRole(message, departments));
+            case "Додати" -> departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
             default -> {
                 List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
                 methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), namesOfButtons,
                         "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
-                if (message.getText().equals("Додати")) {
-                    departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
-                }
+//                if (message.getText().equals("Додати")) {
+//                    departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+//                }
             }
         }
         return methods;
