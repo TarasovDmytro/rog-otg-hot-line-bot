@@ -29,7 +29,7 @@ public class SuperAdminController implements Controller {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
     final CheckRoleService checkRoleService;
-    final List <Department> departments = new ArrayList<>();
+    List <Department> departments = new ArrayList<>();
 
 
     BotUser botUser = new BotUser();
@@ -87,6 +87,7 @@ public class SuperAdminController implements Controller {
                         .keyboard(keyboardService.getAgreeButtons(dataStartText))
                         .build())
                 .build());
+        this.departments = new ArrayList<>();
         return methods;
     }
 
