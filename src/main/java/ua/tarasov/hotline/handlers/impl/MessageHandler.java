@@ -110,6 +110,7 @@ public class MessageHandler implements RequestHandler {
             }
         }
         if (message.hasContact()) return botUserController.setBotUserPhone(message);
-        return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
+//        return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
+        return messageController.sendMessageToAll(message);
     }
 }
