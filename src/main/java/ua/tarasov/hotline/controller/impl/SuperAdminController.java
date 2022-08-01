@@ -141,6 +141,7 @@ public class SuperAdminController implements Controller {
             return getDepartmentsOfAdmin(message);
         }
         if (botUser.getPhone() == null) {
+            botUser.setPhone("phone");
             return Controller.getSimpleResponseToRequest(message, "PHONE");
         }
         if (message.getText().startsWith("+")) {
