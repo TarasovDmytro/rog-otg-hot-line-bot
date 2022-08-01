@@ -57,6 +57,9 @@ public class MessageHandler implements RequestHandler {
         if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
             return userRequestController.createRequest(message);
         }
+        if (message.getForwardFrom()!= null){
+            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
+        }
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
             return messageController.sendMessageToAll(message);
         }
