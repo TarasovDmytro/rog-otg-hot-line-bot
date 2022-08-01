@@ -171,15 +171,15 @@ public class SuperAdminController implements Controller {
                 methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано"));
             }
             case "Відправити заявку" -> methods.addAll(requestRole(message, departments));
-            case "Додати" -> departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+//            case "Додати" -> departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
             default -> {
                 List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
                 methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), namesOfButtons,
                         "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
-//                if (message.getText().equals("Додати")) {
-//                    departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
-//                }
+                if (message.getText().equals("Додати")) {
+                    departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+                }
             }
         }
         return methods;
