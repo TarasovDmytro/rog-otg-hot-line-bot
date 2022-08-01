@@ -16,7 +16,8 @@ import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
 import ua.tarasov.hotline.service.KeyboardService;
-import ua.tarasov.hotline.service.impl.*;
+import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
+import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
 
 import java.util.List;
 
@@ -51,13 +52,13 @@ public class MessageHandler implements RequestHandler {
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
-        if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES)){
+        if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES)) {
             return superAdminController.changeRoleRequest(message);
         }
         if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
             return userRequestController.createRequest(message);
         }
-        if (message.getForwardFrom()!= null){
+        if (message.getForwardFromChat() != null) {
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
         }
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
