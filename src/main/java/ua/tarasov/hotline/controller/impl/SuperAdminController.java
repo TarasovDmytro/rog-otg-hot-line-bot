@@ -71,7 +71,7 @@ public class SuperAdminController implements Controller {
         }
         List<String> depText = new ArrayList<>();
         depText.add(message.getChatId().toString());
-        departments.forEach(department -> depText.add(String.valueOf(department)));
+        departments.forEach(department -> depText.add(String.valueOf((department.ordinal() + 1))));
         String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
