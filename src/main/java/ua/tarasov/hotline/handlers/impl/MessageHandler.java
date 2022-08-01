@@ -9,10 +9,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.handlers.RequestHandler;
-import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
 import ua.tarasov.hotline.service.KeyboardService;
@@ -58,12 +56,6 @@ public class MessageHandler implements RequestHandler {
         if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
             return userRequestController.createRequest(message);
         }
-//        if (message.getForwardFromChat() != null) {
-//            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
-//        }
-//        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE_TO_ALL)) {
-//            return messageController.sendMessageToAll(message);
-//        }
         if (message.hasText()) {
             switch (message.getText()) {
                 case "/start" -> {
@@ -110,7 +102,6 @@ public class MessageHandler implements RequestHandler {
             }
         }
         if (message.hasContact()) return botUserController.setBotUserPhone(message);
-//        return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
         return messageController.sendMessageToAll(message);
     }
 }

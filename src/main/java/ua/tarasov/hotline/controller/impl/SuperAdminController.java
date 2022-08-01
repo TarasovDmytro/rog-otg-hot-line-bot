@@ -65,7 +65,7 @@ public class SuperAdminController implements Controller {
                 .build());
     }
 
-    public List<BotApiMethod<?>> requestRole(@NotNull Message message, List<Department> departments) {
+    public List<BotApiMethod<?>> requestRole(@NotNull Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
         }
@@ -150,7 +150,7 @@ public class SuperAdminController implements Controller {
             departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
             return methods;
         } else {
-            return requestRole(message, departments);
+            return requestRole(message);
         }
     }
 }
