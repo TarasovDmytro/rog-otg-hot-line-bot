@@ -29,7 +29,7 @@ public class SuperAdminController implements Controller {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
     final CheckRoleService checkRoleService;
-    final List <Department> departments = new ArrayList<>();
+//    final List <Department> departments = new ArrayList<>();
 
 
     BotUser botUser = new BotUser();
@@ -65,7 +65,7 @@ public class SuperAdminController implements Controller {
                 .build());
     }
 
-    public List<BotApiMethod<?>> requestRole(@NotNull Message message) {
+    public List<BotApiMethod<?>> requestRole(@NotNull Message message, List<Department> departments) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
         }
@@ -138,6 +138,7 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message){
+        List<Department> departments = new ArrayList<>();
         if (message.getText().equals("Скасувати заявку")){
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
             return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
@@ -150,7 +151,7 @@ public class SuperAdminController implements Controller {
             departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
             return methods;
         } else {
-            return requestRole(message);
+            return requestRole(message, departments);
         }
     }
 }
