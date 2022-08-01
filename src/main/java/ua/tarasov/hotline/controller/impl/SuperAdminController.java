@@ -150,7 +150,9 @@ public class SuperAdminController implements Controller {
                     "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
 //            methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку",
 //                    "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
-            departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+            if (message.getText().equals("Додати")) {
+                departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+            }
             return methods;
         } else {
             return requestRole(message, departments);
