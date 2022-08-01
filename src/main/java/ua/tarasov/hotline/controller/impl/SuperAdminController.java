@@ -73,7 +73,6 @@ public class SuperAdminController implements Controller {
         String dataStartText = "department" + jsonConverter.toJson(depText);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-        botUser = new BotUser();
         List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
                 "Заявку прийнято"));
         methods.add(SendMessage.builder()
@@ -138,19 +137,23 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
+        List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setRoleReplyKeyboard(message.getChatId(),
+                List.of("Скасувати заявку"),
+                "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
         if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES)) {
-            return getDepartmentsOfAdmin(message);
+            return setDepartmentsOfAdmin(message);
         }
         if (botUser.getPhone() == null) {
             botUser.setPhone("phone");
-            return Controller.getSimpleResponseToRequest(message, "PHONE");
+            methods.addAll(Controller.getSimpleResponseToRequest(message, "PHONE"));
+            return methods;
         }
         if (message.getText().startsWith("+")) {
             return setPhoneOfAdmin(message);
         } else {
-            //            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-            return Controller.getSimpleResponseToRequest(message, "Невірний формат телефонного номеру," +
-                            " спробуйте ще раз");
+            methods.addAll(Controller.getSimpleResponseToRequest(message, "Невірний формат телефонного номеру," +
+                    " спробуйте ще раз"));
+            return methods;
         }
     }
 
@@ -159,11 +162,11 @@ public class SuperAdminController implements Controller {
             String phoneNumber = message.getText();
             botUser.setPhone(phoneNumber);
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
-            return getDepartmentsOfAdmin(message);
+            return setDepartmentsOfAdmin(message);
     }
 
     @NotNull
-    public List<BotApiMethod<?>> getDepartmentsOfAdmin(@NotNull Message message) {
+    public List<BotApiMethod<?>> setDepartmentsOfAdmin(@NotNull Message message) {
         log.info("PHONE = {}", botUser.getPhone());
         List<BotApiMethod<?>> methods = new ArrayList<>();
         switch (message.getText()) {
@@ -172,7 +175,6 @@ public class SuperAdminController implements Controller {
                 methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано"));
             }
             case "Відправити заявку" -> methods.addAll(requestRole(message, departments));
-//            case "Додати" -> departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
             default -> {
                 List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
