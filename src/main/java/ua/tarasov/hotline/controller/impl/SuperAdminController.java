@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -137,34 +138,41 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
-        if (message.getText().equals("Скасувати заявку")){
+        if (message.getText().equals("Скасувати заявку")) {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
             return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
         }
         if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES)) {
             return setDepartmentsOfAdmin(message);
         }
-        if (botUser.getPhone() == null) {
-            botUser.setPhone("phone");
+        if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.WAIT_PHONE)) {
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
             return keyboardService.setRoleReplyKeyboard(message.getChatId(),
                     List.of("Скасувати заявку"),
                     "PHONE");
         }
-        if (message.getText().startsWith("+")) {
+        if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)){
             return setPhoneOfAdmin(message);
+        }
+
+        return keyboardService.setRoleReplyKeyboard(message.getChatId(),
+                List.of("Скасувати заявку"),
+                RequestHandler.WRONG_ACTION_TEXT);
+    }
+
+    @NotNull
+    private List<BotApiMethod<?>> setPhoneOfAdmin(@NotNull Message message) {
+        if (message.getText().startsWith("+")) {
+            String phoneNumber = message.getText();
+            botUser.setPhone(phoneNumber);
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
+            return setDepartmentsOfAdmin(message);
         } else {
             return keyboardService.setRoleReplyKeyboard(message.getChatId(),
                     List.of("Скасувати заявку"),
                     "Невірний формат телефонного номеру, спробуйте ще раз");
         }
-    }
 
-    @NotNull
-    private List<BotApiMethod<?>> setPhoneOfAdmin(@NotNull Message message) {
-            String phoneNumber = message.getText();
-            botUser.setPhone(phoneNumber);
-            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
-            return setDepartmentsOfAdmin(message);
     }
 
     @NotNull
