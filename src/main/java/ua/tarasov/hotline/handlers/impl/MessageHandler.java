@@ -96,7 +96,7 @@ public class MessageHandler implements RequestHandler {
                     if (message.getText().startsWith("*set*"))
                         return superAdminController.handelRequestAdminRole(message);
                     if (message.getText().startsWith("*role*")) {
-                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
+                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
                         return superAdminController.changeRoleRequest(message);
                     }
                 }
