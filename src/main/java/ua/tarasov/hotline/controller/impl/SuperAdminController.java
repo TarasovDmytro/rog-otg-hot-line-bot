@@ -148,7 +148,7 @@ public class SuperAdminController implements Controller {
             botUser.setPhone("phone");
             return keyboardService.setRoleReplyKeyboard(message.getChatId(),
                     List.of("Скасувати заявку"),
-                    "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'");
+                    "PHONE");
         }
         if (message.getText().startsWith("+")) {
             return setPhoneOfAdmin(message);
