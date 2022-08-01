@@ -29,11 +29,9 @@ public class SuperAdminController implements Controller {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
     final CheckRoleService checkRoleService;
-    List <Department> departments = new ArrayList<>();
-
-
-    BotUser botUser = new BotUser();
     final DepartmentController departmentController;
+    List<Department> departments = new ArrayList<>();
+    BotUser botUser = new BotUser();
 
     public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService, CheckRoleService checkRoleService, DepartmentController departmentController) {
         this.botUserService = botUserService;
@@ -138,9 +136,25 @@ public class SuperAdminController implements Controller {
         } else return Controller.getSimpleResponseToRequest(message, "You do not have enough access rights");
     }
 
-    public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message){
+    public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
         List<BotApiMethod<?>> methods = new ArrayList<>();
-        switch (message.getText()){
+        if (message.getText().startsWith("+")) {
+            String phoneNumber = message.getText();
+            botUser.setPhone(phoneNumber);
+            return getDepartmentsOfAdmin(message, methods);
+        } else {
+            methods.addAll(Controller.getSimpleResponseToRequest(message, "Невірний формат телефонного номеру," +
+                    " спробуйте ще раз"));
+            methods.addAll(Controller.getSimpleResponseToRequest(message, "role"));
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+            return methods;
+        }
+    }
+
+    @NotNull
+    private List<BotApiMethod<?>> getDepartmentsOfAdmin(@NotNull Message message, List<BotApiMethod<?>> methods) {
+        log.info("PHONE = {}", botUser.getPhone());
+        switch (message.getText()) {
             case "Скасувати заявку" -> {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано"));
@@ -156,23 +170,6 @@ public class SuperAdminController implements Controller {
                 }
             }
         }
-//        if (message.getText().equals("Скасувати заявку")){
-//            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-//            return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
-//        }
-//        if (!message.getText().equals("Відправити заявку")){
-//            List<BotApiMethod<?>> methods = new ArrayList<>();
-//            List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
-//            methods.addAll(departmentController.getMenuOfDepartments(message));
-//            methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), namesOfButtons,
-//                    "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
-//            if (message.getText().equals("Додати")) {
-//                departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
-//            }
-//            return methods;
-//        } else {
-//            return requestRole(message, departments);
-//        }
         return methods;
     }
 }

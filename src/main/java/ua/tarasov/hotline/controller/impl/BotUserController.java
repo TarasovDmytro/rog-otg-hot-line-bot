@@ -94,8 +94,8 @@ public class BotUserController implements Controller {
             botUser = botUserService.findById(Long.parseLong(depText[0])).get();
         }
         Set<Department> departments = new HashSet<>();
-        List<String> departmentsNumber = Arrays.stream(depText).skip(1).toList();
-        for (String s : departmentsNumber) {
+        List<String> departmentsNumbers = Arrays.stream(depText).skip(1).toList();
+        for (String s : departmentsNumbers) {
             Department department = Department.values()[Integer.parseInt(s) - 1];
             departments.add(department);
         }
