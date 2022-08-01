@@ -137,6 +137,10 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
+        if (message.getText().equals("Скасувати заявку")){
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+            return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
+        }
         if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES)) {
             return setDepartmentsOfAdmin(message);
         }
