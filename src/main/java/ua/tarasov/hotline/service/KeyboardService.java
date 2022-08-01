@@ -33,5 +33,5 @@ public interface KeyboardService {
     List<KeyboardRow> getRequestReplyButtons(Long userId, String nameOfButton);
 
     List<BotApiMethod<?>> setRequestReplyKeyboard(Long userId, String nameOfButton, String messageText);
-    List<BotApiMethod<?>> setRoleReplyKeyboard(Long userId, String nameOfButton, String messageText);
+    List<BotApiMethod<?>> setRoleReplyKeyboard(Long userId, List<String> namesOfButtons, String messageText);
 }

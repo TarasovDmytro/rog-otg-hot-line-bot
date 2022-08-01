@@ -144,9 +144,12 @@ public class SuperAdminController implements Controller {
         }
         if (!message.getText().equals("Відправити заявку")){
             List<BotApiMethod<?>> methods = new ArrayList<>();
+            List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
             methods.addAll(departmentController.getMenuOfDepartments(message));
-            methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку",
+            methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), namesOfButtons,
                     "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
+//            methods.addAll(keyboardService.setRequestReplyKeyboard(message.getChatId(), "Відправити заявку",
+//                    "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
             departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
             return methods;
         } else {

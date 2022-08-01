@@ -195,14 +195,21 @@ public class KeyboardServiceImpl implements KeyboardService {
         return List.of(firstRow, secondRow);
     }
 
-    public List<KeyboardRow> getRoleReplyButtons(String nameOfButton) {
-        var firstRow = new KeyboardRow();
-        firstRow.add(nameOfButton);
-        var secondRow = new KeyboardRow();
-        secondRow.add("Скасувати заявку");
-        var thirdRow = new KeyboardRow();
-        thirdRow.add("Додати");
-        return List.of(firstRow, secondRow, thirdRow);
+    public List<KeyboardRow> getRoleReplyButtons(List<String> namesOfButtons) {
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+        namesOfButtons.forEach(nameOfButton -> {
+            KeyboardRow keyboardRow = new KeyboardRow();
+            keyboardRow.add(nameOfButton);
+            keyboardRows.add(keyboardRow);
+        });
+        return keyboardRows;
+//        var firstRow = new KeyboardRow();
+//        firstRow.add(nameOfButton);
+//        var secondRow = new KeyboardRow();
+//        secondRow.add("Скасувати заявку");
+//        var thirdRow = new KeyboardRow();
+//        thirdRow.add("Додати");
+//        return List.of(firstRow, secondRow, thirdRow);
     }
 
     @Override
@@ -219,8 +226,8 @@ public class KeyboardServiceImpl implements KeyboardService {
                 .build());
     }
 
-    public List<BotApiMethod<?>> setRoleReplyKeyboard(Long userId, String nameOfButton, String messageText) {
-        List<KeyboardRow> keyboardRows = getRoleReplyButtons(nameOfButton);
+    public List<BotApiMethod<?>> setRoleReplyKeyboard(Long userId, List<String> namesOfButtons, String messageText) {
+        List<KeyboardRow> keyboardRows = getRoleReplyButtons(namesOfButtons);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(userId))
                 .text(messageText)
