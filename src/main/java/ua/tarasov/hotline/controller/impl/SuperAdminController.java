@@ -137,23 +137,21 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
-        List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setRoleReplyKeyboard(message.getChatId(),
-                List.of("Скасувати заявку"),
-                "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
         if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES)) {
             return setDepartmentsOfAdmin(message);
         }
         if (botUser.getPhone() == null) {
             botUser.setPhone("phone");
-            methods.addAll(Controller.getSimpleResponseToRequest(message, "PHONE"));
-            return methods;
+            return keyboardService.setRoleReplyKeyboard(message.getChatId(),
+                    List.of("Скасувати заявку"),
+                    "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'");
         }
         if (message.getText().startsWith("+")) {
             return setPhoneOfAdmin(message);
         } else {
-            methods.addAll(Controller.getSimpleResponseToRequest(message, "Невірний формат телефонного номеру," +
-                    " спробуйте ще раз"));
-            return methods;
+            return keyboardService.setRoleReplyKeyboard(message.getChatId(),
+                    List.of("Скасувати заявку"),
+                    "Невірний формат телефонного номеру, спробуйте ще раз");
         }
     }
 
