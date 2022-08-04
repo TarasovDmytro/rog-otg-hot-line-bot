@@ -203,13 +203,6 @@ public class KeyboardServiceImpl implements KeyboardService {
             keyboardRows.add(keyboardRow);
         });
         return keyboardRows;
-//        var firstRow = new KeyboardRow();
-//        firstRow.add(nameOfButton);
-//        var secondRow = new KeyboardRow();
-//        secondRow.add("Скасувати заявку");
-//        var thirdRow = new KeyboardRow();
-//        thirdRow.add("Додати");
-//        return List.of(firstRow, secondRow, thirdRow);
     }
 
     @Override

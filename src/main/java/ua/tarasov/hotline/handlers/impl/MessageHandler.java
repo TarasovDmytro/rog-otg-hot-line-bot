@@ -91,11 +91,7 @@ public class MessageHandler implements RequestHandler {
                     return notificationController.getNotifications(message);
                 }
                 default -> {
-                    if (message.getText().startsWith("*admin*"))
-                        return superAdminController.requestAdminRole(message);
-                    if (message.getText().startsWith("*set*"))
-                        return superAdminController.handelRequestAdminRole(message);
-                    if (message.getText().startsWith("*role*")) {
+                    if (message.getText().startsWith("*admin*")) {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
                         return superAdminController.changeRoleRequest(message);
                     }
