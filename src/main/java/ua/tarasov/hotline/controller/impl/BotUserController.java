@@ -100,10 +100,6 @@ public class BotUserController implements Controller {
             Department department = Department.values()[Integer.parseInt(departmentsNumber)];
             departments.add(department);
         });
-//        for (String s : departmentsNumbers) {
-//            Department department = Department.values()[Integer.parseInt(s)];
-//            departments.add(department);
-//        }
         if (departments.isEmpty()) {
             botUser.setRole(Role.USER);
             departments.add(Department.USER);
@@ -111,7 +107,7 @@ public class BotUserController implements Controller {
         } else {
             if (!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
             builder.append("встановлені для департаментів: ");
-            botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
+            departments.forEach(department -> builder.append("\n").append(department));
         }
         botUser.setDepartments(departments);
         botUserService.saveBotUser(this.botUser);
