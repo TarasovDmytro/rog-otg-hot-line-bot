@@ -89,22 +89,33 @@ public class BotUserController implements Controller {
     @NotNull
     @Unmodifiable
     public List<BotApiMethod<?>> setBotUserDepartment(@NotNull CallbackQuery callbackQuery) {
+        StringBuilder builder = new StringBuilder();
         String[] depText = jsonConverter.fromJson(callbackQuery.getData().substring("yes-department".length()), String[].class);
         if (botUserService.findById(Long.parseLong(depText[0])).isPresent()) {
             botUser = botUserService.findById(Long.parseLong(depText[0])).get();
         }
         Set<Department> departments = new HashSet<>();
         List<String> departmentsNumbers = Arrays.stream(depText).skip(1).toList();
-        for (String s : departmentsNumbers) {
-            Department department = Department.values()[Integer.parseInt(s) - 1];
+        departmentsNumbers.forEach(departmentsNumber -> {
+            Department department = Department.values()[Integer.parseInt(departmentsNumber)];
             departments.add(department);
+        });
+//        for (String s : departmentsNumbers) {
+//            Department department = Department.values()[Integer.parseInt(s)];
+//            departments.add(department);
+//        }
+        if (departments.isEmpty()) {
+            botUser.setRole(Role.USER);
+            departments.add(Department.USER);
+            builder.append("скасовано");
+        } else {
+            if (!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
+            builder.append("встановлені для департаментів: ");
+            botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
         }
         botUser.setDepartments(departments);
-        if (!botUser.getRole().equals(Role.SUPER_ADMIN)) botUser.setRole(Role.ADMIN);
         botUserService.saveBotUser(this.botUser);
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
-        StringBuilder builder = new StringBuilder("встановлені для департаментів: ");
-        botUser.getDepartments().forEach(department -> builder.append("\n").append(department));
         return List.of(SendMessage.builder()
                         .chatId(botUser.getId().toString())
                         .text("Ваші права доступу адміністратора " + builder)
