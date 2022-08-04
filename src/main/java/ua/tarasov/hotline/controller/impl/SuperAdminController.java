@@ -149,7 +149,7 @@ public class SuperAdminController implements Controller {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
             return keyboardService.setRoleReplyKeyboard(message.getChatId(),
                     List.of("Скасувати заявку"),
-                    "PHONE");
+                    "Введіть номер телефону адміністратора у форматі '+123456789098'");
         }
         if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)){
             return setPhoneOfAdmin(message);
