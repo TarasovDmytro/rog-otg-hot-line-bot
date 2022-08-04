@@ -103,7 +103,6 @@ public class SuperAdminController implements Controller {
                     List.of("Скасувати заявку"),
                     "Невірний формат телефонного номеру,\nабо такий номер не зареєстрований.\nСпробуйте ще раз");
         }
-
     }
 
     @NotNull

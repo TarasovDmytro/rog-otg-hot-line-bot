@@ -13,10 +13,12 @@ import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
+import ua.tarasov.hotline.service.CheckRoleService;
 import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -25,6 +27,7 @@ import java.util.List;
 public class MessageHandler implements RequestHandler {
     final KeyboardService keyboardService;
     final ChatPropertyModeService chatPropertyModeService;
+    final CheckRoleService checkRoleService;
 
     final BotUserController botUserController;
     final UserRequestController userRequestController;
@@ -34,11 +37,12 @@ public class MessageHandler implements RequestHandler {
 
     public MessageHandler(KeyboardServiceImpl keyboardService,
                           @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService,
-                          BotUserController botUserController, UserRequestController userRequestController,
+                          CheckRoleService checkRoleService, BotUserController botUserController, UserRequestController userRequestController,
                           NotificationController notificationController, SuperAdminController superAdminController,
                           MessageController messageController) {
         this.keyboardService = keyboardService;
         this.chatPropertyModeService = chatPropertyModeService;
+        this.checkRoleService = checkRoleService;
         this.botUserController = botUserController;
         this.userRequestController = userRequestController;
         this.notificationController = notificationController;
@@ -91,10 +95,10 @@ public class MessageHandler implements RequestHandler {
                     return notificationController.getNotifications(message);
                 }
                 default -> {
-                    if (message.getText().startsWith("*admin*")) {
+                    if (message.getText().startsWith("*admin*") && checkRoleService.checkIsAdmin(message.getChatId())) {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
                         return superAdminController.changeRoleRequest(message);
-                    }
+                    } else return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
                 }
             }
         }

@@ -114,7 +114,7 @@ public class BotUserController implements Controller {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
                         .chatId(botUser.getId().toString())
-                        .text("Ваші права доступу адміністратора " + builder)
+                        .text("Ваші права доступу адміністратора\n" + builder)
                         .replyMarkup(ReplyKeyboardMarkup.builder()
                                 .keyboard(keyboardService.getAdminReplyButtons())
                                 .resizeKeyboard(true)
@@ -123,7 +123,7 @@ public class BotUserController implements Controller {
                         .build(),
                 SendMessage.builder()
                         .chatId(String.valueOf(superAdmin.getId()))
-                        .text("Права доступу адміністратора " + botUser.getFullName() + " " + builder)
+                        .text("Права доступу адміністратора\n" + botUser.getFullName() + "\n" + builder)
                         .build());
     }
 }
