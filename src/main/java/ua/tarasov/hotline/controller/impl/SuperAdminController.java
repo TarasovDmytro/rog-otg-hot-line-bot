@@ -16,10 +16,12 @@ import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
+import ua.tarasov.hotline.service.CheckRoleService;
 import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -28,13 +30,15 @@ import java.util.List;
 public class SuperAdminController implements Controller {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
+    final CheckRoleService checkRoleService;
     final DepartmentController departmentController;
     List<Department> departments = new ArrayList<>();
     BotUser botUser = new BotUser();
 
-    public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService, DepartmentController departmentController) {
+    public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService, CheckRoleService checkRoleService, DepartmentController departmentController) {
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
+        this.checkRoleService = checkRoleService;
         this.departmentController = departmentController;
     }
 
@@ -68,27 +72,32 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
-        if (message.getText().equals("Скасувати заявку")) {
+        if (checkRoleService.checkIsAdmin(message.getChatId())) {
+            if (message.getText().equals("Скасувати заявку")) {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
+            }
+            switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
+                case SET_ROLES -> {
+                    return setDepartmentsOfAdmin(message);
+                }
+                case WAIT_PHONE -> {
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
+                    return keyboardService.setRoleReplyKeyboard(message.getChatId(),
+                            List.of("Скасувати заявку"),
+                            "Введіть номер телефону адміністратора у форматі '+123456789098'");
+                }
+                case SET_PHONE -> {
+                    return setPhoneOfAdmin(message);
+                }
+            }
+            return keyboardService.setRoleReplyKeyboard(message.getChatId(),
+                    List.of("Скасувати заявку"),
+                    RequestHandler.WRONG_ACTION_TEXT);
+        } else {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-            return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
+            return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
         }
-        switch (chatPropertyModeService.getStateOfRequest(message.getChatId())){
-            case SET_ROLES -> {
-                return setDepartmentsOfAdmin(message);
-            }
-            case WAIT_PHONE -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
-                return keyboardService.setRoleReplyKeyboard(message.getChatId(),
-                        List.of("Скасувати заявку"),
-                        "Введіть номер телефону адміністратора у форматі '+123456789098'");
-            }
-            case SET_PHONE -> {
-                return setPhoneOfAdmin(message);
-            }
-        }
-        return keyboardService.setRoleReplyKeyboard(message.getChatId(),
-                List.of("Скасувати заявку"),
-                RequestHandler.WRONG_ACTION_TEXT);
     }
 
     @NotNull
