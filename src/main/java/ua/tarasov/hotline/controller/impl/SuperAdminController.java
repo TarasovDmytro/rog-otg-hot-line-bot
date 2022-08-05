@@ -42,7 +42,7 @@ public class SuperAdminController implements Controller {
         this.departmentController = departmentController;
     }
 
-    private List<BotApiMethod<?>> requestRole(@NotNull Message message, List<Department> departments) {
+    private @NotNull List<BotApiMethod<?>> requestRole(@NotNull Message message, List<Department> departments) {
         BotUser admin = new BotUser();
         if (botUserService.findById(message.getChatId()).isPresent()) {
             admin = botUserService.findById(message.getChatId()).get();
@@ -128,7 +128,7 @@ public class SuperAdminController implements Controller {
                 List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
                 methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), namesOfButtons,
-                        "Ви можете додавати Департаменти, поки не натисните кнопку 'Відправити заявку'"));
+                        "Ви можете додавати Департаменти, поки не натиснуте кнопку 'Відправити заявку'"));
                 if (message.getText().equals("Додати")) {
                     departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
                 }
