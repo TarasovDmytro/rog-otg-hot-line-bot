@@ -186,16 +186,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         return List.of(checkRoleService.getFalseAdminText(message.getChatId()));
     }
 
-    @Override
-    public List<KeyboardRow> getRequestReplyButtons(Long userId, String nameOfButton) {
-        var firstRow = new KeyboardRow();
-        firstRow.add(nameOfButton);
-        var secondRow = new KeyboardRow();
-        secondRow.add("Скасувати заявку");
-        return List.of(firstRow, secondRow);
-    }
-
-    public List<KeyboardRow> getRoleReplyButtons(List<String> namesOfButtons) {
+    private @NotNull List<KeyboardRow> getRequestMenuReplyButtons(@NotNull List<String> namesOfButtons) {
         List<KeyboardRow> keyboardRows = new ArrayList<>();
         namesOfButtons.forEach(nameOfButton -> {
             KeyboardRow keyboardRow = new KeyboardRow();
@@ -206,21 +197,8 @@ public class KeyboardServiceImpl implements KeyboardService {
     }
 
     @Override
-    public List<BotApiMethod<?>> setRequestReplyKeyboard(Long userId, String nameOfButton, String messageText) {
-        List<KeyboardRow> keyboardRows = getRequestReplyButtons(userId, nameOfButton);
-        return Collections.singletonList(SendMessage.builder()
-                .chatId(String.valueOf(userId))
-                .text(messageText)
-                .replyMarkup(ReplyKeyboardMarkup.builder()
-                        .keyboard(keyboardRows)
-                        .resizeKeyboard(true)
-                        .oneTimeKeyboard(false)
-                        .build())
-                .build());
-    }
-
-    public List<BotApiMethod<?>> setRoleReplyKeyboard(Long userId, List<String> namesOfButtons, String messageText) {
-        List<KeyboardRow> keyboardRows = getRoleReplyButtons(namesOfButtons);
+    public List<BotApiMethod<?>> setRequestMenuReplyKeyboard(Long userId, List<String> namesOfButtons, String messageText) {
+        List<KeyboardRow> keyboardRows = getRequestMenuReplyButtons(namesOfButtons);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(userId))
                 .text(messageText)

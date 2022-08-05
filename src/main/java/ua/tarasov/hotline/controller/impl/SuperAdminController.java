@@ -83,7 +83,7 @@ public class SuperAdminController implements Controller {
                 }
                 case WAIT_PHONE -> {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
-                    return keyboardService.setRoleReplyKeyboard(message.getChatId(),
+                    return keyboardService.setRequestMenuReplyKeyboard(message.getChatId(),
                             List.of("Скасувати заявку"),
                             "Введіть номер телефону адміністратора у форматі '+123456789098'");
                 }
@@ -91,7 +91,7 @@ public class SuperAdminController implements Controller {
                     return setPhoneOfAdmin(message);
                 }
             }
-            return keyboardService.setRoleReplyKeyboard(message.getChatId(),
+            return keyboardService.setRequestMenuReplyKeyboard(message.getChatId(),
                     List.of("Скасувати заявку"),
                     RequestHandler.WRONG_ACTION_TEXT);
         } else {
@@ -108,7 +108,7 @@ public class SuperAdminController implements Controller {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
             return setDepartmentsOfAdmin(message);
         } else {
-            return keyboardService.setRoleReplyKeyboard(message.getChatId(),
+            return keyboardService.setRequestMenuReplyKeyboard(message.getChatId(),
                     List.of("Скасувати заявку"),
                     "Невірний формат телефонного номеру,\nабо такий номер не зареєстрований.\nСпробуйте ще раз");
         }
@@ -127,7 +127,7 @@ public class SuperAdminController implements Controller {
             default -> {
                 List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
-                methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), namesOfButtons,
+                methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), namesOfButtons,
                         "Ви можете додавати Департаменти, поки не натиснуте кнопку 'Відправити заявку'"));
                 if (message.getText().equals("Додати")) {
                     departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));

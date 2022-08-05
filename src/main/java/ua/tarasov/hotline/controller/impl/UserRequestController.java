@@ -72,7 +72,7 @@ public class UserRequestController implements Controller {
                 case SET_DEPARTMENT -> {
                     List<BotApiMethod<?>> methods = new ArrayList<>();
                     methods.addAll(departmentController.getMenuOfDepartments(message));
-                    methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
+                    methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
                             "Ви можете змінити ці данні, або натисніть кнопку 'Далі'"));
                     return methods;
                 }
@@ -240,7 +240,7 @@ public class UserRequestController implements Controller {
         List<BotApiMethod<?>> methods = new ArrayList<>();
         methods.addAll(Controller.getSimpleResponseToRequest(message, "Опис проблеми додано до заявки,\nВи можете" +
                 " його змінити,або натисніть кнопку 'Відправити заявку'"));
-        methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), List.of("Відправити заявку", "Скасувати заявку"),
+        methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Відправити заявку", "Скасувати заявку"),
                 "Ваша заявка\n" + userRequest.getBodyOfMessage()));
         return methods;
     }
@@ -249,7 +249,7 @@ public class UserRequestController implements Controller {
         chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         List<BotApiMethod<?>> methods = new ArrayList<>();
-        methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
+        methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
                 "Адресу додано до заявки"));
         methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                 " або натисніть кнопку 'Далі'"));
@@ -261,7 +261,7 @@ public class UserRequestController implements Controller {
             Location location = message.getLocation();
             chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
             List<BotApiMethod<?>> methods = new ArrayList<>();
-            methods.addAll(keyboardService.setRoleReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
+            methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
                     "Локацію додано до заявки"));
             methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                     " або натисніть кнопку 'Далі'"));
