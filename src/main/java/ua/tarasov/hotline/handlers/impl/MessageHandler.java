@@ -25,7 +25,6 @@ import java.util.List;
 public class MessageHandler implements RequestHandler {
     final KeyboardService keyboardService;
     final ChatPropertyModeService chatPropertyModeService;
-
     final BotUserController botUserController;
     final UserRequestController userRequestController;
     final NotificationController notificationController;
