@@ -90,6 +90,7 @@ public class BotUserController implements Controller {
     @Unmodifiable
     public List<BotApiMethod<?>> setBotUserDepartment(@NotNull CallbackQuery callbackQuery) {
         StringBuilder builder = new StringBuilder();
+        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         String[] depText = jsonConverter.fromJson(callbackQuery.getData().substring("yes-department".length()), String[].class);
         if (botUserService.findById(Long.parseLong(depText[0])).isPresent()) {
             botUser = botUserService.findById(Long.parseLong(depText[0])).get();
@@ -101,6 +102,10 @@ public class BotUserController implements Controller {
             departments.add(department);
         });
         if (departments.isEmpty()) {
+            if (botUser.getRole().equals(Role.SUPER_ADMIN)) return List.of(SendMessage.builder()
+                    .chatId(String.valueOf(superAdmin.getId()))
+                    .text("Неможливо скасувати права суперадміна.\nНеобхідно спочатку назначити іншого суперадміна")
+                    .build());
             botUser.setRole(Role.USER);
             departments.add(Department.USER);
             builder.append("скасовано");
@@ -111,7 +116,6 @@ public class BotUserController implements Controller {
         }
         botUser.setDepartments(departments);
         botUserService.saveBotUser(this.botUser);
-        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
                         .chatId(botUser.getId().toString())
                         .text("Ваші права доступу адміністратора\n" + builder)
