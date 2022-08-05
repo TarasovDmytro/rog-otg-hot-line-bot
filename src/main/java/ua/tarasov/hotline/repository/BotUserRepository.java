@@ -13,7 +13,6 @@ public interface BotUserRepository extends JpaRepository<BotUser, Long> {
     List<BotUser> findAllByDepartmentsContains(Department department);
 
     BotUser findByRole(Role role);
-    List<BotUser> findAllByRole(Role role);
 
     Optional<BotUser> findByPhone(String phone);
 }

@@ -102,7 +102,7 @@ public class BotUserController implements Controller {
             departments.add(department);
         });
         if (departments.isEmpty()) {
-            if (botUser.getRole().equals(Role.SUPER_ADMIN) && botUserService.findAllByRole(Role.SUPER_ADMIN).size() < 2) {
+            if (botUser.getRole().equals(Role.SUPER_ADMIN)) {
                 return List.of(SendMessage.builder()
                         .chatId(String.valueOf(superAdmin.getId()))
                         .text("Неможливо скасувати права суперадміна.\nНеобхідно спочатку призначити іншого суперадміна")
