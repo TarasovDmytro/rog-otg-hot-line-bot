@@ -47,22 +47,24 @@ public class SuperAdminController implements Controller {
         depText.add(botUser.getId().toString());
         departments.forEach(department -> depText.add(String.valueOf((department.ordinal()))));
         String dataStartText = "department" + jsonConverter.toJson(depText);
-        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        List<BotUser> superAdmins = botUserService.findAllByRole(Role.SUPER_ADMIN);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
         List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
                 "Заявку прийнято"));
-        methods.add(SendMessage.builder()
-                .chatId(String.valueOf(superAdmin.getId()))
-                .text("<b>Отримана заявка від </b>" + admin.getFullName() + "\n<b>тел.</b>" + admin.getPhone()
-                        + "\n<b>ID:</b>" + admin.getId() + "\nна встановлення зв'язку адмін-департамент\nміж користувачем\n"
-                        + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
-                        + "\n<b>ID:</b>" + botUser.getId() +
-                        "\nта департаментами:\n" + departments + "\nВстановити зв'язок?")
-                .parseMode("HTML")
-                .replyMarkup(InlineKeyboardMarkup.builder()
-                        .keyboard(keyboardService.getAgreeButtons(dataStartText))
-                        .build())
-                .build());
+        for (BotUser superAdmin : superAdmins) {
+            methods.add(SendMessage.builder()
+                    .chatId(String.valueOf(superAdmin.getId()))
+                    .text("<b>Отримана заявка від </b>" + admin.getFullName() + "\n<b>тел.</b>" + admin.getPhone()
+                            + "\n<b>ID:</b>" + admin.getId() + "\nна встановлення зв'язку адмін-департамент\nміж користувачем\n"
+                            + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
+                            + "\n<b>ID:</b>" + botUser.getId() +
+                            "\nта департаментами:\n" + departments + "\nВстановити зв'язок?")
+                    .parseMode("HTML")
+                    .replyMarkup(InlineKeyboardMarkup.builder()
+                            .keyboard(keyboardService.getAgreeButtons(dataStartText))
+                            .build())
+                    .build());
+        }
         this.departments = new ArrayList<>();
         return methods;
     }
@@ -72,7 +74,7 @@ public class SuperAdminController implements Controller {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
             return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
         }
-        switch (chatPropertyModeService.getStateOfRequest(message.getChatId())){
+        switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
             case SET_ROLES -> {
                 return setDepartmentsOfAdmin(message);
             }
