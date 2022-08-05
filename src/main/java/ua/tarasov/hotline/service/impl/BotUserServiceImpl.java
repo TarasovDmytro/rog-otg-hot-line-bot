@@ -44,6 +44,11 @@ public class BotUserServiceImpl implements BotUserService {
     }
 
     @Override
+    public List<BotUser> findAllByRole(Role role) {
+        return botUserRepository.findAllByRole(role);
+    }
+
+    @Override
     public Optional<BotUser> findByPhone(String userPhone) {
         return botUserRepository.findByPhone(userPhone);
     }

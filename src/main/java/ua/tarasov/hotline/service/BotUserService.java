@@ -17,6 +17,7 @@ public interface BotUserService {
     List<BotUser> findAllByDepartment(Department department);
 
     BotUser findByRole(Role role);
+    List<BotUser> findAllByRole(Role role);
 
     Optional<BotUser> findByPhone(String userPhone);
 }
