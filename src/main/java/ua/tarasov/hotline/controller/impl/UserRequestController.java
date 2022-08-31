@@ -235,7 +235,9 @@ public class UserRequestController implements Controller {
         userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID "
-                + userRequest.getMessageId() + "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
+                + userRequest.getMessageId() + "\nвід " +
+//                userRequest.getDateTimeToString() +
+                "\n\n" + message.getText() +
                 "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
         List<BotApiMethod<?>> methods = new ArrayList<>();
