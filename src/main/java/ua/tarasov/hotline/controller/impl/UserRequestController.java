@@ -28,7 +28,10 @@ import ua.tarasov.hotline.service.UserRequestService;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -204,6 +207,10 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
+            String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
+            userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID "
+                    + userRequest.getMessageId() + "\nвід " + userRequest.getDateTimeToString() + "\n\n" + message.getText() +
+                    "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
             requestService.saveRequest(userRequest);
             chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
@@ -230,14 +237,11 @@ public class UserRequestController implements Controller {
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
-//        userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
         userRequest.setAddress(chatPropertyModeService.getCurrentRequestAddress(message.getChatId()));
         userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID "
                 + userRequest.getMessageId() +
-//                "\nвід " +
-//                userRequest.getDateTimeToString() +
                 "\n\n" + message.getText() +
                 "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
