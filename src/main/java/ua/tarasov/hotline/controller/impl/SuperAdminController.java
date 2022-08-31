@@ -7,10 +7,12 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
@@ -18,6 +20,7 @@ import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.CheckRoleService;
 import ua.tarasov.hotline.service.KeyboardService;
+import ua.tarasov.hotline.service.UserRequestService;
 import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
 
 import java.util.ArrayList;
@@ -31,14 +34,18 @@ public class SuperAdminController implements Controller {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
     final CheckRoleService checkRoleService;
+    final UserRequestService requestService;
     final DepartmentController departmentController;
     List<Department> departments = new ArrayList<>();
     BotUser botUser = new BotUser();
 
-    public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService, CheckRoleService checkRoleService, DepartmentController departmentController) {
+    public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService,
+                                CheckRoleService checkRoleService, UserRequestService requestService,
+                                DepartmentController departmentController) {
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
         this.checkRoleService = checkRoleService;
+        this.requestService = requestService;
         this.departmentController = departmentController;
     }
 
@@ -135,5 +142,21 @@ public class SuperAdminController implements Controller {
             }
         }
         return methods;
+    }
+
+    public List<BotApiMethod<?>> complaint(CallbackQuery callbackQuery) {
+        Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("refuse_request".length()), Integer.class);
+        UserRequest userRequest = requestService.findByMessageId(messageId);
+        if (botUserService.findById(userRequest.getChatId()).isPresent()){
+            botUser = botUserService.findById(userRequest.getChatId()).get();
+        }
+        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        return List.of(SendMessage.builder()
+                .chatId(String.valueOf(superAdmin.getId()))
+                .text("Отримана скарга на користувача" +
+                        "ID " + botUser.getId() +
+                        "\n" + botUser.getFullName()+
+                        "по заявці ID " + messageId)
+                .build());
     }
 }

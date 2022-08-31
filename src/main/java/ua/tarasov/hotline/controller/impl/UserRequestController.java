@@ -273,7 +273,7 @@ public class UserRequestController implements Controller {
     @Unmodifiable
     public List<BotApiMethod<?>> setStateRequest(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
-        Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("message_id".length()), Integer.class);
+        Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("state_request".length()), Integer.class);
         userRequest = requestService.findByMessageId(messageId);
         if (userRequest != null) {
             userRequest.setState(!userRequest.isState());

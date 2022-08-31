@@ -146,7 +146,7 @@ public class KeyboardServiceImpl implements KeyboardService {
                         .build(),
                 InlineKeyboardButton.builder()
                         .text(text)
-                        .callbackData("message_id" + jsonConverter.toJson(messageId))
+                        .callbackData("state_request" + jsonConverter.toJson(messageId))
                         .build()));
         buttons.add(List.of(
                 InlineKeyboardButton.builder()

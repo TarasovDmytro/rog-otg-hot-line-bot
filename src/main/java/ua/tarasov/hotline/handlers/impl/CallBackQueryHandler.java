@@ -9,10 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ua.tarasov.hotline.controller.Controller;
-import ua.tarasov.hotline.controller.impl.BotUserController;
-import ua.tarasov.hotline.controller.impl.DepartmentController;
-import ua.tarasov.hotline.controller.impl.MessageController;
-import ua.tarasov.hotline.controller.impl.UserRequestController;
+import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.handlers.RequestHandler;
 
 import java.util.List;
@@ -25,13 +22,16 @@ public class CallBackQueryHandler implements RequestHandler {
     final UserRequestController userRequestController;
     final MessageController messageController;
     final BotUserController botUserController;
+    final SuperAdminController superAdminController;
 
     public CallBackQueryHandler(DepartmentController departmentController, UserRequestController userRequestController,
-                                MessageController messageController, BotUserController botUserController) {
+                                MessageController messageController, BotUserController botUserController,
+                                SuperAdminController superAdminController) {
         this.departmentController = departmentController;
         this.userRequestController = userRequestController;
         this.messageController = messageController;
         this.botUserController = botUserController;
+        this.superAdminController = superAdminController;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class CallBackQueryHandler implements RequestHandler {
         if (callbackQuery.getData().startsWith("department")) {
             return departmentController.setDepartment(callbackQuery);
         }
-        if (callbackQuery.getData().startsWith("message_id")) {
+        if (callbackQuery.getData().startsWith("state_request")) {
             return userRequestController.setStateRequest(callbackQuery);
         }
         if (callbackQuery.getData().startsWith("refuse_request")) {
@@ -67,6 +67,9 @@ public class CallBackQueryHandler implements RequestHandler {
         }
         if (callbackQuery.getData().startsWith("refuse")) {
             return messageController.refuseSetLocationOfRequestMessage(callbackQuery);
+        }
+        if (callbackQuery.getData().startsWith("complaint")){
+            return superAdminController.complaint(callbackQuery);
         }
         return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), WRONG_ACTION_TEXT);
     }
