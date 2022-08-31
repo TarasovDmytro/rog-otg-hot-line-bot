@@ -203,6 +203,7 @@ public class UserRequestController implements Controller {
 
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
+            userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
             requestService.saveRequest(userRequest);
             chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
@@ -229,7 +230,7 @@ public class UserRequestController implements Controller {
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
-        userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
+//        userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
         userRequest.setAddress(chatPropertyModeService.getCurrentRequestAddress(message.getChatId()));
         userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
