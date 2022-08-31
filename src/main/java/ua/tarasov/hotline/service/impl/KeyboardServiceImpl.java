@@ -32,7 +32,6 @@ public class KeyboardServiceImpl implements KeyboardService {
     final CheckRoleServiceImpl checkRoleServiceImpl;
     final ChatPropertyModeService chatPropertyModeService;
     final CheckRoleService checkRoleService;
-
     final Gson jsonConverter = new Gson();
 
     public KeyboardServiceImpl(CheckRoleServiceImpl checkRoleServiceImpl,
@@ -158,6 +157,11 @@ public class KeyboardServiceImpl implements KeyboardService {
                 InlineKeyboardButton.builder()
                         .text("Отримати локацію")
                         .callbackData("location" + jsonConverter.toJson(messageId))
+                        .build()));
+        buttons.add(List.of(
+                InlineKeyboardButton.builder()
+                        .text("Поскаржитись")
+                        .callbackData("complaint" + jsonConverter.toJson(messageId))
                         .build()));
         return buttons;
     }
