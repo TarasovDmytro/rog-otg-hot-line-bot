@@ -147,16 +147,20 @@ public class SuperAdminController implements Controller {
     public List<BotApiMethod<?>> complaint(CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("complaint".length()), Integer.class);
         UserRequest userRequest = requestService.findByMessageId(messageId);
-        if (botUserService.findById(userRequest.getChatId()).isPresent()){
+        if (botUserService.findById(userRequest.getChatId()).isPresent()) {
             botUser = botUserService.findById(userRequest.getChatId()).get();
-        }
+        } else Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "No user");
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         return List.of(SendMessage.builder()
-                .chatId(String.valueOf(superAdmin.getId()))
-                .text("Отримана скарга на користувача" +
-                        "ID " + botUser.getId() +
-                        "\n" + botUser.getFullName()+
-                        "по заявці ID " + messageId)
-                .build());
+                        .chatId(String.valueOf(superAdmin.getId()))
+                        .text("Отримана скарга на користувача\n" +
+                                "ID " + botUser.getId() +
+                                "\n" + botUser.getFullName() +
+                                "\nпо заявці ID " + messageId)
+                        .build(),
+                SendMessage.builder()
+                        .chatId(String.valueOf(superAdmin.getId()))
+                        .text(userRequest.getBodyOfMessage())
+                        .build());
     }
 }
