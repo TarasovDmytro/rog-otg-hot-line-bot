@@ -67,9 +67,7 @@ public class UserRequestController implements Controller {
                         chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
                         return keyboardService.setReplyKeyboardOfUser(chatId, "Заявку скасовано");
                     }
-                    case "Відправити заявку" -> {
-                        chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
-                    }
+                    case "Відправити заявку" -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 }
             }
             switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
