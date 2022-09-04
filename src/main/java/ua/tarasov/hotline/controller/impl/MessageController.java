@@ -88,7 +88,7 @@ public class MessageController implements Controller {
     }
 
     public List<BotApiMethod<?>> setRequestAddressMessage(@NotNull Message message) {
-        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_ADDRESS);
+//        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_ADDRESS);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ADDRESS);
         return Controller.getSimpleResponseToRequest(message, "Введіть, будь ласка, адресу," +
                 " за якою сталася проблема");
