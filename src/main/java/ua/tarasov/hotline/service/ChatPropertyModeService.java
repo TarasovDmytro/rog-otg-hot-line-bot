@@ -1,6 +1,5 @@
 package ua.tarasov.hotline.service;
 
-import org.telegram.telegrambots.meta.api.objects.Location;
 import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
@@ -14,8 +13,6 @@ public interface ChatPropertyModeService {
     Map<Long, Boolean> currentAdminKeyboardState = new HashMap<>();
     Map<Long, BotState> currentBotState = new HashMap<>();
     Map<Long, StateOfRequest> currentStateOfRequest = new HashMap<>();
-    Map<Long, String> currentRequestAddress = new HashMap<>();
-    Map<Long, Location> currentLocation = new HashMap<>();
     Map<Long, UserRequest> currentRequest = new HashMap<>();
     UserRequest getCurrentRequest(long chatId);
     void setCurrentRequest(long chatId, UserRequest userRequest);
@@ -35,12 +32,4 @@ public interface ChatPropertyModeService {
     void setCurrentStateOfRequest(long chatId, StateOfRequest stateOfRequest);
 
     StateOfRequest getStateOfRequest(Long chatId);
-
-    void setCurrentRequestAddress(long chatId, String address);
-
-    String getCurrentRequestAddress(long chatId);
-
-    void setCurrentLocation(long chatId, Location location);
-
-    Location getCurrentLocation(long chatId);
 }

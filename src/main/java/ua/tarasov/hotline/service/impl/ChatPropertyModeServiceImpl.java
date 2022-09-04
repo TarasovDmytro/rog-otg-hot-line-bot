@@ -2,7 +2,6 @@ package ua.tarasov.hotline.service.impl;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Location;
 import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
@@ -73,24 +72,6 @@ public class ChatPropertyModeServiceImpl implements ChatPropertyModeService {
     public StateOfRequest getStateOfRequest(Long chatId) {
         return currentStateOfRequest.getOrDefault(chatId, StateOfRequest.REQUEST_CREATED);
     }
-
-    @Override
-    public void setCurrentRequestAddress(long chatId, String address) {
-        currentRequestAddress.put(chatId, address);
-    }
-
-    @Override
-    public String getCurrentRequestAddress(long chatId) {
-        return currentRequestAddress.getOrDefault(chatId, "Адресу не встановлено");
-    }
-
-    @Override
-    public void setCurrentLocation(long chatId, Location location) {
-        currentLocation.put(chatId, location);
-    }
-
-    @Override
-    public Location getCurrentLocation(long chatId) {
-        return currentLocation.get(chatId);
-    }
 }
+
+
