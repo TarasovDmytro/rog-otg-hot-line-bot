@@ -94,7 +94,7 @@ public class UserRequestController implements Controller {
                 }
                 case SET_ADDRESS -> {
                     log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
-                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_ADDRESS);
+//                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_ADDRESS);
                     return setRequestAddress(message);
                 }
                 case WAIT_TEXT -> {
@@ -127,7 +127,11 @@ public class UserRequestController implements Controller {
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_TEXT);
                 }
             }
-            case SET_TEXT -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
+           case SET_TEXT -> {
+                if (userRequest.getBodyOfMessage() == null){
+                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
+                }
+           }
         }
     }
 
