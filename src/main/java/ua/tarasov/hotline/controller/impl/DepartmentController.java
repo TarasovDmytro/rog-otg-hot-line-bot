@@ -37,7 +37,7 @@ public class DepartmentController implements Controller {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(message.getChatId().toString())
-                .text("Оберіть, будьласка, обслуговуючий департамент")
+                .text("Оберіть, будь ласка, обслуговуючий департамент\n(Ваш вибір помічений галочкою)")
                 .replyMarkup(InlineKeyboardMarkup.builder()
                         .keyboard(keyboardService.getDepartmentInlineButtons(currentDepartment))
                         .build())

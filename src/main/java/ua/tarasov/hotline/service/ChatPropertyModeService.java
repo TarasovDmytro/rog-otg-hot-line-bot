@@ -1,6 +1,7 @@
 package ua.tarasov.hotline.service;
 
 import org.telegram.telegrambots.meta.api.objects.Location;
+import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -15,6 +16,9 @@ public interface ChatPropertyModeService {
     Map<Long, StateOfRequest> currentStateOfRequest = new HashMap<>();
     Map<Long, String> currentRequestAddress = new HashMap<>();
     Map<Long, Location> currentLocation = new HashMap<>();
+    Map<Long, UserRequest> currentRequest = new HashMap<>();
+    UserRequest getCurrentRequest(long chatId);
+    void setCurrentRequest(long chatId, UserRequest userRequest);
 
     Department getCurrentDepartment(long chatId);
 

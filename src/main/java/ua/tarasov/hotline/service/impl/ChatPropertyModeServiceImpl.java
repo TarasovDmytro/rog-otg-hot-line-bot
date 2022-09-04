@@ -3,6 +3,7 @@ package ua.tarasov.hotline.service.impl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Location;
+import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -21,6 +22,16 @@ public class ChatPropertyModeServiceImpl implements ChatPropertyModeService {
             chatProperties = new ChatPropertyModeServiceImpl();
         }
         return chatProperties;
+    }
+
+    @Override
+    public UserRequest getCurrentRequest(long chatId) {
+        return currentRequest.getOrDefault(chatId, new UserRequest());
+    }
+
+    @Override
+    public void setCurrentRequest(long chatId, UserRequest userRequest) {
+        currentRequest.put(chatId, userRequest);
     }
 
     @Override

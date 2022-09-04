@@ -54,7 +54,7 @@ public class UserRequestController implements Controller {
         this.messageController = messageController;
     }
 
-    public List<BotApiMethod<?>> createRequest(Message message) {
+    public List<BotApiMethod<?>> createRequest(@NotNull Message message) {
         Long chatId = message.getChatId();
         if (!chatPropertyModeService.getStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)) {
             if (message.hasLocation()) return setRequestLocation(message);
@@ -77,6 +77,9 @@ public class UserRequestController implements Controller {
                     methods.addAll(departmentController.getMenuOfDepartments(message));
                     methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
                             "Ви можете змінити ці данні, або натисніть кнопку 'Далі'"));
+                    userRequest =  chatPropertyModeService.getCurrentRequest(chatId);
+                    userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(chatId));
+                    chatPropertyModeService.setCurrentRequest(chatId, userRequest);
                     return methods;
                 }
                 case SET_LOCATION -> {
@@ -206,10 +209,13 @@ public class UserRequestController implements Controller {
 
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
+            userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
             userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
             userRequest.setBodyOfMessage(userRequest.getBodyOfMessage() + "\n\nЗареєстрована: " + userRequest.getDateTimeToString());
             requestService.saveRequest(userRequest);
-            chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
+            userRequest = new UserRequest();
+            chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
+//            chatPropertyModeService.setCurrentLocation(message.getChatId(), null);
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             if (!botUsers.isEmpty()) {
@@ -230,12 +236,13 @@ public class UserRequestController implements Controller {
     }
 
     private List<BotApiMethod<?>> createNewUserRequest(@NotNull Message message) {
-        userRequest.setId(0L);
-        userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+        userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+//        userRequest.setId(0L);
+//        userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
-        userRequest.setAddress(chatPropertyModeService.getCurrentRequestAddress(message.getChatId()));
-        userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
+//        userRequest.setAddress(chatPropertyModeService.getCurrentRequestAddress(message.getChatId()));
+//        userRequest.setLocation(chatPropertyModeService.getCurrentLocation(message.getChatId()));
         String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID "
                 + userRequest.getMessageId() +
@@ -243,6 +250,7 @@ public class UserRequestController implements Controller {
                 "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
         userRequest.setState(false);
         List<BotApiMethod<?>> methods = new ArrayList<>();
+        chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
         methods.addAll(Controller.getSimpleResponseToRequest(message, "Опис проблеми додано до заявки,\nВи можете" +
                 " його змінити,або натисніть кнопку 'Відправити заявку'"));
         methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Відправити заявку", "Скасувати заявку"),
@@ -251,7 +259,10 @@ public class UserRequestController implements Controller {
     }
 
     public List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
-        chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
+        userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+        userRequest.setAddress(message.getText());
+        chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
+//        chatPropertyModeService.setCurrentRequestAddress(message.getChatId(), message.getText());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         List<BotApiMethod<?>> methods = new ArrayList<>();
         methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
@@ -264,12 +275,14 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
-            chatPropertyModeService.setCurrentLocation(message.getChatId(), location);
             List<BotApiMethod<?>> methods = new ArrayList<>();
             methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Далі", "Скасувати заявку"),
                     "Локацію додано до заявки"));
             methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                     " або натисніть кнопку 'Далі'"));
+            userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+            userRequest.setLocation(location);
+            chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
             return methods;
         } else return Controller.getSimpleResponseToRequest(message, RequestHandler.WRONG_ACTION_TEXT);
     }
