@@ -121,6 +121,9 @@ public class UserRequestController implements Controller {
     }
 
     public List<BotApiMethod<?>> getLocationMenu(Message message) {
+        userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+        userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+        chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
         return List.of(
                 SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
