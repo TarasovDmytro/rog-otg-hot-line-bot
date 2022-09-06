@@ -54,7 +54,7 @@ public class MessageHandler implements RequestHandler {
             return superAdminController.changeRoleRequest(message);
         }
         if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
-//            log.info("chatId = {}", message.getChatId());
+            log.info("chatId = {}", message.getChatId());
             return userRequestController.createRequest(message);
         }
         if (message.hasText()) {
