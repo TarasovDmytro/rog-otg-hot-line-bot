@@ -227,8 +227,7 @@ public class UserRequestController implements Controller {
             userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
             userRequest.setBodyOfMessage(userRequest.getBodyOfMessage() + "\n\nЗареєстрована: " + userRequest.getDateTimeToString());
             requestService.saveRequest(userRequest);
-//            userRequest = new UserRequest();
-//            chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
+            chatPropertyModeService.setCurrentRequest(message.getChatId(), new UserRequest());
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             if (!botUsers.isEmpty()) {
