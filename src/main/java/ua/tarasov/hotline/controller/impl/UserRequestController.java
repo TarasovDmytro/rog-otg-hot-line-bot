@@ -225,7 +225,7 @@ public class UserRequestController implements Controller {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
             userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
-            userRequest.setBodyOfMessage(userRequest.getBodyOfMessage() + "\n\nЗареєстрована: " + userRequest.getDateTimeToString());
+//            userRequest.setBodyOfMessage(userRequest.getBodyOfMessage() + "\n\nЗареєстрована: " + userRequest.getDateTimeToString());
             requestService.saveRequest(userRequest);
             chatPropertyModeService.setCurrentRequest(message.getChatId(), new UserRequest());
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
@@ -252,11 +252,8 @@ public class UserRequestController implements Controller {
         userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
-        String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
-        userRequest.setBodyOfMessage(userRequest.getDepartment().toString().substring("1. ".length()) + "\nID "
-                + userRequest.getMessageId() +
-                "\n\n" + message.getText() +
-                "\n\nадреса: " + userRequest.getAddress() + "\n" + isLocation);
+//        String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
+        userRequest.setBodyOfMessage(message.getText());
         userRequest.setState(false);
         List<BotApiMethod<?>> methods = new ArrayList<>();
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);

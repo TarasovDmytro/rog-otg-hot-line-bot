@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-@ToString
+//@ToString
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
@@ -56,5 +56,14 @@ public class UserRequest {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        String isLocation = getLocation() != null ? "Локація: +" : "Локація: --";
+        return getDepartment().toString().substring("1. ".length()) + "\nID "
+                + getMessageId() +
+                "\n\n" + getBodyOfMessage() +
+                "\n\nадреса: " + getAddress() + "\n" + isLocation + "\n\nЗареєстрована: " + getDateTimeToString();
     }
 }
