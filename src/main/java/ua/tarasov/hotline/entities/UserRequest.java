@@ -1,7 +1,10 @@
 package ua.tarasov.hotline.entities;
 
 import com.google.gson.Gson;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 import org.telegram.telegrambots.meta.api.objects.Location;
@@ -33,16 +36,18 @@ public class UserRequest {
     String address;
     String location;
 
-    public void setLocation(Location location) {
-        this.location = new Gson().toJson(location);
-    }
-
     public Location getLocation() {
         return new Gson().fromJson(location, Location.class);
     }
 
+    public void setLocation(Location location) {
+        this.location = new Gson().toJson(location);
+    }
+
     public String getDateTimeToString() {
-        return this.dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH.mm.ss"));
+        if (this.dateTime != null) {
+            return this.dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH.mm.ss"));
+        } else return "Не зареєстровано";
     }
 
     @Override
