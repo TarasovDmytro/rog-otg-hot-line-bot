@@ -160,7 +160,7 @@ public class SuperAdminController implements Controller {
                         .build(),
                 SendMessage.builder()
                         .chatId(String.valueOf(superAdmin.getId()))
-                        .text(userRequest.getBodyOfMessage())
+                        .text(userRequest.toString())
                         .build());
     }
 }

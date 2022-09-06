@@ -131,7 +131,7 @@ public class UserRequestController implements Controller {
         }
     }
 
-    public List<BotApiMethod<?>> getLocationMenu(Message message) {
+    public List<BotApiMethod<?>> getLocationMenu(@NotNull Message message) {
         userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
@@ -151,7 +151,7 @@ public class UserRequestController implements Controller {
         return sendListOfMessagesToUser(message, messages);
     }
 
-    private List<BotApiMethod<?>> sendListOfMessagesToUser(Message message, @NotNull List<UserRequest> messages) {
+    private @NotNull List<BotApiMethod<?>> sendListOfMessagesToUser(Message message, @NotNull List<UserRequest> messages) {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         if (!messages.isEmpty()) {
             messages.sort(Comparator.comparing(UserRequest::getId));
@@ -159,7 +159,7 @@ public class UserRequestController implements Controller {
                 stateText.set(currentMessage.isState() ? TRUE_ACTION_STATE_TEXT : FALSE_ACTION_STATE_TEXT);
                 answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
-                        .text(currentMessage.getBodyOfMessage() + "\n\n" + stateText)
+                        .text(currentMessage + "\n\n" + stateText)
                         .build());
             });
         } else answerMessages.add(SendMessage.builder()
@@ -181,7 +181,7 @@ public class UserRequestController implements Controller {
         return answerMessages;
     }
 
-    private List<BotApiMethod<?>> sendListOfMessagesToAdmin(Message message, @NotNull List<UserRequest> messages) {
+    private @NotNull List<BotApiMethod<?>> sendListOfMessagesToAdmin(Message message, @NotNull List<UserRequest> messages) {
         if (!messages.isEmpty()) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             messages.sort(Comparator.comparing(UserRequest::getId));
@@ -191,7 +191,7 @@ public class UserRequestController implements Controller {
                         keyboardService.getStateRequestButton(currentMessage.getMessageId(), stateText.get());
                 answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
-                        .text(currentMessage.getBodyOfMessage())
+                        .text(currentMessage.toString())
                         .replyMarkup(InlineKeyboardMarkup.builder()
                                 .keyboard(buttons)
                                 .build())
@@ -225,7 +225,6 @@ public class UserRequestController implements Controller {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
             userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
-//            userRequest.setBodyOfMessage(userRequest.getBodyOfMessage() + "\n\nЗареєстрована: " + userRequest.getDateTimeToString());
             requestService.saveRequest(userRequest);
             chatPropertyModeService.setCurrentRequest(message.getChatId(), new UserRequest());
             List<BotUser> botUsers = botUserService.findAllByDepartment(userRequest.getDepartment());
@@ -248,11 +247,10 @@ public class UserRequestController implements Controller {
                 "\n<b>Виконайте, будь ласка, коректну дію за допомогою кнопок</b>");
     }
 
-    private List<BotApiMethod<?>> createNewUserRequest(@NotNull Message message) {
+    private @NotNull List<BotApiMethod<?>> createNewUserRequest(@NotNull Message message) {
         userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
-//        String isLocation = userRequest.getLocation() != null ? "Локація: +" : "Локація: --";
         userRequest.setBodyOfMessage(message.getText());
         userRequest.setState(false);
         List<BotApiMethod<?>> methods = new ArrayList<>();
@@ -358,7 +356,7 @@ public class UserRequestController implements Controller {
                     if (!phone.startsWith("+")) {
                         phone = "+" + phone;
                     }
-                    String messageText = userRequest.getBodyOfMessage() +
+                    String messageText = userRequest +
                             "\n\nІз користувачем можна зв'язатись за телефоном:\n"
                             + phone;
                     return Controller.getSimpleResponseToRequest(message, messageText);
