@@ -233,7 +233,7 @@ public class UserRequestController implements Controller {
             if (!botUsers.isEmpty()) {
                 botUsers.forEach(botUser -> answerMessages.add(SendMessage.builder()
                         .chatId(String.valueOf(botUser.getId()))
-                        .text(userRequest.getBodyOfMessage() +
+                        .text(userRequest.toString() +
                                 "\n\n" + FALSE_ACTION_STATE_TEXT)
                         .build()));
             }
@@ -260,7 +260,7 @@ public class UserRequestController implements Controller {
         methods.addAll(Controller.getSimpleResponseToRequest(message, "Опис проблеми додано до заявки,\nВи можете" +
                 " його змінити,або натисніть кнопку 'Відправити заявку'"));
         methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), List.of("Відправити заявку", "Скасувати заявку"),
-                "Ваша заявка\n" + userRequest.getBodyOfMessage()));
+                "Ваша заявка\n" + userRequest.toString()));
         return methods;
     }
 
