@@ -67,10 +67,7 @@ public class UserRequestController implements Controller {
                         chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
                         return keyboardService.setReplyKeyboardOfUser(chatId, "Заявку скасовано");
                     }
-                    case "Відправити заявку" -> {
-//                        chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE);
-                        chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
-                    }
+                    case "Відправити заявку" -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 }
             }
             switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
@@ -94,7 +91,6 @@ public class UserRequestController implements Controller {
                 }
                 case SET_ADDRESS -> {
                     log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
-//                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_ADDRESS);
                     return setRequestAddress(message);
                 }
                 case WAIT_TEXT -> {
@@ -244,6 +240,7 @@ public class UserRequestController implements Controller {
             }
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+            log.info("chatId = {}", message.getChatId());
             answerMessages.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
                     "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
                             "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
