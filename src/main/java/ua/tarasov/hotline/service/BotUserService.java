@@ -1,5 +1,7 @@
 package ua.tarasov.hotline.service;
 
+import org.jetbrains.annotations.NotNull;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
@@ -19,4 +21,6 @@ public interface BotUserService {
     BotUser findByRole(Role role);
 
     Optional<BotUser> findByPhone(String userPhone);
+    boolean checkIsAdmin(@NotNull Long userId);
+    SendMessage getFalseAdminText(@NotNull Long userId);
 }

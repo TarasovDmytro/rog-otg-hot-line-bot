@@ -44,6 +44,7 @@ public class BotUserController implements Controller {
         User user = message.getFrom();
         botUser.setId(message.getChatId());
         botUser.setUsername(user.getUserName());
+        botUser.setWarningCount(0);
         botUser.setFullName(user.getFirstName() + " " + user.getLastName());
         if (botUserService.findById(botUser.getId()).isPresent()) {
             botUser.setRole(botUserService.findById(botUser.getId()).get().getRole());

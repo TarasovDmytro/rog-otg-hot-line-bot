@@ -18,7 +18,6 @@ import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
-import ua.tarasov.hotline.service.CheckRoleService;
 import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.UserRequestService;
 import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
@@ -33,18 +32,15 @@ import java.util.List;
 public class SuperAdminController implements Controller {
     final BotUserService botUserService;
     final KeyboardService keyboardService;
-    final CheckRoleService checkRoleService;
     final UserRequestService requestService;
     final DepartmentController departmentController;
     List<Department> departments = new ArrayList<>();
     BotUser botUser = new BotUser();
 
     public SuperAdminController(BotUserServiceImpl botUserService, KeyboardService keyboardService,
-                                CheckRoleService checkRoleService, UserRequestService requestService,
-                                DepartmentController departmentController) {
+                                UserRequestService requestService, DepartmentController departmentController) {
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
-        this.checkRoleService = checkRoleService;
         this.requestService = requestService;
         this.departmentController = departmentController;
     }
@@ -79,7 +75,7 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
-        if (checkRoleService.checkIsAdmin(message.getChatId())) {
+        if (botUserService.checkIsAdmin(message.getChatId())) {
             if (message.getText().equals("Скасувати заявку")) {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
@@ -103,7 +99,7 @@ public class SuperAdminController implements Controller {
                     RequestHandler.WRONG_ACTION_TEXT);
         } else {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-            return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
+            return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
         }
     }
 

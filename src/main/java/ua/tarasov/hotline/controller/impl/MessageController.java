@@ -18,7 +18,6 @@ import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
-import ua.tarasov.hotline.service.CheckRoleService;
 import ua.tarasov.hotline.service.KeyboardService;
 
 import java.util.ArrayList;
@@ -30,29 +29,27 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MessageController implements Controller {
 
-    final CheckRoleService checkRoleService;
     final BotUserService botUserService;
     final KeyboardService keyboardService;
 
-    public MessageController(CheckRoleService checkRoleService, BotUserService botUserService, KeyboardService keyboardService) {
-        this.checkRoleService = checkRoleService;
+    public MessageController(BotUserService botUserService, KeyboardService keyboardService) {
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
     }
 
     public List<BotApiMethod<?>> setMessageToAll(Message message) {
-        if (checkRoleService.checkIsAdmin(message.getChatId())) {
+        if (botUserService.checkIsAdmin(message.getChatId())) {
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
             return Controller.getSimpleResponseToRequest(message, """
                     Введіть, будь ласка, повідомлення
                     для всіх користувачів""");
         }
-        return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
+        return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
     }
 
     @NotNull
     public List<BotApiMethod<?>> sendMessageToAll(Message message) {
-        if (checkRoleService.checkIsAdmin(message.getChatId())) {
+        if (botUserService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
             botUsers.forEach(botUser ->
@@ -65,7 +62,7 @@ public class MessageController implements Controller {
             return answerMessages;
         }
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
-        return Collections.singletonList(checkRoleService.getFalseAdminText(message.getChatId()));
+        return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
     }
 
     @NotNull

@@ -17,8 +17,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ua.tarasov.hotline.models.Department;
+import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
-import ua.tarasov.hotline.service.CheckRoleService;
 import ua.tarasov.hotline.service.KeyboardService;
 
 import java.util.ArrayList;
@@ -29,16 +29,14 @@ import java.util.List;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KeyboardServiceImpl implements KeyboardService {
-    final CheckRoleServiceImpl checkRoleServiceImpl;
+    final BotUserService botUserService;
     final ChatPropertyModeService chatPropertyModeService;
-    final CheckRoleService checkRoleService;
     final Gson jsonConverter = new Gson();
 
-    public KeyboardServiceImpl(CheckRoleServiceImpl checkRoleServiceImpl,
-                               @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService, CheckRoleService checkRoleService) {
-        this.checkRoleServiceImpl = checkRoleServiceImpl;
+    public KeyboardServiceImpl(BotUserService botUserService,
+                               @Qualifier("getChatProperties") ChatPropertyModeServiceImpl chatPropertyModeService) {
+        this.botUserService = botUserService;
         this.chatPropertyModeService = chatPropertyModeService;
-        this.checkRoleService = checkRoleService;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         firstRow.add("Мої не виконані заявки");
         var secondRow = new KeyboardRow();
         secondRow.add("Останні оголошення");
-        if (checkRoleServiceImpl.checkIsAdmin(userId)) {
+        if (botUserService.checkIsAdmin(userId)) {
             secondRow.add("Змінити меню");
         }
         return List.of(firstRow, secondRow);
@@ -181,13 +179,13 @@ public class KeyboardServiceImpl implements KeyboardService {
     }
 
     public List<BotApiMethod<?>> setChangeMenu(Message message) {
-        if (checkRoleService.checkIsAdmin(message.getChatId())) {
+        if (botUserService.checkIsAdmin(message.getChatId())) {
             boolean state = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId());
             chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), !state);
             String messageText = "Меню змінено, приємного користування";
             return setReplyKeyboardOfUser(message.getChatId(), messageText);
         }
-        return List.of(checkRoleService.getFalseAdminText(message.getChatId()));
+        return List.of(botUserService.getFalseAdminText(message.getChatId()));
     }
 
     private @NotNull List<KeyboardRow> getRequestMenuReplyButtons(@NotNull List<String> namesOfButtons) {
