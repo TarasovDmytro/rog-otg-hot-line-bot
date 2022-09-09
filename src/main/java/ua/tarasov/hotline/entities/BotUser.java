@@ -21,7 +21,7 @@ public class BotUser {
     @Id
     @Column(nullable = false)
     Long id;
-    int warningCount;
+    Integer warningCount;
     String fullName;
     String username;
     @ElementCollection(fetch = FetchType.EAGER)
