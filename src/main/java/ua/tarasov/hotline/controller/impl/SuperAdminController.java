@@ -144,7 +144,7 @@ public class SuperAdminController implements Controller {
         return methods;
     }
 
-    public List<BotApiMethod<?>> complaint(CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> getComplaint(@NotNull CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("complaint".length()), Integer.class);
         UserRequest userRequest = requestService.findByMessageId(messageId);
         if (botUserService.findById(userRequest.getChatId()).isPresent()) {

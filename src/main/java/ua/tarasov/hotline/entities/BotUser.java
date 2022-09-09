@@ -21,13 +21,11 @@ public class BotUser {
     @Id
     @Column(nullable = false)
     Long id;
-
+    int warningCount;
     String fullName;
     String username;
-
     @ElementCollection(fetch = FetchType.EAGER)
     Set<Department> departments = new HashSet<>();
-
     @Enumerated(EnumType.STRING)
     Role role;
 

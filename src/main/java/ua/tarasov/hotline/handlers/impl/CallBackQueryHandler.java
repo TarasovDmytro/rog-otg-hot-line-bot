@@ -69,7 +69,7 @@ public class CallBackQueryHandler implements RequestHandler {
             return messageController.refuseSetLocationOfRequestMessage(callbackQuery);
         }
         if (callbackQuery.getData().startsWith("complaint")){
-            return superAdminController.complaint(callbackQuery);
+            return superAdminController.getComplaint(callbackQuery);
         }
         return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), WRONG_ACTION_TEXT);
     }
