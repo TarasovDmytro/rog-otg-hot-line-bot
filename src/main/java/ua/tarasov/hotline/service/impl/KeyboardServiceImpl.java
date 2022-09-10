@@ -216,7 +216,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(
                 InlineKeyboardButton.builder()
-                        .text("Погодити")
+                        .text("✅  Погодити")
                         .callbackData("agree_complaint" + jsonConverter.toJson(messageId))
                         .build()));
         return buttons;
