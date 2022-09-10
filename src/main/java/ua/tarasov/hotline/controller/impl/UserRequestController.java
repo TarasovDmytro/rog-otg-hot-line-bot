@@ -257,7 +257,7 @@ public class UserRequestController implements Controller {
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
         methods.addAll(Controller.getSimpleResponseToRequest(message, "Опис проблеми додано до заявки,\nВи можете" +
                 " його змінити,або натисніть кнопку 'Відправити заявку'"));
-        methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("\uD83D\uDCE8  Відправити заявку", "❌ Скасувати заявку"),
+        methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("\uD83D\uDCE8 Відправити заявку", "❌ Скасувати заявку"),
                 "Ваша заявка\n" + userRequest.toString()));
         return methods;
     }
