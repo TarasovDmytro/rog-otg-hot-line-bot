@@ -42,25 +42,25 @@ public class KeyboardServiceImpl implements KeyboardService {
     @Override
     public List<KeyboardRow> getAdminReplyButtons() {
         var firstRow = new KeyboardRow();
-        firstRow.add("Повідомлення всім");
-        firstRow.add("Всі заявки");
-        firstRow.add("Не виконані заявки");
+        firstRow.add("\uD83D\uDCE3 Повідомлення всім");
+        firstRow.add("\uD83D\uDCDA Всі заявки");
+        firstRow.add("\uD83D\uDCD5 Не виконані заявки");
         var secondRow = new KeyboardRow();
-        secondRow.add("Останні оголошення");
-        secondRow.add("Змінити меню");
+        secondRow.add("\uD83D\uDD0A Останні оголошення");
+        secondRow.add("\uD83D\uDD01 Змінити меню");
         return List.of(firstRow, secondRow);
     }
 
     @Override
     public List<KeyboardRow> getUserReplyButtons(Long userId) {
         var firstRow = new KeyboardRow();
-        firstRow.add("Зробити заявку");
-        firstRow.add("Мої заявки");
-        firstRow.add("Мої не виконані заявки");
+        firstRow.add("\uD83D\uDCC4 Зробити заявку");
+        firstRow.add("\uD83D\uDCDA Мої заявки");
+        firstRow.add("\uD83D\uDCD5 Мої не виконані заявки");
         var secondRow = new KeyboardRow();
-        secondRow.add("Останні оголошення");
+        secondRow.add("\uD83D\uDD0A Останні оголошення");
         if (botUserService.checkIsAdmin(userId)) {
-            secondRow.add("Змінити меню");
+            secondRow.add("\uD83D\uDD01 Змінити меню");
         }
         return List.of(firstRow, secondRow);
     }
@@ -83,7 +83,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(
                 InlineKeyboardButton.builder()
-                        .text("Відмовитись")
+                        .text("❌ Відмовитись")
                         .callbackData("refuse" + jsonConverter.toJson(messageId))
                         .build()));
         return buttons;
@@ -182,7 +182,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         if (botUserService.checkIsAdmin(message.getChatId())) {
             boolean state = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId());
             chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), !state);
-            String messageText = "Меню змінено, приємного користування";
+            String messageText = "\uD83D\uDCAB Меню змінено, приємного користування";
             return setReplyKeyboardOfUser(message.getChatId(), messageText);
         }
         return List.of(botUserService.getFalseAdminText(message.getChatId()));

@@ -88,7 +88,7 @@ public class SuperAdminController implements Controller {
                 case WAIT_PHONE -> {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
                     return keyboardService.setMenuReplyKeyboard(message.getChatId(),
-                            List.of("Скасувати заявку"),
+                            List.of("❌ Скасувати заявку"),
                             "Введіть номер телефону адміністратора у форматі '+123456789098'");
                 }
                 case SET_PHONE -> {
@@ -96,7 +96,7 @@ public class SuperAdminController implements Controller {
                 }
             }
             return keyboardService.setMenuReplyKeyboard(message.getChatId(),
-                    List.of("Скасувати заявку"),
+                    List.of("❌ Скасувати заявку"),
                     RequestHandler.WRONG_ACTION_TEXT);
         } else {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
@@ -113,7 +113,7 @@ public class SuperAdminController implements Controller {
             return setDepartmentsOfAdmin(message);
         } else {
             return keyboardService.setMenuReplyKeyboard(message.getChatId(),
-                    List.of("Скасувати заявку"),
+                    List.of("❌ Скасувати заявку"),
                     "Невірний формат телефонного номеру,\nабо такий номер не зареєстрований.\nСпробуйте ще раз");
         }
     }
@@ -123,13 +123,13 @@ public class SuperAdminController implements Controller {
         log.info("PHONE = {}", botUser.getPhone());
         List<BotApiMethod<?>> methods = new ArrayList<>();
         switch (message.getText()) {
-            case "Скасувати заявку" -> {
+            case "❌ Скасувати заявку" -> {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано"));
             }
             case "Відправити заявку" -> methods.addAll(requestRole(message, departments));
             default -> {
-                List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
+                List<String> namesOfButtons = List.of("➕ Додати", "\uD83D\uDCE8 Відправити заявку", "❌ Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
                 methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
                         "Ви можете додавати Департаменти, поки не натиснуте кнопку 'Відправити заявку'"));
