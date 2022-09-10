@@ -37,18 +37,10 @@ public class MessageController implements Controller {
         this.keyboardService = keyboardService;
     }
 
-    public List<BotApiMethod<?>> setMessageToAll(Message message) {
-        if (botUserService.checkIsAdmin(message.getChatId())) {
-            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE_TO_ALL);
-            return Controller.getSimpleResponseToRequest(message, """
-                    Введіть, будь ласка, повідомлення
-                    для всіх користувачів""");
-        }
-        return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
-    }
-
     @NotNull
     public List<BotApiMethod<?>> sendMessageToAll(Message message) {
+        message.setText("\uD83D\uDCE3 " + message.getText());
+        log.info("text = {}", message.getText());
         if (botUserService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
