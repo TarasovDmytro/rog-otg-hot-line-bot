@@ -106,8 +106,6 @@ public class MessageHandler implements RequestHandler {
                 }
             }
             if (message.hasContact()) return botUserController.setBotUserPhone(message);
-            String newText = "\uD83D\uDCE3 " + message.getText();
-            message.setText(newText);
             return messageController.sendMessageToAll(message);
         } else return List.of(SendMessage.builder()
                 .chatId(String.valueOf(userId))
