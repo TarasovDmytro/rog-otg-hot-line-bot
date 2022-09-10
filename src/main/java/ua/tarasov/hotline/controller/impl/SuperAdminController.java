@@ -179,8 +179,8 @@ public class SuperAdminController implements Controller {
         botUserService.saveBotUser(botUser);
         return List.of(SendMessage.builder()
                         .chatId(String.valueOf(userId))
-                        .text("Ви отримали " + botUser.getWarningCount() + " попередження за некоректне використання сервісу. " +
-                                "При отриманні 3 попереджень Ви будете заблоковані. Скарга була подана на Вашу заявку ID " + messageId)
+                        .text("Ви отримали " + botUser.getWarningCount() + " попередження за некоректне використання сервісу." +
+                                "\nПри отриманні 3 попереджень користувач автоматично блокується.\nСкарга була подана на Вашу заявку ID " + messageId)
                         .build(),
                 SendMessage.builder()
                         .chatId(String.valueOf(userId))
