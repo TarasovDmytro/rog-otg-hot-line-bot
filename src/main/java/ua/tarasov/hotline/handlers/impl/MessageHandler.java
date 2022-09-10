@@ -79,16 +79,16 @@ public class MessageHandler implements RequestHandler {
                     case "Мої заявки" -> {
                         return userRequestController.getAllStatesRequestsOfUser(message);
                     }
-                    case "Всі заявки" -> {
+                    case "\uD83D\uDCDA Всі заявки" -> {
                         return userRequestController.getAllStatesRequestsOfAdmin(message);
                     }
-                    case "Мої не виконані заявки" -> {
+                    case "\uD83D\uDCD5 Мої не виконані заявки" -> {
                         return userRequestController.getFalseStateRequestsOfUser(message);
                     }
-                    case "Не виконані заявки" -> {
+                    case "\uD83D\uDCD5 Не виконані заявки" -> {
                         return userRequestController.getFalseStateRequestsOfAdmin(message);
                     }
-                    case "Змінити меню" -> {
+                    case "\uD83D\uDD01 Змінити меню" -> {
                         return keyboardService.setChangeMenu(message);
                     }
                     case "Повідомлення всім" -> {
@@ -97,7 +97,7 @@ public class MessageHandler implements RequestHandler {
                     case "❌ Відмовитись" -> {
                         return keyboardService.setReplyKeyboardOfUser(message.getChatId(), START_TEXT);
                     }
-                    case "Останні оголошення" -> {
+                    case "\uD83D\uDD0A Останні оголошення" -> {
                         return notificationController.getNotifications(message);
                     }
                     default -> {
