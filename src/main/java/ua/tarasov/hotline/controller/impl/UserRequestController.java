@@ -67,14 +67,14 @@ public class UserRequestController implements Controller {
                         chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
                         return keyboardService.setReplyKeyboardOfUser(chatId, "Заявку скасовано");
                     }
-                    case "Відправити заявку" -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
+                    case "\uD83D\uDCE8 Відправити заявку" -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 }
             }
             switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
                 case SET_DEPARTMENT -> {
                     List<BotApiMethod<?>> methods = new ArrayList<>();
                     methods.addAll(departmentController.getMenuOfDepartments(message));
-                    methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "Скасувати заявку"),
+                    methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "❌ Скасувати заявку"),
                             "Ви можете змінити ці данні, або натисніть кнопку 'Далі'"));
                     userRequest =  chatPropertyModeService.getCurrentRequest(chatId);
                     userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(chatId));
@@ -257,7 +257,7 @@ public class UserRequestController implements Controller {
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
         methods.addAll(Controller.getSimpleResponseToRequest(message, "Опис проблеми додано до заявки,\nВи можете" +
                 " його змінити,або натисніть кнопку 'Відправити заявку'"));
-        methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("\uD83D\uDCE8  Відправити заявку", "Скасувати заявку"),
+        methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("\uD83D\uDCE8  Відправити заявку", "❌ Скасувати заявку"),
                 "Ваша заявка\n" + userRequest.toString()));
         return methods;
     }
@@ -268,7 +268,7 @@ public class UserRequestController implements Controller {
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         List<BotApiMethod<?>> methods = new ArrayList<>();
-        methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "Скасувати заявку"),
+        methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "❌ Скасувати заявку"),
                 "Адресу додано до заявки"));
         methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                 " або натисніть кнопку 'Далі'"));

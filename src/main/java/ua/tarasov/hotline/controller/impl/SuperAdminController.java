@@ -58,7 +58,7 @@ public class SuperAdminController implements Controller {
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
         List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
-                "Заявку прийнято"));
+                "✅  Заявку прийнято"));
         methods.add(SendMessage.builder()
                 .chatId(String.valueOf(superAdmin.getId()))
                 .text("<b>Отримана заявка від </b>" + admin.getFullName() + "\n<b>тел.</b>" + admin.getPhone()
@@ -77,7 +77,7 @@ public class SuperAdminController implements Controller {
 
     public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
         if (botUserService.checkIsAdmin(message.getChatId())) {
-            if (message.getText().equals("Скасувати заявку")) {
+            if (message.getText().equals("❌ Скасувати заявку")) {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
             }
@@ -127,13 +127,13 @@ public class SuperAdminController implements Controller {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано"));
             }
-            case "Відправити заявку" -> methods.addAll(requestRole(message, departments));
+            case "\uD83D\uDCE8 Відправити заявку" -> methods.addAll(requestRole(message, departments));
             default -> {
                 List<String> namesOfButtons = List.of("➕ Додати", "\uD83D\uDCE8 Відправити заявку", "❌ Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
                 methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
                         "Ви можете додавати Департаменти, поки не натиснуте кнопку 'Відправити заявку'"));
-                if (message.getText().equals("Додати")) {
+                if (message.getText().equals("➕ Додати")) {
                     departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
                 }
             }
