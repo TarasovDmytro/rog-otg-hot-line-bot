@@ -76,7 +76,7 @@ public class MessageHandler implements RequestHandler {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
                         return userRequestController.createRequest(message);
                     }
-                    case "Мої заявки" -> {
+                    case "\uD83D\uDCDA Мої заявки" -> {
                         return userRequestController.getAllStatesRequestsOfUser(message);
                     }
                     case "\uD83D\uDCDA Всі заявки" -> {
