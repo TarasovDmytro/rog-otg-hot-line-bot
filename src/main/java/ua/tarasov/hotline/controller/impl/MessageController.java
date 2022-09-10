@@ -39,8 +39,6 @@ public class MessageController implements Controller {
 
     @NotNull
     public List<BotApiMethod<?>> sendMessageToAll(Message message) {
-        message.setText("\uD83D\uDCE3 " + message.getText());
-        log.info("text = {}", message.getText());
         if (botUserService.checkIsAdmin(message.getChatId())) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
