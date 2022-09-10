@@ -218,10 +218,6 @@ public class KeyboardServiceImpl implements KeyboardService {
                 InlineKeyboardButton.builder()
                         .text("Погодити")
                         .callbackData("agree_complaint" + jsonConverter.toJson(messageId))
-                        .build(),
-                InlineKeyboardButton.builder()
-                        .text("Ігнорувати")
-                        .callbackData("refuse_complaint" + jsonConverter.toJson(messageId))
                         .build()));
         return buttons;
     }

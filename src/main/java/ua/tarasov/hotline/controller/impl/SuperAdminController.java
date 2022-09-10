@@ -146,22 +146,44 @@ public class SuperAdminController implements Controller {
         UserRequest userRequest = requestService.findByMessageId(messageId);
         if (botUserService.findById(userRequest.getChatId()).isPresent()) {
             botUser = botUserService.findById(userRequest.getChatId()).get();
-        } else Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "No user");
-        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
-        List<List<InlineKeyboardButton>> buttons = keyboardService.getComplaintButton(messageId);
+        } else Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Такого користувача не існує");
+        if (botUser.getWarningCount() < 3) {
+            BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+            List<List<InlineKeyboardButton>> buttons = keyboardService.getComplaintButton(messageId);
+            return List.of(SendMessage.builder()
+                            .chatId(String.valueOf(superAdmin.getId()))
+                            .text("Отримана скарга на користувача\n" +
+                                    "ID " + botUser.getId() +
+                                    "\n" + botUser.getFullName() +
+                                    "\nпо заявці ID " + messageId)
+                            .build(),
+                    SendMessage.builder()
+                            .chatId(String.valueOf(superAdmin.getId()))
+                            .text(userRequest.toString())
+                            .replyMarkup(InlineKeyboardMarkup.builder()
+                                    .keyboard(buttons)
+                                    .build())
+                            .build());
+        } else
+            return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цей користувач вже заблокований");
+    }
+
+    public List<BotApiMethod<?>> sendComplaint(CallbackQuery callbackQuery) {
+        Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("agree_complaint".length()), Integer.class);
+        UserRequest userRequest = requestService.findByMessageId(messageId);
+        Long userId = userRequest.getChatId();
+        if (botUserService.findById(userId).isPresent()) {
+            botUser = botUserService.findById(userId).get();
+        }
+        botUser.setWarningCount(botUser.getWarningCount() + 1);
         return List.of(SendMessage.builder()
-                        .chatId(String.valueOf(superAdmin.getId()))
-                        .text("Отримана скарга на користувача\n" +
-                                "ID " + botUser.getId() +
-                                "\n" + botUser.getFullName() +
-                                "\nпо заявці ID " + messageId)
+                        .chatId(String.valueOf(userId))
+                        .text("Ви отримали " + botUser.getWarningCount() + " попередження за некоректне використання сервісу. " +
+                                "При отриманні 3 попереджень Ви будете заблоковані. Скарга була подана на Вашу заявку ID " + messageId)
                         .build(),
                 SendMessage.builder()
-                        .chatId(String.valueOf(superAdmin.getId()))
-                        .text(userRequest.toString())
-                        .replyMarkup(InlineKeyboardMarkup.builder()
-                                .keyboard(buttons)
-                                .build())
+                        .chatId(String.valueOf(userId))
+                        .text(userRequest.getBodyOfMessage())
                         .build());
     }
 }

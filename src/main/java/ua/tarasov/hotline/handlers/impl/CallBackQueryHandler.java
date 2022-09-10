@@ -82,6 +82,9 @@ public class CallBackQueryHandler implements RequestHandler {
             if (callbackQuery.getData().startsWith("complaint")) {
                 return superAdminController.getComplaint(callbackQuery);
             }
+            if (callbackQuery.getData().startsWith("agree_complaint")) {
+                return superAdminController.sendComplaint(callbackQuery);
+            }
             return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), WRONG_ACTION_TEXT);
         } else return List.of(SendMessage.builder()
                 .chatId(String.valueOf(userId))
