@@ -158,7 +158,7 @@ public class KeyboardServiceImpl implements KeyboardService {
                         .build()));
         buttons.add(List.of(
                 InlineKeyboardButton.builder()
-                        .text("Поскаржитись")
+                        .text("❗️Поскаржитись")
                         .callbackData("complaint" + jsonConverter.toJson(messageId))
                         .build()));
         return buttons;
