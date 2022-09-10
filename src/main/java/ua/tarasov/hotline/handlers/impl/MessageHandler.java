@@ -91,9 +91,6 @@ public class MessageHandler implements RequestHandler {
                     case "\uD83D\uDD01 Змінити меню" -> {
                         return keyboardService.setChangeMenu(message);
                     }
-                    case "Повідомлення всім" -> {
-                        return messageController.setMessageToAll(message);
-                    }
                     case "❌ Відмовитись" -> {
                         return keyboardService.setReplyKeyboardOfUser(message.getChatId(), START_TEXT);
                     }
