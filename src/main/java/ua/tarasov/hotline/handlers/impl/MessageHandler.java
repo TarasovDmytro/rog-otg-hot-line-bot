@@ -72,7 +72,7 @@ public class MessageHandler implements RequestHandler {
                     case "/start" -> {
                         return botUserController.setStartProperties(message);
                     }
-                    case "Зробити заявку" -> {
+                    case "\uD83D\uDCC4 Зробити заявку" -> {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
                         return userRequestController.createRequest(message);
                     }
