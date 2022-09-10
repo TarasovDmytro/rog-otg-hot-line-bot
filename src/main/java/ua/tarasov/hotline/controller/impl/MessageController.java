@@ -43,11 +43,15 @@ public class MessageController implements Controller {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
             botUsers.forEach(botUser ->
-                    answerMessages.add(ForwardMessage.builder()
-                            .chatId(String.valueOf(botUser.getId()))
-                            .fromChatId(String.valueOf(message.getChatId()))
-                            .messageId(message.getMessageId())
-                            .build()));
+                    answerMessages.addAll(List.of(SendMessage.builder()
+                                    .chatId(String.valueOf(botUser.getId()))
+                                    .text("\uD83D\uDCE3")
+                                    .build(),
+                            ForwardMessage.builder()
+                                    .chatId(String.valueOf(botUser.getId()))
+                                    .fromChatId(String.valueOf(message.getChatId()))
+                                    .messageId(message.getMessageId())
+                                    .build())));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
         }
