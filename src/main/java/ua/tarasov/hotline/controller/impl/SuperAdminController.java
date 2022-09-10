@@ -176,6 +176,7 @@ public class SuperAdminController implements Controller {
             botUser = botUserService.findById(userId).get();
         }
         botUser.setWarningCount(botUser.getWarningCount() + 1);
+        botUserService.saveBotUser(botUser);
         return List.of(SendMessage.builder()
                         .chatId(String.valueOf(userId))
                         .text("Ви отримали " + botUser.getWarningCount() + " попередження за некоректне використання сервісу. " +
