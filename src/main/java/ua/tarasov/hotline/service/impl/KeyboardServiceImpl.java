@@ -148,12 +148,12 @@ public class KeyboardServiceImpl implements KeyboardService {
                         .build()));
         buttons.add(List.of(
                 InlineKeyboardButton.builder()
-                        .text("\uD83D\uDCDE☎️Отримати контакт")
+                        .text("\uD83D\uDCDE Отримати контакт")
                         .callbackData("contact" + jsonConverter.toJson(messageId))
                         .build()));
         buttons.add(List.of(
                 InlineKeyboardButton.builder()
-                        .text("\uD83C\uDF0F Отримати локацію")
+                        .text("\uD83C\uDF0D Отримати локацію")
                         .callbackData("location" + jsonConverter.toJson(messageId))
                         .build()));
         buttons.add(List.of(
