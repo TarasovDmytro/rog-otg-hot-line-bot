@@ -42,7 +42,6 @@ public class KeyboardServiceImpl implements KeyboardService {
     @Override
     public List<KeyboardRow> getAdminReplyButtons() {
         var firstRow = new KeyboardRow();
-        firstRow.add("\uD83D\uDCE3 Повідомлення всім");
         firstRow.add("\uD83D\uDCDA Всі заявки");
         firstRow.add("\uD83D\uDCD5 Не виконані заявки");
         var secondRow = new KeyboardRow();
