@@ -357,7 +357,7 @@ public class UserRequestController implements Controller {
                         phone = "+" + phone;
                     }
                     String messageText = userRequest +
-                            "\n\nІз користувачем можна зв'язатись за телефоном:\n\n"
+                            "\n\nІз користувачем можна зв'язатись за телефоном:\n\n☎️  "
                             + phone;
                     return Controller.getSimpleResponseToRequest(message, messageText);
                 } else return List.of(AnswerCallbackQuery.builder()
