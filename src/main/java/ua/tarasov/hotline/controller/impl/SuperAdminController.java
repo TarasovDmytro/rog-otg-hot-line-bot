@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.UserRequest;
@@ -86,7 +87,7 @@ public class SuperAdminController implements Controller {
                 }
                 case WAIT_PHONE -> {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
-                    return keyboardService.setRequestMenuReplyKeyboard(message.getChatId(),
+                    return keyboardService.setMenuReplyKeyboard(message.getChatId(),
                             List.of("Скасувати заявку"),
                             "Введіть номер телефону адміністратора у форматі '+123456789098'");
                 }
@@ -94,7 +95,7 @@ public class SuperAdminController implements Controller {
                     return setPhoneOfAdmin(message);
                 }
             }
-            return keyboardService.setRequestMenuReplyKeyboard(message.getChatId(),
+            return keyboardService.setMenuReplyKeyboard(message.getChatId(),
                     List.of("Скасувати заявку"),
                     RequestHandler.WRONG_ACTION_TEXT);
         } else {
@@ -111,7 +112,7 @@ public class SuperAdminController implements Controller {
             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
             return setDepartmentsOfAdmin(message);
         } else {
-            return keyboardService.setRequestMenuReplyKeyboard(message.getChatId(),
+            return keyboardService.setMenuReplyKeyboard(message.getChatId(),
                     List.of("Скасувати заявку"),
                     "Невірний формат телефонного номеру,\nабо такий номер не зареєстрований.\nСпробуйте ще раз");
         }
@@ -130,7 +131,7 @@ public class SuperAdminController implements Controller {
             default -> {
                 List<String> namesOfButtons = List.of("Додати", "Відправити заявку", "Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
-                methods.addAll(keyboardService.setRequestMenuReplyKeyboard(message.getChatId(), namesOfButtons,
+                methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
                         "Ви можете додавати Департаменти, поки не натиснуте кнопку 'Відправити заявку'"));
                 if (message.getText().equals("Додати")) {
                     departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
@@ -147,6 +148,7 @@ public class SuperAdminController implements Controller {
             botUser = botUserService.findById(userRequest.getChatId()).get();
         } else Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "No user");
         BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        List<List<InlineKeyboardButton>> buttons = keyboardService.getComplaintButton(messageId);
         return List.of(SendMessage.builder()
                         .chatId(String.valueOf(superAdmin.getId()))
                         .text("Отримана скарга на користувача\n" +
@@ -157,6 +159,9 @@ public class SuperAdminController implements Controller {
                 SendMessage.builder()
                         .chatId(String.valueOf(superAdmin.getId()))
                         .text(userRequest.toString())
+                        .replyMarkup(InlineKeyboardMarkup.builder()
+                                .keyboard(buttons)
+                                .build())
                         .build());
     }
 }

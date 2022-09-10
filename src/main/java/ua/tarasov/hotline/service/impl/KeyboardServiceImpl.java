@@ -188,7 +188,7 @@ public class KeyboardServiceImpl implements KeyboardService {
         return List.of(botUserService.getFalseAdminText(message.getChatId()));
     }
 
-    private @NotNull List<KeyboardRow> getRequestMenuReplyButtons(@NotNull List<String> namesOfButtons) {
+    private @NotNull List<KeyboardRow> getMenuReplyButtons(@NotNull List<String> namesOfButtons) {
         List<KeyboardRow> keyboardRows = new ArrayList<>();
         namesOfButtons.forEach(nameOfButton -> {
             KeyboardRow keyboardRow = new KeyboardRow();
@@ -199,8 +199,8 @@ public class KeyboardServiceImpl implements KeyboardService {
     }
 
     @Override
-    public List<BotApiMethod<?>> setRequestMenuReplyKeyboard(Long userId, List<String> namesOfButtons, String messageText) {
-        List<KeyboardRow> keyboardRows = getRequestMenuReplyButtons(namesOfButtons);
+    public List<BotApiMethod<?>> setMenuReplyKeyboard(Long userId, List<String> namesOfButtons, String messageText) {
+        List<KeyboardRow> keyboardRows = getMenuReplyButtons(namesOfButtons);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(userId))
                 .text(messageText)
@@ -210,5 +210,19 @@ public class KeyboardServiceImpl implements KeyboardService {
                         .oneTimeKeyboard(false)
                         .build())
                 .build());
+    }
+
+    public List<List<InlineKeyboardButton>> getComplaintButton(Integer messageId) {
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        buttons.add(List.of(
+                InlineKeyboardButton.builder()
+                        .text("Погодити")
+                        .callbackData("agree_complaint" + jsonConverter.toJson(messageId))
+                        .build(),
+                InlineKeyboardButton.builder()
+                        .text("Ігнорувати")
+                        .callbackData("refuse_complaint" + jsonConverter.toJson(messageId))
+                        .build()));
+        return buttons;
     }
 }
