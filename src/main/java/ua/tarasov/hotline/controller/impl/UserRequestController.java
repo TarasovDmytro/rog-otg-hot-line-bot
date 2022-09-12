@@ -57,7 +57,7 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> createRequest(@NotNull Message message) {
         Long chatId = message.getChatId();
         if (!chatPropertyModeService.getCurrentStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)) {
-            if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
+            if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_LOCATION)) {
                 if (message.hasLocation()) {
                     return setRequestLocation(message);
                 } else {
@@ -127,8 +127,10 @@ public class UserRequestController implements Controller {
                 }
             }
             case SET_LOCATION -> {
-                chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE);
-                chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
+                if (userRequest.getLocation() != null) {
+                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE);
+                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
+                }
             }
             case SET_ADDRESS -> {
                 if (userRequest.getAddress() != null) {
