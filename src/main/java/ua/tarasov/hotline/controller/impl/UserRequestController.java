@@ -18,7 +18,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.UserRequest;
-import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -117,7 +116,6 @@ public class UserRequestController implements Controller {
         }
         return createRequestMessageHandler(message);
     }
-
     public void switchStateOfRequest(Long chatId) {
         userRequest = chatPropertyModeService.getCurrentRequest(chatId);
         switch (chatPropertyModeService.getCurrentStateOfRequest(chatId)) {
@@ -144,7 +142,6 @@ public class UserRequestController implements Controller {
             }
         }
     }
-
     public List<BotApiMethod<?>> getLocationMenu(@NotNull Message message) {
         userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
@@ -159,13 +156,11 @@ public class UserRequestController implements Controller {
                                 .build())
                         .build());
     }
-
     public List<BotApiMethod<?>> getAllStatesRequestsOfUser(@NotNull Message message) {
         List<UserRequest> messages = requestService.findMessagesByBotUser(message.getChatId());
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return sendListOfMessagesToUser(message, messages);
     }
-
     private @NotNull List<BotApiMethod<?>> sendListOfMessagesToUser(Message message, @NotNull List<UserRequest> messages) {
         List<BotApiMethod<?>> answerMessages = new ArrayList<>();
         if (!messages.isEmpty()) {
@@ -183,7 +178,6 @@ public class UserRequestController implements Controller {
                 .build());
         return answerMessages;
     }
-
     public List<BotApiMethod<?>> getAllStatesRequestsOfAdmin(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
@@ -195,7 +189,6 @@ public class UserRequestController implements Controller {
         }
         return answerMessages;
     }
-
     private @NotNull List<BotApiMethod<?>> sendListOfMessagesToAdmin(Message message, @NotNull List<UserRequest> messages) {
         if (!messages.isEmpty()) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
@@ -216,13 +209,11 @@ public class UserRequestController implements Controller {
         }
         return Controller.getSimpleResponseToRequest(message, "Наразі не існує таких заявок");
     }
-
     public List<BotApiMethod<?>> getFalseStateRequestsOfUser(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         List<UserRequest> messages = requestService.findMessagesByBotUserAndState(message.getChatId(), false);
         return sendListOfMessagesToUser(message, messages);
     }
-
     public List<BotApiMethod<?>> getFalseStateRequestsOfAdmin(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         if (botUserService.findById(message.getChatId()).isPresent()) {
@@ -235,7 +226,6 @@ public class UserRequestController implements Controller {
         }
         return answerMessages;
     }
-
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
@@ -261,7 +251,6 @@ public class UserRequestController implements Controller {
         } else return Controller.getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
                 "\n<b>Виконайте, будь ласка, коректну дію за допомогою кнопок</b>");
     }
-
     private @NotNull List<BotApiMethod<?>> createNewUserRequest(@NotNull Message message) {
         userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setChatId(message.getChatId());
@@ -276,7 +265,6 @@ public class UserRequestController implements Controller {
                 "Ваша заявка\n" + userRequest.toString()));
         return methods;
     }
-
     public List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
         userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setAddress(message.getText());
@@ -289,9 +277,7 @@ public class UserRequestController implements Controller {
                 " або натисніть кнопку 'Далі'"));
         return methods;
     }
-
     public List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
-//        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             List<BotApiMethod<?>> methods = new ArrayList<>();
             methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "❌ Скасувати заявку"),
@@ -300,12 +286,9 @@ public class UserRequestController implements Controller {
                     " або натисніть кнопку 'Далі'"));
             userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
             userRequest.setLocation(location);
-//            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
             chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
             return methods;
-//        } else return Controller.getSimpleResponseToRequest(message, RequestHandler.WRONG_ACTION_TEXT);
     }
-
     @NotNull
     @Unmodifiable
     public List<BotApiMethod<?>> setStateRequest(@NotNull CallbackQuery callbackQuery) {
