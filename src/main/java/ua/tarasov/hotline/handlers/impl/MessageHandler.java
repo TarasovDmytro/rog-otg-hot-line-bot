@@ -72,9 +72,9 @@ public class MessageHandler implements RequestHandler {
                 String text = message.getText();
                 if (message.hasEntities()) {
                     switch (text) {
-//                        case "/start" -> {
-//                            return botUserController.setStartProperties(message.getFrom());
-//                        }
+                        case "/start" -> {
+                            return botUserController.setStartProperties(message.getFrom());
+                        }
                         case "/new_admin" -> {
                             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
                             return superAdminController.changeRoleRequest(message);
