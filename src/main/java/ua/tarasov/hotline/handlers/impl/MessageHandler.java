@@ -61,11 +61,11 @@ public class MessageHandler implements RequestHandler {
             user = userService.findById(userId).get();
         }
         if (user.getWarningCount() < 3) {
-            if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
-                    chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
+            if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
+                    chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
                 return superAdminController.changeRoleRequest(message);
             }
-            if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
+            if (!chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
                 return userRequestController.createRequest(message);
             }
             if (message.hasText()) {

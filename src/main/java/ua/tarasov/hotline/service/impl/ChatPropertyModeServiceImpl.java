@@ -69,7 +69,7 @@ public class ChatPropertyModeServiceImpl implements ChatPropertyModeService {
     }
 
     @Override
-    public StateOfRequest getStateOfRequest(Long chatId) {
+    public StateOfRequest getCurrentStateOfRequest(Long chatId) {
         return currentStateOfRequest.getOrDefault(chatId, StateOfRequest.REQUEST_CREATED);
     }
 }

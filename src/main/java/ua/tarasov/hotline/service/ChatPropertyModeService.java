@@ -31,5 +31,5 @@ public interface ChatPropertyModeService {
 
     void setCurrentStateOfRequest(long chatId, StateOfRequest stateOfRequest);
 
-    StateOfRequest getStateOfRequest(Long chatId);
+    StateOfRequest getCurrentStateOfRequest(Long chatId);
 }

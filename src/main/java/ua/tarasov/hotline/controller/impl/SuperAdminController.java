@@ -81,7 +81,7 @@ public class SuperAdminController implements Controller {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
             }
-            switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
+            switch (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId())) {
                 case SET_ROLES -> {
                     return setDepartmentsOfAdmin(message);
                 }

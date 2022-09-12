@@ -14,9 +14,11 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
+import ua.tarasov.hotline.entities.UserRequest;
 import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
+import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
 import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
@@ -43,6 +45,8 @@ public class BotUserController implements Controller {
     @Unmodifiable
     public List<BotApiMethod<?>> setStartProperties(@NotNull User user) {
         chatPropertyModeService.setCurrentBotState(user.getId(), BotState.WAIT_BUTTON);
+        chatPropertyModeService.setCurrentRequest(user.getId(), new UserRequest());
+        chatPropertyModeService.setCurrentStateOfRequest(user.getId(), StateOfRequest.REQUEST_CREATED);
         log.info("USER = {}", user);
         botUser.setId(user.getId());
         botUser.setUsername(user.getUserName());

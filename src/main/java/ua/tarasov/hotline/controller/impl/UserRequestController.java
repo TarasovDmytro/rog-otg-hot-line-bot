@@ -56,7 +56,7 @@ public class UserRequestController implements Controller {
 
     public List<BotApiMethod<?>> createRequest(@NotNull Message message) {
         Long chatId = message.getChatId();
-        if (!chatPropertyModeService.getStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)) {
+        if (!chatPropertyModeService.getCurrentStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)) {
             if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION) &&
                     !message.hasLocation()) {
                 Controller.getSimpleResponseToRequest(message, "Вибачте, але я не отримав даних із геолокацією");
@@ -74,7 +74,7 @@ public class UserRequestController implements Controller {
                             chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 }
             }
-            switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
+            switch (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId())) {
                 case SET_DEPARTMENT -> {
                     List<BotApiMethod<?>> methods = new ArrayList<>();
                     methods.addAll(departmentController.getMenuOfDepartments(message));
@@ -86,15 +86,15 @@ public class UserRequestController implements Controller {
                     return methods;
                 }
                 case SET_LOCATION -> {
-                    log.info("case SET_LOCATION = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                    log.info("case SET_LOCATION = {}", chatPropertyModeService.getCurrentStateOfRequest(chatId));
                     return getLocationMenu(message);
                 }
                 case WAIT_ADDRESS -> {
-                    log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                    log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getCurrentStateOfRequest(chatId));
                     return messageController.setRequestAddressMessage(message);
                 }
                 case SET_ADDRESS -> {
-                    log.info("case SET_ADDRESS = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                    log.info("case SET_ADDRESS = {}", chatPropertyModeService.getCurrentStateOfRequest(chatId));
                     return setRequestAddress(message);
                 }
                 case WAIT_TEXT -> {
@@ -102,7 +102,7 @@ public class UserRequestController implements Controller {
                     return Controller.getSimpleResponseToRequest(message, "Введіть, будь ласка, докладний опис існуючої проблеми");
                 }
                 case SET_TEXT -> {
-                    log.info("case SET_TEXT = {}", chatPropertyModeService.getStateOfRequest(chatId));
+                    log.info("case SET_TEXT = {}", chatPropertyModeService.getCurrentStateOfRequest(chatId));
                     return createNewUserRequest(message);
                 }
             }
@@ -112,7 +112,7 @@ public class UserRequestController implements Controller {
 
     public void switchStateOfRequest(Long chatId) {
         userRequest = chatPropertyModeService.getCurrentRequest(chatId);
-        switch (chatPropertyModeService.getStateOfRequest(chatId)) {
+        switch (chatPropertyModeService.getCurrentStateOfRequest(chatId)) {
             case SET_DEPARTMENT -> {
                 if (userRequest.getDepartment() != null) {
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
