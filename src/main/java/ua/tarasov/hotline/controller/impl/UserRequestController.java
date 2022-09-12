@@ -61,7 +61,9 @@ public class UserRequestController implements Controller {
 //                    !message.hasLocation()) {
 //                Controller.getSimpleResponseToRequest(message, "Вибачте, але я не отримав даних із геолокацією");
 //            } else
-               if (message.hasLocation()) {return setRequestLocation(message);}
+               if (message.hasLocation()) {
+                   return setRequestLocation(message);
+               }
             if (message.hasText()) {
                 switch (message.getText()) {
                     case "▶️ Далі" -> switchStateOfRequest(chatId);

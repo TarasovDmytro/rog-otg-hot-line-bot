@@ -61,6 +61,17 @@ public class MessageHandler implements RequestHandler {
             user = userService.findById(userId).get();
         }
         if (user.getWarningCount() < 3) {
+            if (message.hasEntities() && message.hasText()) {
+                switch (message.getText()) {
+                    case "/start" -> {
+                        return botUserController.setStartProperties(message.getFrom());
+                    }
+                    case "/new_admin" -> {
+                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
+                        return superAdminController.changeRoleRequest(message);
+                    }
+                }
+            }
             if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
                     chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
                 return superAdminController.changeRoleRequest(message);
@@ -69,47 +80,34 @@ public class MessageHandler implements RequestHandler {
                 return userRequestController.createRequest(message);
             }
             if (message.hasText()) {
-                String text = message.getText();
-                if (message.hasEntities()) {
-                    switch (text) {
-                        case "/start" -> {
-                            return botUserController.setStartProperties(message.getFrom());
-                        }
-                        case "/new_admin" -> {
-                            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
-                            return superAdminController.changeRoleRequest(message);
-                        }
+                switch (message.getText()) {
+                    case "\uD83D\uDCC4 Зробити заявку" -> {
+                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
+                        return userRequestController.createRequest(message);
                     }
-                } else {
-                    switch (text) {
-                        case "\uD83D\uDCC4 Зробити заявку" -> {
-                            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
-                            return userRequestController.createRequest(message);
-                        }
-                        case "\uD83D\uDCDA Мої заявки" -> {
-                            return userRequestController.getAllStatesRequestsOfUser(message);
-                        }
-                        case "\uD83D\uDCDA Всі заявки" -> {
-                            return userRequestController.getAllStatesRequestsOfAdmin(message);
-                        }
-                        case "\uD83D\uDCD5 Мої не виконані заявки" -> {
-                            return userRequestController.getFalseStateRequestsOfUser(message);
-                        }
-                        case "\uD83D\uDCD5 Не виконані заявки" -> {
-                            return userRequestController.getFalseStateRequestsOfAdmin(message);
-                        }
-                        case "\uD83D\uDD01 Змінити меню" -> {
-                            return keyboardService.setChangeMenu(message);
-                        }
-                        case "❌ Відмовитись" -> {
-                            return keyboardService.setReplyKeyboardOfUser(message.getChatId(), START_TEXT);
-                        }
-                        case "\uD83D\uDD0A Останні оголошення" -> {
-                            return notificationController.getNotifications(message);
-                        }
-                        default -> {
-                            return messageController.sendMessageToAll(message);
-                        }
+                    case "\uD83D\uDCDA Мої заявки" -> {
+                        return userRequestController.getAllStatesRequestsOfUser(message);
+                    }
+                    case "\uD83D\uDCDA Всі заявки" -> {
+                        return userRequestController.getAllStatesRequestsOfAdmin(message);
+                    }
+                    case "\uD83D\uDCD5 Мої не виконані заявки" -> {
+                        return userRequestController.getFalseStateRequestsOfUser(message);
+                    }
+                    case "\uD83D\uDCD5 Не виконані заявки" -> {
+                        return userRequestController.getFalseStateRequestsOfAdmin(message);
+                    }
+                    case "\uD83D\uDD01 Змінити меню" -> {
+                        return keyboardService.setChangeMenu(message);
+                    }
+                    case "❌ Відмовитись" -> {
+                        return keyboardService.setReplyKeyboardOfUser(message.getChatId(), START_TEXT);
+                    }
+                    case "\uD83D\uDD0A Останні оголошення" -> {
+                        return notificationController.getNotifications(message);
+                    }
+                    default -> {
+                        return messageController.sendMessageToAll(message);
                     }
                 }
             }
