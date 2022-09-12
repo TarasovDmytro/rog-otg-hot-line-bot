@@ -54,8 +54,8 @@ public class MessageHandler implements RequestHandler {
     @Override
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
-        Message message = update.getMessage();
-        if (message != null) {
+        if (update.getMessage() != null) {
+            Message message = update.getMessage();
             Long userId = message.getChatId();
             BotUser user = new BotUser();
             if (message.hasEntities() && message.hasText()) {
