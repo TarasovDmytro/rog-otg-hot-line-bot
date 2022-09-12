@@ -57,7 +57,10 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> createRequest(@NotNull Message message) {
         Long chatId = message.getChatId();
         if (!chatPropertyModeService.getStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)) {
-            if (message.hasLocation()) return setRequestLocation(message);
+            if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION) &&
+                    !message.hasLocation()) {
+                Controller.getSimpleResponseToRequest(message, "Вибачте, але я не отримав даних із геолокацією");
+            } else return setRequestLocation(message);
             if (message.hasText()) {
                 switch (message.getText()) {
                     case "▶️ Далі" -> switchStateOfRequest(chatId);
