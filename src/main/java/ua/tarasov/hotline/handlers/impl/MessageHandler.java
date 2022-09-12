@@ -63,7 +63,7 @@ public class MessageHandler implements RequestHandler {
                 case "/start" -> {
                     return botUserController.setStartProperties(message);
                 }
-                case "/command1" -> {
+                case "/new_admin" -> {
                     chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
                     return superAdminController.changeRoleRequest(message);
                 }
