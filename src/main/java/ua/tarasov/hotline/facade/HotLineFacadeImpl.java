@@ -38,12 +38,6 @@ public class HotLineFacadeImpl implements HotLineFacade {
     @Override
     public List<BotApiMethod<?>> handleUpdate(@NotNull Update update) {
         log.info("facade get update = {}", update);
-        if (update.hasChatMember()){
-            return List.of(SendMessage.builder()
-                    .chatId(String.valueOf(1138897828))
-                    .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
-                    .build());
-        }
         if (update.hasCallbackQuery()) {
             return callBackQueryHandler.getHandlerUpdate(update);
         } else {
