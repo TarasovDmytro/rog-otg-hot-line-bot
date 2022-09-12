@@ -62,7 +62,11 @@ public class UserRequestController implements Controller {
                     return setRequestLocation(message);
                 } else {
                     chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
-                   return Controller.getSimpleResponseToRequest(message, "Вибачте, але я не отримав даних із геолокацією");
+                    List<BotApiMethod<?>> methods = new ArrayList<>();
+                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Вибачте, але я не отримав" +
+                            " даних із геолокацією"));
+                    methods.addAll(getLocationMenu(message));
+                    return methods;
                 }
             }
             if (message.hasText()) {
