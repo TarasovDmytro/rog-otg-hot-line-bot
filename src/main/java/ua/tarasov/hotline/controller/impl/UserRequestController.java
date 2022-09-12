@@ -67,7 +67,8 @@ public class UserRequestController implements Controller {
                         chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.REQUEST_CREATED);
                         return keyboardService.setReplyKeyboardOfUser(chatId, "Заявку скасовано");
                     }
-                    case "\uD83D\uDCE8 Відправити заявку" -> chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
+                    case "\uD83D\uDCE8 Відправити заявку" ->
+                            chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 }
             }
             switch (chatPropertyModeService.getStateOfRequest(message.getChatId())) {
@@ -76,7 +77,7 @@ public class UserRequestController implements Controller {
                     methods.addAll(departmentController.getMenuOfDepartments(message));
                     methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "❌ Скасувати заявку"),
                             "Ви можете змінити ці данні, або натисніть кнопку 'Далі'"));
-                    userRequest =  chatPropertyModeService.getCurrentRequest(chatId);
+                    userRequest = chatPropertyModeService.getCurrentRequest(chatId);
                     userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(chatId));
                     chatPropertyModeService.setCurrentRequest(chatId, userRequest);
                     return methods;
@@ -123,16 +124,16 @@ public class UserRequestController implements Controller {
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_TEXT);
                 }
             }
-           case SET_TEXT -> {
-                if (userRequest.getBodyOfMessage() == null){
+            case SET_TEXT -> {
+                if (userRequest.getBodyOfMessage() == null) {
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_TEXT);
                 }
-           }
+            }
         }
     }
 
     public List<BotApiMethod<?>> getLocationMenu(@NotNull Message message) {
-        userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+        userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
         return List.of(
@@ -223,7 +224,7 @@ public class UserRequestController implements Controller {
 
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
         if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
-            userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+            userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
             userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
             requestService.saveRequest(userRequest);
             chatPropertyModeService.setCurrentRequest(message.getChatId(), new UserRequest());
@@ -248,7 +249,7 @@ public class UserRequestController implements Controller {
     }
 
     private @NotNull List<BotApiMethod<?>> createNewUserRequest(@NotNull Message message) {
-        userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+        userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setChatId(message.getChatId());
         userRequest.setMessageId(message.getMessageId());
         userRequest.setBodyOfMessage(message.getText());
@@ -263,7 +264,7 @@ public class UserRequestController implements Controller {
     }
 
     public List<BotApiMethod<?>> setRequestAddress(@NotNull Message message) {
-        userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+        userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setAddress(message.getText());
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
@@ -276,14 +277,14 @@ public class UserRequestController implements Controller {
     }
 
     public List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
-        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
+        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION) && message.hasLocation()) {
             Location location = message.getLocation();
             List<BotApiMethod<?>> methods = new ArrayList<>();
             methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "❌ Скасувати заявку"),
                     "Локацію додано до заявки"));
             methods.addAll(Controller.getSimpleResponseToRequest(message, "Ви можете змінити ці данні," +
                     " або натисніть кнопку 'Далі'"));
-            userRequest =  chatPropertyModeService.getCurrentRequest(message.getChatId());
+            userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
             userRequest.setLocation(location);
             chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
             return methods;

@@ -13,8 +13,8 @@ import ua.tarasov.hotline.controller.impl.BotUserController;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.handlers.impl.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.impl.MessageHandler;
-import ua.tarasov.hotline.listener.WebSiteListener;
 import ua.tarasov.hotline.listener.NotificationListener;
+import ua.tarasov.hotline.listener.WebSiteListener;
 
 import java.util.List;
 
@@ -44,15 +44,13 @@ public class HotLineFacadeImpl implements HotLineFacade {
         if (update.hasCallbackQuery()) {
             return callBackQueryHandler.getHandlerUpdate(update);
         }
-        if(update.hasMessage()) {
+        if (update.hasMessage()) {
             log.info("return messageHandler action");
             return messageHandler.getHandlerUpdate(update);
-        } else {
-            User telegramUser = update.getMyChatMember().getFrom();
-            return botUserController.setStartProperties(telegramUser);
         }
+        User telegramUser = update.getMyChatMember().getFrom();
+        return botUserController.setStartProperties(telegramUser);
     }
-
     @Override
     public List<BotApiMethod<?>> notificationUpdate() {
         return webSiteListener.getWebSiteUpdate(notificationUrl);
