@@ -57,18 +57,6 @@ public class UserRequestController implements Controller {
     public List<BotApiMethod<?>> createRequest(@NotNull Message message) {
         Long chatId = message.getChatId();
         if (!chatPropertyModeService.getCurrentStateOfRequest(chatId).equals(StateOfRequest.CREATE_REQUEST)) {
-            if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_LOCATION)) {
-                if (message.hasLocation()) {
-                    return setRequestLocation(message);
-                } else {
-                    chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
-                    List<BotApiMethod<?>> methods = new ArrayList<>();
-                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Вибачте, але я не отримав" +
-                            " даних із геолокацією"));
-                    methods.addAll(getLocationMenu(message));
-                    return methods;
-                }
-            }
             if (message.hasText()) {
                 switch (message.getText()) {
                     case "▶️ Далі" -> switchStateOfRequest(chatId);
@@ -80,6 +68,18 @@ public class UserRequestController implements Controller {
                     }
                     case "\uD83D\uDCE8 Відправити заявку" ->
                             chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
+                }
+            }
+            if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_LOCATION)) {
+                if (message.hasLocation()) {
+                    return setRequestLocation(message);
+                } else {
+                    chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
+                    List<BotApiMethod<?>> methods = new ArrayList<>();
+                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Вибачте, але я не отримав" +
+                            " даних із геолокацією"));
+                    methods.addAll(getLocationMenu(message));
+                    return methods;
                 }
             }
             switch (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId())) {
