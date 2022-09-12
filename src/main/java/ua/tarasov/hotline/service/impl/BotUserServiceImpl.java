@@ -55,7 +55,9 @@ public class BotUserServiceImpl implements BotUserService {
         if (findById(userId).isPresent()) {
             botUser = findById(userId).get();
         }
-        return botUser.getRole().equals(Role.ADMIN) || botUser.getRole().equals(Role.SUPER_ADMIN);
+        if (botUser.getRole() != null) {
+            return botUser.getRole().equals(Role.ADMIN) || botUser.getRole().equals(Role.SUPER_ADMIN);
+        } else return false;
     }
     @Override
     public SendMessage getFalseAdminText(@NotNull Long userId) {
