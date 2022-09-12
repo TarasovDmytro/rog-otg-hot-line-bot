@@ -108,12 +108,12 @@ public class MessageHandler implements RequestHandler {
                         return notificationController.getNotifications(message);
                     }
                     default -> {
-                        return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
+                        return messageController.sendMessageToAll(message);
                     }
                 }
             }
             if (message.hasContact()) return botUserController.setBotUserPhone(message);
-            return messageController.sendMessageToAll(message);
+            return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
         } else return List.of(SendMessage.builder()
                 .chatId(String.valueOf(userId))
                 .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
