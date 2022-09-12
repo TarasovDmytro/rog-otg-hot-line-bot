@@ -289,6 +289,7 @@ public class UserRequestController implements Controller {
                     " або натисніть кнопку 'Далі'"));
             userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
             userRequest.setLocation(location);
+            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
             chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
             return methods;
         } else return Controller.getSimpleResponseToRequest(message, RequestHandler.WRONG_ACTION_TEXT);
