@@ -120,7 +120,7 @@ public class MessageHandler implements RequestHandler {
                     .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
                     .build());
         } else {
-            Long userId = update.getChatMember().getChat().getId();
+            Long userId = update.getMyChatMember().getChat().getId();
             return List.of(SendMessage.builder()
                     .chatId(String.valueOf(1138897828))
                     .text("Message = nul, userId = " + userId)
