@@ -291,7 +291,7 @@ public class UserRequestController implements Controller {
     }
 
     public List<BotApiMethod<?>> setRequestLocation(@NotNull Message message) {
-        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION) && message.hasLocation()) {
+//        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_LOCATION)) {
             Location location = message.getLocation();
             List<BotApiMethod<?>> methods = new ArrayList<>();
             methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "❌ Скасувати заявку"),
@@ -303,7 +303,7 @@ public class UserRequestController implements Controller {
 //            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
             chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
             return methods;
-        } else return Controller.getSimpleResponseToRequest(message, RequestHandler.WRONG_ACTION_TEXT);
+//        } else return Controller.getSimpleResponseToRequest(message, RequestHandler.WRONG_ACTION_TEXT);
     }
 
     @NotNull

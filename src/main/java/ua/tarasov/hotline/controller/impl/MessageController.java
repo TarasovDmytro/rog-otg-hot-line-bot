@@ -62,7 +62,7 @@ public class MessageController implements Controller {
     @NotNull
     @Unmodifiable
     public List<BotApiMethod<?>> setLocationMessage(@NotNull CallbackQuery callbackQuery) {
-        chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
+//        chatPropertyModeService.setCurrentBotState(callbackQuery.getMessage().getChatId(), BotState.WAIT_LOCATION);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(callbackQuery.getMessage().getChatId().toString())
                 .text("""
