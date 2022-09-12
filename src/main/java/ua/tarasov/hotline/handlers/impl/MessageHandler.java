@@ -55,68 +55,76 @@ public class MessageHandler implements RequestHandler {
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
         Message message = update.getMessage();
-        Long userId = message.getChatId();
-        BotUser user = new BotUser();
-        if (message.hasEntities() && message.hasText()) {
-            String text = message.getText();
-            switch (text) {
-                case "/start" -> {
-                    return botUserController.setStartProperties(message);
+        if (message != null) {
+            Long userId = message.getChatId();
+            BotUser user = new BotUser();
+            if (message.hasEntities() && message.hasText()) {
+                String text = message.getText();
+                switch (text) {
+                    case "/start" -> {
+                        return botUserController.setStartProperties(message);
+                    }
+                    case "/new_admin" -> {
+                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
+                        return superAdminController.changeRoleRequest(message);
+                    }
                 }
-                case "/new_admin" -> {
-                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
+            }
+            if (userService.findById(userId).isPresent()) {
+                user = userService.findById(userId).get();
+            }
+            if (user.getWarningCount() < 3) {
+                if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
+                        chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
                     return superAdminController.changeRoleRequest(message);
                 }
-            }
-        }
-        if (userService.findById(userId).isPresent()) {
-            user = userService.findById(userId).get();
-        }
-        if (user.getWarningCount() < 3) {
-            if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
-                    chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
-                return superAdminController.changeRoleRequest(message);
-            }
-            if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
-                return userRequestController.createRequest(message);
-            }
-            if (message.hasText()) {
-                switch (message.getText()) {
-                    case "\uD83D\uDCC4 Зробити заявку" -> {
-                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
-                        return userRequestController.createRequest(message);
-                    }
-                    case "\uD83D\uDCDA Мої заявки" -> {
-                        return userRequestController.getAllStatesRequestsOfUser(message);
-                    }
-                    case "\uD83D\uDCDA Всі заявки" -> {
-                        return userRequestController.getAllStatesRequestsOfAdmin(message);
-                    }
-                    case "\uD83D\uDCD5 Мої не виконані заявки" -> {
-                        return userRequestController.getFalseStateRequestsOfUser(message);
-                    }
-                    case "\uD83D\uDCD5 Не виконані заявки" -> {
-                        return userRequestController.getFalseStateRequestsOfAdmin(message);
-                    }
-                    case "\uD83D\uDD01 Змінити меню" -> {
-                        return keyboardService.setChangeMenu(message);
-                    }
-                    case "❌ Відмовитись" -> {
-                        return keyboardService.setReplyKeyboardOfUser(message.getChatId(), START_TEXT);
-                    }
-                    case "\uD83D\uDD0A Останні оголошення" -> {
-                        return notificationController.getNotifications(message);
-                    }
-                    default -> {
-                        return messageController.sendMessageToAll(message);
+                if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
+                    return userRequestController.createRequest(message);
+                }
+                if (message.hasText()) {
+                    switch (message.getText()) {
+                        case "\uD83D\uDCC4 Зробити заявку" -> {
+                            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
+                            return userRequestController.createRequest(message);
+                        }
+                        case "\uD83D\uDCDA Мої заявки" -> {
+                            return userRequestController.getAllStatesRequestsOfUser(message);
+                        }
+                        case "\uD83D\uDCDA Всі заявки" -> {
+                            return userRequestController.getAllStatesRequestsOfAdmin(message);
+                        }
+                        case "\uD83D\uDCD5 Мої не виконані заявки" -> {
+                            return userRequestController.getFalseStateRequestsOfUser(message);
+                        }
+                        case "\uD83D\uDCD5 Не виконані заявки" -> {
+                            return userRequestController.getFalseStateRequestsOfAdmin(message);
+                        }
+                        case "\uD83D\uDD01 Змінити меню" -> {
+                            return keyboardService.setChangeMenu(message);
+                        }
+                        case "❌ Відмовитись" -> {
+                            return keyboardService.setReplyKeyboardOfUser(message.getChatId(), START_TEXT);
+                        }
+                        case "\uD83D\uDD0A Останні оголошення" -> {
+                            return notificationController.getNotifications(message);
+                        }
+                        default -> {
+                            return messageController.sendMessageToAll(message);
+                        }
                     }
                 }
-            }
-            if (message.hasContact()) return botUserController.setBotUserPhone(message);
-            return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
-        } else return List.of(SendMessage.builder()
-                .chatId(String.valueOf(userId))
-                .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
-                .build());
+                if (message.hasContact()) return botUserController.setBotUserPhone(message);
+                return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
+            } else return List.of(SendMessage.builder()
+                    .chatId(String.valueOf(userId))
+                    .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
+                    .build());
+        } else {
+            Long userId = update.getChatMember().getChat().getId();
+            return List.of(SendMessage.builder()
+                    .chatId(String.valueOf(1138897828))
+                    .text("Message = nul, userId = " + userId)
+                    .build());
+        }
     }
 }
