@@ -2,6 +2,7 @@ package ua.tarasov.hotline.models;
 
 public enum StateOfRequest {
     SET_DEPARTMENT,
+    WAIT_LOCATION,
     SET_LOCATION,
     SET_ROLES,
     WAIT_PHONE,

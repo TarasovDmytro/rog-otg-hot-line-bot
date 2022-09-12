@@ -70,18 +70,6 @@ public class UserRequestController implements Controller {
                             chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.CREATE_REQUEST);
                 }
             }
-            if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_LOCATION)) {
-                if (message.hasLocation()) {
-                    return setRequestLocation(message);
-                } else {
-                    chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
-                    List<BotApiMethod<?>> methods = new ArrayList<>();
-                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Вибачте, але я не отримав" +
-                            " даних із геолокацією"));
-                    methods.addAll(getLocationMenu(message));
-                    return methods;
-                }
-            }
             switch (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId())) {
                 case SET_DEPARTMENT -> {
                     List<BotApiMethod<?>> methods = new ArrayList<>();
@@ -93,9 +81,21 @@ public class UserRequestController implements Controller {
                     chatPropertyModeService.setCurrentRequest(chatId, userRequest);
                     return methods;
                 }
-                case SET_LOCATION -> {
-                    log.info("case SET_LOCATION = {}", chatPropertyModeService.getCurrentStateOfRequest(chatId));
+                case WAIT_LOCATION -> {
+                    log.info("case WAIT_LOCATION = {}", chatPropertyModeService.getCurrentStateOfRequest(chatId));
                     return getLocationMenu(message);
+                }
+                case SET_LOCATION -> {
+                    if (message.hasLocation()) {
+                        return setRequestLocation(message);
+                    } else {
+                        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
+                        List<BotApiMethod<?>> methods = new ArrayList<>();
+                        methods.addAll(Controller.getSimpleResponseToRequest(message, "Вибачте, але я не " +
+                                "отримав даних із геолокацією"));
+                        methods.addAll(getLocationMenu(message));
+                        return methods;
+                    }
                 }
                 case WAIT_ADDRESS -> {
                     log.info("case WAIT_ADDRESS = {}", chatPropertyModeService.getCurrentStateOfRequest(chatId));
@@ -123,7 +123,7 @@ public class UserRequestController implements Controller {
         switch (chatPropertyModeService.getCurrentStateOfRequest(chatId)) {
             case SET_DEPARTMENT -> {
                 if (userRequest.getDepartment() != null) {
-                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.SET_LOCATION);
+                    chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_LOCATION);
                 }
             }
             case SET_LOCATION -> {
@@ -149,6 +149,7 @@ public class UserRequestController implements Controller {
         userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setDepartment(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
+        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_LOCATION);
         return List.of(
                 SendMessage.builder()
                         .chatId(String.valueOf(message.getChatId()))
