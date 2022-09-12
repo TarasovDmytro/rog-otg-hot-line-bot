@@ -2,6 +2,8 @@ package ua.tarasov.hotline.controller.impl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,7 @@ import java.util.*;
 import static ua.tarasov.hotline.handlers.RequestHandler.START_TEXT;
 
 @Component
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BotUserController implements Controller {
     final BotUserService botUserService;
@@ -42,6 +45,7 @@ public class BotUserController implements Controller {
     public List<BotApiMethod<?>> setStartProperties(@NotNull Message message) {
         chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         User user = message.getFrom();
+        log.info("USER = {}", user);
         botUser.setId(message.getChatId());
         botUser.setUsername(user.getUserName());
         botUser.setWarningCount(0);
