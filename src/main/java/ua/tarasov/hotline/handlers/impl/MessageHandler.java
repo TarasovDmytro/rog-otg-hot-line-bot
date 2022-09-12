@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.handlers.RequestHandler;
@@ -57,7 +58,6 @@ public class MessageHandler implements RequestHandler {
         Long userId = message.getChatId();
         BotUser user = new BotUser();
         if (message.hasEntities() && message.hasText()) {
-            log.info("MESSAGE HAS ENTITIES");
             String text = message.getText();
             switch (text) {
                 case "/start" -> {
@@ -108,10 +108,7 @@ public class MessageHandler implements RequestHandler {
                         return notificationController.getNotifications(message);
                     }
                     default -> {
-                        if (message.getText().startsWith("*admin*")) {
-                            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
-                            return superAdminController.changeRoleRequest(message);
-                        }
+                        return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
                     }
                 }
             }
