@@ -48,12 +48,14 @@ public class BotUserController implements Controller {
         log.info("USER = {}", user);
         botUser.setId(message.getChatId());
         botUser.setUsername(user.getUserName());
-        botUser.setWarningCount(0);
         botUser.setFullName(user.getFirstName() + " " + user.getLastName());
         if (botUserService.findById(botUser.getId()).isPresent()) {
-            botUser.setRole(botUserService.findById(botUser.getId()).get().getRole());
-            botUser.setDepartments(botUserService.findById(botUser.getId()).get().getDepartments());
+            BotUser currentUser = botUserService.findById(botUser.getId()).get();
+            botUser.setRole(currentUser.getRole());
+            botUser.setDepartments(currentUser.getDepartments());
+            botUser.setWarningCount(currentUser.getWarningCount());
         } else {
+            botUser.setWarningCount(0);
             if ((long) botUserService.findAll().size() == 0) {
                 botUser.setRole(Role.SUPER_ADMIN);
                 botUser.getDepartments().addAll(Arrays.stream(Department.values()).toList());

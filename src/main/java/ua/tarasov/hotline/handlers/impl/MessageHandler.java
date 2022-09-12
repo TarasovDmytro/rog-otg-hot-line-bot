@@ -21,6 +21,7 @@ import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -54,10 +55,10 @@ public class MessageHandler implements RequestHandler {
     @Override
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
+        BotUser user = new BotUser();
         if (update.getMessage() != null) {
             Message message = update.getMessage();
             Long userId = message.getChatId();
-            BotUser user = new BotUser();
             if (message.hasEntities() && message.hasText()) {
                 String text = message.getText();
                 switch (text) {
@@ -121,9 +122,18 @@ public class MessageHandler implements RequestHandler {
                     .build());
         } else {
             Long userId = update.getMyChatMember().getChat().getId();
-            return List.of(SendMessage.builder()
-                    .chatId(String.valueOf(1138897828))
-                    .text("Message = nul, userId = " + userId)
+            if (userService.findById(userId).isPresent()) {
+                user = userService.findById(userId).get();
+                List<BotApiMethod<?>> methods = new ArrayList<>();
+                methods.add(SendMessage.builder()
+                        .chatId(String.valueOf(userId))
+                        .text("Ми раді знову Вас бачити " + user.getFullName())
+                        .build());
+                methods.addAll(keyboardService.setReplyKeyboardOfUser(userId, START_TEXT));
+                return methods;
+            } return List.of(SendMessage.builder()
+                    .chatId(String.valueOf(userId))
+                    .text(WRONG_ACTION_TEXT)
                     .build());
         }
     }
