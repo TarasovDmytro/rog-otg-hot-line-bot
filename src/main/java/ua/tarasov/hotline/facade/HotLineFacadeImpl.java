@@ -7,8 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+import ua.tarasov.hotline.controller.impl.BotUserController;
 import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.handlers.impl.CallBackQueryHandler;
 import ua.tarasov.hotline.handlers.impl.MessageHandler;
@@ -24,15 +25,17 @@ public class HotLineFacadeImpl implements HotLineFacade {
     final RequestHandler messageHandler;
     final RequestHandler callBackQueryHandler;
     final WebSiteListener webSiteListener;
+    final BotUserController botUserController;
     @Value("${notification.urls}")
     String notificationUrl;
 
 
     public HotLineFacadeImpl(MessageHandler messageHandler, CallBackQueryHandler callBackQueryHandler,
-                             NotificationListener notificationListener) {
+                             NotificationListener notificationListener, BotUserController botUserController) {
         this.messageHandler = messageHandler;
         this.callBackQueryHandler = callBackQueryHandler;
         this.webSiteListener = notificationListener;
+        this.botUserController = botUserController;
     }
 
     @Override
@@ -40,9 +43,13 @@ public class HotLineFacadeImpl implements HotLineFacade {
         log.info("facade get update = {}", update);
         if (update.hasCallbackQuery()) {
             return callBackQueryHandler.getHandlerUpdate(update);
-        } else {
+        }
+        if(update.hasMessage()) {
             log.info("return messageHandler action");
             return messageHandler.getHandlerUpdate(update);
+        } else {
+            User telegramUser = update.getMyChatMember().getFrom();
+            return botUserController.setStartProperties(telegramUser);
         }
     }
 

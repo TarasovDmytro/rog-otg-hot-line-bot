@@ -57,7 +57,7 @@ public class MessageHandler implements RequestHandler {
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
         BotUser user = new BotUser();
-        if (update.getMessage() != null) {
+//        if (update.getMessage() != null) {
             Message message = update.getMessage();
             Long userId = message.getChatId();
             if (message.hasEntities() && message.hasText()) {
@@ -121,24 +121,9 @@ public class MessageHandler implements RequestHandler {
                     .chatId(String.valueOf(userId))
                     .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
                     .build());
-        } else {
-            User telegramUser = update.getMyChatMember().getFrom();
-            return botUserController.setStartProperties(telegramUser);
-//            Long userId = telegramUser.getId();
-//            if (userService.findById(userId).isPresent()) {
-//                user = userService.findById(userId).get();
-//                List<BotApiMethod<?>> methods = new ArrayList<>();
-//                methods.add(SendMessage.builder()
-//                        .chatId(String.valueOf(userId))
-//                        .text("Ми раді знову Вас бачити " + user.getFullName())
-//                        .build());
-//                methods.addAll(keyboardService.setReplyKeyboardOfUser(userId, START_TEXT));
-//                return methods;
-        }
-//            } return List.of(SendMessage.builder()
-//                    .chatId(String.valueOf(userId))
-//                    .text(WRONG_ACTION_TEXT)
-//                    .build());
+//        } else {
+//            User telegramUser = update.getMyChatMember().getFrom();
+//            return botUserController.setStartProperties(telegramUser);
 //        }
     }
 }
