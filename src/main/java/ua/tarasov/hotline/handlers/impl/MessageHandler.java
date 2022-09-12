@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.entities.BotUser;
@@ -63,7 +64,7 @@ public class MessageHandler implements RequestHandler {
                 String text = message.getText();
                 switch (text) {
                     case "/start" -> {
-                        return botUserController.setStartProperties(message);
+                        return botUserController.setStartProperties(message.getFrom());
                     }
                     case "/new_admin" -> {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
@@ -121,20 +122,23 @@ public class MessageHandler implements RequestHandler {
                     .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
                     .build());
         } else {
-            Long userId = update.getMyChatMember().getChat().getId();
-            if (userService.findById(userId).isPresent()) {
-                user = userService.findById(userId).get();
-                List<BotApiMethod<?>> methods = new ArrayList<>();
-                methods.add(SendMessage.builder()
-                        .chatId(String.valueOf(userId))
-                        .text("Ми раді знову Вас бачити " + user.getFullName())
-                        .build());
-                methods.addAll(keyboardService.setReplyKeyboardOfUser(userId, START_TEXT));
-                return methods;
-            } return List.of(SendMessage.builder()
-                    .chatId(String.valueOf(userId))
-                    .text(WRONG_ACTION_TEXT)
-                    .build());
+            User telegramUser = update.getMyChatMember().getFrom();
+            return botUserController.setStartProperties(telegramUser);
+//            Long userId = telegramUser.getId();
+//            if (userService.findById(userId).isPresent()) {
+//                user = userService.findById(userId).get();
+//                List<BotApiMethod<?>> methods = new ArrayList<>();
+//                methods.add(SendMessage.builder()
+//                        .chatId(String.valueOf(userId))
+//                        .text("Ми раді знову Вас бачити " + user.getFullName())
+//                        .build());
+//                methods.addAll(keyboardService.setReplyKeyboardOfUser(userId, START_TEXT));
+//                return methods;
         }
+//            } return List.of(SendMessage.builder()
+//                    .chatId(String.valueOf(userId))
+//                    .text(WRONG_ACTION_TEXT)
+//                    .build());
+//        }
     }
 }

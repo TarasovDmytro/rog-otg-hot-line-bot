@@ -42,11 +42,11 @@ public class BotUserController implements Controller {
 
     @NotNull
     @Unmodifiable
-    public List<BotApiMethod<?>> setStartProperties(@NotNull Message message) {
-        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
-        User user = message.getFrom();
+    public List<BotApiMethod<?>> setStartProperties(@NotNull User user) {
+        chatPropertyModeService.setCurrentBotState(user.getId(), BotState.WAIT_BUTTON);
+//        User user = message.getFrom();
         log.info("USER = {}", user);
-        botUser.setId(message.getChatId());
+        botUser.setId(user.getId());
         botUser.setUsername(user.getUserName());
         botUser.setFullName(user.getFirstName() + " " + user.getLastName());
         if (botUserService.findById(botUser.getId()).isPresent()) {
@@ -65,9 +65,9 @@ public class BotUserController implements Controller {
             }
         }
         botUserService.saveBotUser(botUser);
-        chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), botUser.getRole().equals(Role.ADMIN));
+        chatPropertyModeService.setCurrentAdminKeyboardState(user.getId(), botUser.getRole().equals(Role.ADMIN));
         return Collections.singletonList(SendMessage.builder()
-                .chatId(String.valueOf(message.getChatId()))
+                .chatId(String.valueOf(user.getId()))
                 .text("Радий Вас вітати, " + botUser.getFullName() +
                         "\n\nЧи бажаєте Ви додати свій телефонний номер" +
                         "\nдля майбутнього зв'язку з Вами співробітників" +
