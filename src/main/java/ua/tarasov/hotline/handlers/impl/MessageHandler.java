@@ -64,9 +64,9 @@ public class MessageHandler implements RequestHandler {
                     chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
                 return superAdminController.changeRoleRequest(message);
             }
-            if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
-                return userRequestController.createRequest(message);
-            }
+//            if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
+//                return userRequestController.createRequest(message);
+//            }
             if (message.hasText()) {
                 switch (message.getText()) {
                     case "/start" -> {
