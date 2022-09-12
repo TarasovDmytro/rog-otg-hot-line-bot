@@ -2,7 +2,6 @@ package ua.tarasov.hotline.controller.impl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -44,7 +43,6 @@ public class BotUserController implements Controller {
     @Unmodifiable
     public List<BotApiMethod<?>> setStartProperties(@NotNull User user) {
         chatPropertyModeService.setCurrentBotState(user.getId(), BotState.WAIT_BUTTON);
-//        User user = message.getFrom();
         log.info("USER = {}", user);
         botUser.setId(user.getId());
         botUser.setUsername(user.getUserName());

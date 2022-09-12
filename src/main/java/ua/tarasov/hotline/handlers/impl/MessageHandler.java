@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.entities.BotUser;
@@ -22,7 +21,6 @@ import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -57,34 +55,33 @@ public class MessageHandler implements RequestHandler {
     public List<BotApiMethod<?>> getHandlerUpdate(@NotNull Update update) {
         log.info("messageHandler get update = {}", update);
         BotUser user = new BotUser();
-//        if (update.getMessage() != null) {
-            Message message = update.getMessage();
-            Long userId = message.getChatId();
-            if (message.hasEntities() && message.hasText()) {
+        Message message = update.getMessage();
+        Long userId = message.getChatId();
+        if (userService.findById(userId).isPresent()) {
+            user = userService.findById(userId).get();
+        }
+        if (user.getWarningCount() < 3) {
+            if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
+                    chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
+                return superAdminController.changeRoleRequest(message);
+            }
+            if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
+                return userRequestController.createRequest(message);
+            }
+            if (message.hasText()) {
                 String text = message.getText();
-                switch (text) {
-                    case "/start" -> {
-                        return botUserController.setStartProperties(message.getFrom());
+                if (message.hasEntities()) {
+                    switch (text) {
+//                        case "/start" -> {
+//                            return botUserController.setStartProperties(message.getFrom());
+//                        }
+                        case "/new_admin" -> {
+                            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
+                            return superAdminController.changeRoleRequest(message);
+                        }
                     }
-                    case "/new_admin" -> {
-                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
-                        return superAdminController.changeRoleRequest(message);
-                    }
-                }
-            }
-            if (userService.findById(userId).isPresent()) {
-                user = userService.findById(userId).get();
-            }
-            if (user.getWarningCount() < 3) {
-                if (chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
-                        chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
-                    return superAdminController.changeRoleRequest(message);
-                }
-                if (!chatPropertyModeService.getStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
-                    return userRequestController.createRequest(message);
-                }
-                if (message.hasText()) {
-                    switch (message.getText()) {
+                } else {
+                    switch (text) {
                         case "\uD83D\uDCC4 Зробити заявку" -> {
                             chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
                             return userRequestController.createRequest(message);
@@ -115,15 +112,12 @@ public class MessageHandler implements RequestHandler {
                         }
                     }
                 }
-                if (message.hasContact()) return botUserController.setBotUserPhone(message);
-                return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
-            } else return List.of(SendMessage.builder()
-                    .chatId(String.valueOf(userId))
-                    .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
-                    .build());
-//        } else {
-//            User telegramUser = update.getMyChatMember().getFrom();
-//            return botUserController.setStartProperties(telegramUser);
-//        }
+            }
+            if (message.hasContact()) return botUserController.setBotUserPhone(message);
+            return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
+        } else return List.of(SendMessage.builder()
+                .chatId(String.valueOf(userId))
+                .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
+                .build());
     }
 }
