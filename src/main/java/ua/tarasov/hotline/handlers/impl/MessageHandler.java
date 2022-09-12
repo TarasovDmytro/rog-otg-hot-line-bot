@@ -56,6 +56,19 @@ public class MessageHandler implements RequestHandler {
         Message message = update.getMessage();
         Long userId = message.getChatId();
         BotUser user = new BotUser();
+        if (message.hasEntities() && message.hasText()) {
+            log.info("MESSAGE HAS ENTITIES");
+            String text = message.getText();
+            switch (text) {
+                case "/start" -> {
+                    return botUserController.setStartProperties(message);
+                }
+                case "/command1" -> {
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
+                    return superAdminController.changeRoleRequest(message);
+                }
+            }
+        }
         if (userService.findById(userId).isPresent()) {
             user = userService.findById(userId).get();
         }
@@ -69,9 +82,6 @@ public class MessageHandler implements RequestHandler {
             }
             if (message.hasText()) {
                 switch (message.getText()) {
-                    case "/start" -> {
-                        return botUserController.setStartProperties(message);
-                    }
                     case "\uD83D\uDCC4 Зробити заявку" -> {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_DEPARTMENT);
                         return userRequestController.createRequest(message);
