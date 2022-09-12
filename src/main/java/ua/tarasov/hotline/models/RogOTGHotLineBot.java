@@ -83,7 +83,7 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
         Long chatId = superAdmin.getId();
         BotState currentBotState = chatPropertyModeService.getCurrentBotState(chatId);
         if (methods != null && !methods.isEmpty()) {
-            chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE_TO_ALL);
+//            chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE_TO_ALL);
             for (BotApiMethod<?> botApiMethod : methods) {
                 try {
                     execute(botApiMethod);

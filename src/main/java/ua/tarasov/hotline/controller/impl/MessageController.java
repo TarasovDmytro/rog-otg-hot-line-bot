@@ -38,8 +38,7 @@ public class MessageController implements Controller {
     }
 
     @NotNull
-    public List<BotApiMethod<?>> sendMessageToAll(Message message) {
-        if (botUserService.checkIsAdmin(message.getChatId())) {
+    public List<BotApiMethod<?>> sendMessageToAll(@NotNull Message message) {
             List<BotApiMethod<?>> answerMessages = new ArrayList<>();
             List<BotUser> botUsers = botUserService.findAll();
             botUsers.forEach(botUser ->
@@ -54,9 +53,6 @@ public class MessageController implements Controller {
                                     .build())));
             chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
-        }
-        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
-        return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
     }
 
     @NotNull

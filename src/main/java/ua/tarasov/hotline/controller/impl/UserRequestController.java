@@ -126,7 +126,7 @@ public class UserRequestController implements Controller {
             }
             case SET_LOCATION -> {
                 if (userRequest.getLocation() != null) {
-                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE);
+//                    chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE);
                     chatPropertyModeService.setCurrentStateOfRequest(chatId, StateOfRequest.WAIT_ADDRESS);
                 }
             }
@@ -227,7 +227,7 @@ public class UserRequestController implements Controller {
         return answerMessages;
     }
     public List<BotApiMethod<?>> createRequestMessageHandler(@NotNull Message message) {
-        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
+//        if (chatPropertyModeService.getCurrentBotState(message.getChatId()).equals(BotState.WAIT_MESSAGE)) {
             userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
             userRequest.setDateTime(LocalDateTime.now(ZoneId.of("Europe/Kiev")));
             requestService.saveRequest(userRequest);
@@ -248,8 +248,8 @@ public class UserRequestController implements Controller {
                     "\uD83D\uDC4D\nДякуємо, Ваша заявка\nID " + userRequest.getMessageId() +
                             "\nвід " + userRequest.getDateTimeToString() + "\nприйнята"));
             return answerMessages;
-        } else return Controller.getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
-                "\n<b>Виконайте, будь ласка, коректну дію за допомогою кнопок</b>");
+//        } else return Controller.getSimpleResponseToRequest(message, "Вибачте, але я бот і читати не вмію." +
+//                "\n<b>Виконайте, будь ласка, коректну дію за допомогою кнопок</b>");
     }
     private @NotNull List<BotApiMethod<?>> createNewUserRequest(@NotNull Message message) {
         userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
@@ -269,7 +269,7 @@ public class UserRequestController implements Controller {
         userRequest = chatPropertyModeService.getCurrentRequest(message.getChatId());
         userRequest.setAddress(message.getText());
         chatPropertyModeService.setCurrentRequest(message.getChatId(), userRequest);
-        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
+//        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         List<BotApiMethod<?>> methods = new ArrayList<>();
         methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), List.of("▶️ Далі", "❌ Скасувати заявку"),
                 "Адресу додано до заявки"));

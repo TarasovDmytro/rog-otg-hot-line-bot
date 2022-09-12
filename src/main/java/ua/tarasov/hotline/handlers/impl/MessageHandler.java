@@ -107,7 +107,9 @@ public class MessageHandler implements RequestHandler {
                         return notificationController.getNotifications(message);
                     }
                     default -> {
-                        return messageController.sendMessageToAll(message);
+                        if (userService.checkIsAdmin(message.getChatId())) {
+                            return messageController.sendMessageToAll(message);
+                        } else Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
                     }
                 }
             }

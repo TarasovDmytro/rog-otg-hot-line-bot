@@ -177,7 +177,7 @@ public class KeyboardServiceImpl implements KeyboardService {
                 .build());
     }
 
-    public List<BotApiMethod<?>> setChangeMenu(Message message) {
+    public List<BotApiMethod<?>> setChangeMenu(@NotNull Message message) {
         if (botUserService.checkIsAdmin(message.getChatId())) {
             boolean state = chatPropertyModeService.getCurrentAdminKeyboardState(message.getChatId());
             chatPropertyModeService.setCurrentAdminKeyboardState(message.getChatId(), !state);
