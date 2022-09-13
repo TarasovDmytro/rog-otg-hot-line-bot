@@ -21,6 +21,7 @@ import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -106,18 +107,14 @@ public class MessageHandler implements RequestHandler {
                     case "\uD83D\uDD0A Останні оголошення" -> {
                         return notificationController.getNotifications(message);
                     }
-//                    default -> {
-//                        if (userService.checkIsAdmin(message.getChatId())) {
-//                            return messageController.sendMessageToAll(message);
-//                        } else Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
-//                    }
                 }
             }
             if (message.hasContact()) return botUserController.setBotUserPhone(message);
             if (userService.checkIsAdmin(message.getChatId())) {
                 return messageController.sendMessageToAll(message);
-            } else return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
-//            return Controller.getSimpleResponseToRequest(message, WRONG_ACTION_TEXT);
+            } else {
+                return keyboardService.setReplyKeyboardOfUser(message.getChatId(), WRONG_ACTION_TEXT);
+            }
         } else return List.of(SendMessage.builder()
                 .chatId(String.valueOf(userId))
                 .text("Вибачте, але Ви заблоковані за некоректне використання сервісу")
