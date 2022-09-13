@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.controller.impl.*;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.handlers.RequestHandler;
@@ -21,7 +20,6 @@ import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.ChatPropertyModeServiceImpl;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component

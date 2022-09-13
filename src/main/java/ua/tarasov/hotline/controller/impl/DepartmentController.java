@@ -12,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
-import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.impl.KeyboardServiceImpl;
@@ -34,7 +33,6 @@ public class DepartmentController implements Controller {
     @Unmodifiable
     public List<BotApiMethod<?>> getMenuOfDepartments(@NotNull Message message) {
         Department currentDepartment = chatPropertyModeService.getCurrentDepartment(message.getChatId());
-        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
         return Collections.singletonList(SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Оберіть, будь ласка, обслуговуючий департамент\n(Ваш вибір помічений галочкою)")
@@ -46,7 +44,6 @@ public class DepartmentController implements Controller {
 
     public List<BotApiMethod<?>> setDepartment(@NotNull CallbackQuery callbackQuery) {
         Message message = callbackQuery.getMessage();
-//        chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_MESSAGE);
         Department department = jsonConverter.fromJson(callbackQuery
                 .getData().substring("department".length()), Department.class);
         chatPropertyModeService.setCurrentDepartment(message.getChatId(), department);

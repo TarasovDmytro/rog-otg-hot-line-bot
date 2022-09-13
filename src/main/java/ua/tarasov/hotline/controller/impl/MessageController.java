@@ -14,7 +14,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
-import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.BotUserService;
@@ -51,7 +50,6 @@ public class MessageController implements Controller {
                                     .fromChatId(String.valueOf(message.getChatId()))
                                     .messageId(message.getMessageId())
                                     .build())));
-            chatPropertyModeService.setCurrentBotState(message.getChatId(), BotState.WAIT_BUTTON);
             return answerMessages;
     }
 

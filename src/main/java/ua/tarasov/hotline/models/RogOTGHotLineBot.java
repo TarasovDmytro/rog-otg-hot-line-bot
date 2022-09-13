@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
-import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.facade.HotLineFacade;
 import ua.tarasov.hotline.facade.HotLineFacadeImpl;
 import ua.tarasov.hotline.service.BotUserService;
@@ -79,20 +78,23 @@ public class RogOTGHotLineBot extends SpringWebhookBot {
     public void sendNotification() {
         List<BotApiMethod<?>> methods = hotLineFacade.notificationUpdate();
         log.info(String.valueOf(methods));
-        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
-        Long chatId = superAdmin.getId();
-        BotState currentBotState = chatPropertyModeService.getCurrentBotState(chatId);
         if (methods != null && !methods.isEmpty()) {
-//            chatPropertyModeService.setCurrentBotState(chatId, BotState.WAIT_MESSAGE_TO_ALL);
-            for (BotApiMethod<?> botApiMethod : methods) {
+            methods.forEach(botApiMethod -> {
                 try {
                     execute(botApiMethod);
                     Thread.sleep(35);
                 } catch (TelegramApiException | InterruptedException e) {
                     e.printStackTrace();
                 }
-            }
-            chatPropertyModeService.setCurrentBotState(chatId, currentBotState);
+            });
+//            for (BotApiMethod<?> botApiMethod : methods) {
+//                try {
+//                    execute(botApiMethod);
+//                    Thread.sleep(35);
+//                } catch (TelegramApiException | InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
         }
     }
 }

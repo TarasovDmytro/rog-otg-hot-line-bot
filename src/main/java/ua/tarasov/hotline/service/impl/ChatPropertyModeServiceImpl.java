@@ -3,7 +3,6 @@ package ua.tarasov.hotline.service.impl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import ua.tarasov.hotline.entities.UserRequest;
-import ua.tarasov.hotline.models.BotState;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.StateOfRequest;
 import ua.tarasov.hotline.service.ChatPropertyModeService;
@@ -51,16 +50,6 @@ public class ChatPropertyModeServiceImpl implements ChatPropertyModeService {
     @Override
     public void setCurrentAdminKeyboardState(long chatId, boolean adminKeyboardState) {
         currentAdminKeyboardState.put(chatId, adminKeyboardState);
-    }
-
-    @Override
-    public void setCurrentBotState(long chatId, BotState botState) {
-        currentBotState.put(chatId, botState);
-    }
-
-    @Override
-    public BotState getCurrentBotState(long chatId) {
-        return currentBotState.getOrDefault(chatId, BotState.WAIT_BUTTON);
     }
 
     @Override
