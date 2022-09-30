@@ -24,9 +24,9 @@ import ua.tarasov.hotline.service.KeyboardService;
 import ua.tarasov.hotline.service.UserRequestService;
 import ua.tarasov.hotline.service.impl.BotUserServiceImpl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -258,7 +258,9 @@ public class SuperAdminController implements Controller {
                 case "Передати права" -> {
                     BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
                     botUser.setRole(Role.SUPER_ADMIN);
+                    botUser.setDepartments(Arrays.stream(Department.values()).collect(Collectors.toSet()));
                     superAdmin.setRole(Role.ADMIN);
+                    superAdmin.setDepartments(Stream.of(Department.USER).collect(Collectors.toSet()));
                     botUserService.saveBotUser(botUser);
                     botUserService.saveBotUser(superAdmin);
                     methods.add(SendMessage.builder()
