@@ -239,11 +239,25 @@ public class SuperAdminController implements Controller {
                 methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Приємного користування"));
             }
             case "Знайти користувача" -> methods.addAll(Controller.getSimpleResponseToRequest(message, "Введіть телефонний номер"));
+            case "Видалити" -> {
+                botUserService.deleteUser(botUser);
+                methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача видалено"));
+                methods.addAll(getManagementMenu(message));
+            }
+            case "Розблокувати" -> {
+                botUser.setWarningCount(0);
+                botUserService.saveBotUser(botUser);
+                methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача розблоковано"));
+                methods.addAll(getManagementMenu(message));
+            }
             default -> {
                 if (messageText.startsWith("+")){
                     if (botUserService.findByPhone(messageText).isPresent()) {
                         botUser = botUserService.findByPhone(messageText).get();
+                        List<String> namesOfButtons = List.of("Видалити", "Розблокувати", "Вийти");
                         methods.addAll(Controller.getSimpleResponseToRequest(message, String.valueOf(botUser)));
+                        methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
+                                "Виберіть, будь ласка, необхідну дію"));
                     } else methods.addAll(Controller.getSimpleResponseToRequest(message, "Такого користувача не існує"));
                 } else methods.addAll(Controller.getSimpleResponseToRequest(message, "Fail telephone number format"));
             }
