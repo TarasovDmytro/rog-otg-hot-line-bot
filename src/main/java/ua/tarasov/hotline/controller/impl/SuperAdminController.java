@@ -244,6 +244,12 @@ public class SuperAdminController implements Controller {
                 methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача видалено"));
                 methods.addAll(getManagementMenu(message));
             }
+            case "Заблокувати" ->{
+                botUser.setWarningCount(3);
+                botUserService.saveBotUser(botUser);
+                methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача заблоковано"));
+                methods.addAll(getManagementMenu(message));
+            }
             case "Розблокувати" -> {
                 botUser.setWarningCount(0);
                 botUserService.saveBotUser(botUser);
@@ -254,7 +260,7 @@ public class SuperAdminController implements Controller {
                 if (messageText.startsWith("+")){
                     if (botUserService.findByPhone(messageText).isPresent()) {
                         botUser = botUserService.findByPhone(messageText).get();
-                        List<String> namesOfButtons = List.of("Видалити", "Розблокувати", "Вийти");
+                        List<String> namesOfButtons = List.of("Видалити","Заблокувати", "Розблокувати", "Вийти");
                         methods.addAll(Controller.getSimpleResponseToRequest(message, String.valueOf(botUser)));
                         methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
                                 "Виберіть, будь ласка, необхідну дію"));
