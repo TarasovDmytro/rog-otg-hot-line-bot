@@ -203,6 +203,14 @@ public class SuperAdminController implements Controller {
     private List<BotApiMethod<?>> countOfMembers(Message message) {
         List<BotUser> members = botUserService.findAll();
         long counter = members.size();
-        return Controller.getSimpleResponseToRequest(message, "Сервісом користуються " + counter + " користувачей");
+        List<BotUser> blockingMembers = new ArrayList<>();
+        members.forEach(user -> {
+            if (user.getWarningCount()>2){
+                blockingMembers.add(user);
+            }
+        });
+        long blockCounter = blockingMembers.size();
+        return Controller.getSimpleResponseToRequest(message, "Сервісом користуються " + counter +
+                " користувачей\nз них " + blockCounter + " заблоковані");
     }
 }
