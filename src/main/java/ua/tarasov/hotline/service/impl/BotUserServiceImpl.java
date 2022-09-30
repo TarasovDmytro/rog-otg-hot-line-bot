@@ -69,4 +69,9 @@ public class BotUserServiceImpl implements BotUserService {
                         виконати цю дію.""")
                 .build();
     }
+
+    @Override
+    public void deleteUser(BotUser botUser) {
+        botUserRepository.delete(botUser);
+    }
 }
