@@ -123,13 +123,23 @@ public class SuperAdminController implements Controller {
         log.info("PHONE = {}", botUser.getPhone());
         List<BotApiMethod<?>> methods = new ArrayList<>();
         switch (message.getText()) {
+            case "\uD83E\uDDF9 Очистити" -> {
+                departments.clear();
+                departments.add(Department.USER);
+                methods.addAll(Controller.getSimpleResponseToRequest(message, """
+                        Дякую,
+                        відправлено запит на видалення
+                        всіх прав адміністратора"""));
+                methods.addAll(requestRole(message, departments));
+            }
             case "❌ Скасувати заявку" -> {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
                 methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано"));
             }
             case "\uD83D\uDCE8 Відправити заявку" -> methods.addAll(requestRole(message, departments));
             default -> {
-                List<String> namesOfButtons = List.of("➕ Додати", "\uD83D\uDCE8 Відправити заявку", "❌ Скасувати заявку");
+                List<String> namesOfButtons = List.of("➕ Додати", "\uD83E\uDDF9 Очистити", "\uD83D\uDCE8 Відправити заявку",
+                        "❌ Скасувати заявку");
                 methods.addAll(departmentController.getMenuOfDepartments(message));
                 methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
                         "Ви можете додавати Департаменти, поки не натиснуте кнопку 'Відправити заявку'"));
