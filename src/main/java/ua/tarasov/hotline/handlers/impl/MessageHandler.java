@@ -69,6 +69,9 @@ public class MessageHandler implements RequestHandler {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
                         return superAdminController.changeRoleRequest(message);
                     }
+                    case "/members" -> {
+                        return superAdminController.getMembers(message);
+                    }
                 }
             }
             if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||

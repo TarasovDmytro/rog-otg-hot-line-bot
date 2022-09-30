@@ -188,4 +188,21 @@ public class SuperAdminController implements Controller {
                         .text(userRequest.toString())
                         .build());
     }
+
+    public List<BotApiMethod<?>> getMembers(Message message) {
+        if (botUserService.findById(message.getChatId()).isPresent()) {
+            botUser = botUserService.findById(message.getChatId()).get();
+        }
+        if (botUser.getRole().equals(Role.SUPER_ADMIN)) {
+            return countOfMembers(message);
+        }
+        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+        return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
+    }
+
+    private List<BotApiMethod<?>> countOfMembers(Message message) {
+        List<BotUser> members = botUserService.findAll();
+        long counter = members.size();
+        return Controller.getSimpleResponseToRequest(message, "Сервісом користуються " + counter + " користувачей");
+    }
 }
