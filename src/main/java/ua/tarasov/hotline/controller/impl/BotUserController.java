@@ -69,9 +69,10 @@ public class BotUserController implements Controller {
         return Collections.singletonList(SendMessage.builder()
                 .chatId(String.valueOf(user.getId()))
                 .text("Радий Вас вітати, " + botUser.getFullName() +
-                        "\n\nЧи бажаєте Ви додати свій телефонний номер" +
-                        "\nдля майбутнього зв'язку з Вами співробітників" +
-                        "\nобслуговуючих департаментів з метою будь-яких" +
+                        "\n\nЧи бажаєте Ви додати свій телефонний" +
+                        "\nномер для майбутнього зв'язку" +
+                        "\nз Вами співробітників обслуговуючих" +
+                        "\nдепартаментів з метою будь-яких" +
                         "\nуточнень? \uD83D\uDC47")
                 .replyMarkup(ReplyKeyboardMarkup.builder()
                         .keyboard(keyboardService.getAgreeAddContactReplyButtons())
