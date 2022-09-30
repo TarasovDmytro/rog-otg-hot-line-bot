@@ -256,11 +256,20 @@ public class SuperAdminController implements Controller {
                 methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача розблоковано"));
                 methods.addAll(getManagementMenu(message));
             }
+            case "Передати права" -> {
+                BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+                botUser.setRole(Role.SUPER_ADMIN);
+                superAdmin.setRole(Role.ADMIN);
+                botUserService.saveBotUser(botUser);
+                botUserService.saveBotUser(superAdmin);
+                methods.addAll(Controller.getSimpleResponseToRequest(message, "Ваш рівень доступу змінений на " + superAdmin.getRole()));
+
+            }
             default -> {
                 if (messageText.startsWith("+")){
                     if (botUserService.findByPhone(messageText).isPresent()) {
                         botUser = botUserService.findByPhone(messageText).get();
-                        List<String> namesOfButtons = List.of("Видалити","Заблокувати", "Розблокувати", "Вийти");
+                        List<String> namesOfButtons = List.of("Видалити","Заблокувати", "Розблокувати", "Передати права", "Вийти");
                         methods.addAll(Controller.getSimpleResponseToRequest(message, String.valueOf(botUser)));
                         methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
                                 "Виберіть, будь ласка, необхідну дію"));
