@@ -211,6 +211,6 @@ public class SuperAdminController implements Controller {
         });
         long blockCounter = blockingMembers.size();
         return Controller.getSimpleResponseToRequest(message, "Сервісом користуються " + counter +
-                " користувачей\nз них " + blockCounter + " заблоковані");
+                " користувачей\nз них " + blockCounter + " заблокованих");
     }
 }
