@@ -50,6 +50,6 @@ public class BotUser {
                 "\nІм'я: " + fullName +
                 "\nНік: " + username +
                 "\nРівень доступу: " + role +
-                "\nДепартаменти: " + departments;
+                "\nДепартаменти:\n" + departments;
     }
 }
