@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@ToString
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
@@ -42,5 +41,15 @@ public class BotUser {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "id: " + id +
+                "\nРівень попередження = " + warningCount +
+                "\nІм'я: " + fullName +
+                "\nНік: " + username +
+                "\nРівень доступу: " + role +
+                "\nДепартаменти: " + departments;
     }
 }
