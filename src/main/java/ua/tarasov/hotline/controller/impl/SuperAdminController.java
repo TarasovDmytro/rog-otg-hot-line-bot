@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -75,7 +76,7 @@ public class SuperAdminController implements Controller {
         return methods;
     }
 
-    public List<BotApiMethod<?>> changeRoleRequest(@NotNull Message message) {
+    public List<BotApiMethod<?>> changeBotUserRole(@NotNull Message message) {
         if (botUserService.checkIsAdmin(message.getChatId())) {
             if (message.getText().equals("❌ Скасувати заявку")) {
                 chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
@@ -177,7 +178,7 @@ public class SuperAdminController implements Controller {
             return Controller.getSimpleResponseToRequest(callbackQuery.getMessage(), "Цей користувач вже заблокований");
     }
 
-    public List<BotApiMethod<?>> sendComplaint(CallbackQuery callbackQuery) {
+    public List<BotApiMethod<?>> sendComplaint(@NotNull CallbackQuery callbackQuery) {
         Integer messageId = jsonConverter.fromJson(callbackQuery.getData().substring("agree_complaint".length()), Integer.class);
         UserRequest userRequest = requestService.findByMessageId(messageId);
         Long userId = userRequest.getChatId();
@@ -198,7 +199,7 @@ public class SuperAdminController implements Controller {
                         .build());
     }
 
-    public List<BotApiMethod<?>> getMembers(Message message) {
+    public List<BotApiMethod<?>> getMembers(@NotNull Message message) {
         if (botUserService.findById(message.getChatId()).isPresent()) {
             botUser = botUserService.findById(message.getChatId()).get();
         }
@@ -209,7 +210,7 @@ public class SuperAdminController implements Controller {
         return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
     }
 
-    private List<BotApiMethod<?>> countOfMembers(Message message) {
+    private @NotNull @Unmodifiable List<BotApiMethod<?>> countOfMembers(Message message) {
         List<BotUser> members = botUserService.findAll();
         long counter = members.size();
         List<BotUser> blockingMembers = new ArrayList<>();
@@ -221,5 +222,32 @@ public class SuperAdminController implements Controller {
         long blockCounter = blockingMembers.size();
         return Controller.getSimpleResponseToRequest(message, "Сервісом користуються " + counter +
                 " користувачей\nз них " + blockCounter + " заблокованих");
+    }
+
+    public List<BotApiMethod<?>> getManagementMenu(Message message) {
+        List<String> namesOfButtons = List.of("Знайти користувача", "Вийти");
+        return keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
+                "Виберіть, будь ласка, необхідну дію");
+    }
+
+    public List<BotApiMethod<?>> manage(Message message) {
+        String messageText = message.getText();
+        List<BotApiMethod<?>> methods = new ArrayList<>();
+        switch (messageText){
+            case "Вийти" -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Приємного користування"));
+            }
+            case "Знайти користувача" -> methods.addAll(Controller.getSimpleResponseToRequest(message, "Введіть телефонний номер"));
+            default -> {
+                if (messageText.startsWith("+")){
+                    if (botUserService.findByPhone(messageText).isPresent()) {
+                        botUser = botUserService.findByPhone(messageText).get();
+                        methods.addAll(Controller.getSimpleResponseToRequest(message, String.valueOf(botUser)));
+                    } else methods.addAll(Controller.getSimpleResponseToRequest(message, "Такого користувача не існує"));
+                } else methods.addAll(Controller.getSimpleResponseToRequest(message, "Fail telephone number format"));
+            }
+        }
+        return methods;
     }
 }

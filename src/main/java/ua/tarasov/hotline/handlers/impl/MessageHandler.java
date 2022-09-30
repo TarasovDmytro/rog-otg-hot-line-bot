@@ -67,16 +67,23 @@ public class MessageHandler implements RequestHandler {
                     }
                     case "/change_admin" -> {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
-                        return superAdminController.changeRoleRequest(message);
+                        return superAdminController.changeBotUserRole(message);
                     }
                     case "/members" -> {
                         return superAdminController.getMembers(message);
                     }
+                    case "/management" -> {
+                        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SUPER_ADMIN_MANAGEMENT);
+                        return superAdminController.getManagementMenu(message);
+                    }
                 }
+            }
+            if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SUPER_ADMIN_MANAGEMENT)){
+                return superAdminController.manage(message);
             }
             if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
                     chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
-                return superAdminController.changeRoleRequest(message);
+                return superAdminController.changeBotUserRole(message);
             }
             if (!chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
                 return userRequestController.createRequest(message);

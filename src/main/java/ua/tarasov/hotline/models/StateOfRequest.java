@@ -13,5 +13,5 @@ public enum StateOfRequest {
     SET_TEXT,
     CREATE_REQUEST,
     REQUEST_CREATED,
-    ROLES_CREATED
+    SUPER_ADMIN_MANAGEMENT
 }
