@@ -125,7 +125,6 @@ public class SuperAdminController implements Controller {
         switch (message.getText()) {
             case "\uD83E\uDDF9 Очистити" -> {
                 departments.clear();
-//                departments.add(Department.USER);
                 methods.addAll(Controller.getSimpleResponseToRequest(message, """
                         Дякую,
                         відправлено запит на видалення
