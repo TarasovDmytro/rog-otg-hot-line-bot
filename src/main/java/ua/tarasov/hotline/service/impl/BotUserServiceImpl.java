@@ -65,7 +65,7 @@ public class BotUserServiceImpl implements BotUserService {
                 .chatId(String.valueOf(userId))
                 .text("""
                         Вибачте,
-                        Вашы права доступу не дозволяють
+                        Ваші права доступу не дозволяють
                         виконати цю дію.""")
                 .build();
     }
