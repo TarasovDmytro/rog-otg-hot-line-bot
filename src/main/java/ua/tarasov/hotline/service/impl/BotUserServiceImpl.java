@@ -59,6 +59,18 @@ public class BotUserServiceImpl implements BotUserService {
             return botUser.getRole().equals(Role.ADMIN) || botUser.getRole().equals(Role.SUPER_ADMIN);
         } else return false;
     }
+
+    @Override
+    public boolean checkIsSuperAdmin(Long userId) {
+        BotUser botUser = new BotUser();
+        if (findById(userId).isPresent()) {
+            botUser = findById(userId).get();
+        }
+        if (botUser.getRole() != null) {
+            return botUser.getRole().equals(Role.SUPER_ADMIN);
+        } else return false;
+    }
+
     @Override
     public SendMessage getFalseAdminText(@NotNull Long userId) {
         return SendMessage.builder()

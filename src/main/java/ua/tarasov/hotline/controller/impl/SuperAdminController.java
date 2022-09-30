@@ -200,13 +200,9 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> getMembers(@NotNull Message message) {
-        if (botUserService.findById(message.getChatId()).isPresent()) {
-            botUser = botUserService.findById(message.getChatId()).get();
-        }
-        if (botUser.getRole().equals(Role.SUPER_ADMIN)) {
+        if (botUserService.checkIsSuperAdmin(message.getChatId())) {
             return countOfMembers(message);
         }
-        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
         return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
     }
 
@@ -225,58 +221,69 @@ public class SuperAdminController implements Controller {
     }
 
     public List<BotApiMethod<?>> getManagementMenu(Message message) {
-        List<String> namesOfButtons = List.of("Знайти користувача", "Вийти");
-        return keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
-                "Виберіть, будь ласка, необхідну дію");
+        if (botUserService.checkIsSuperAdmin(message.getChatId())) {
+            List<String> namesOfButtons = List.of("Знайти користувача", "Вийти");
+            return keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
+                    "Виберіть, будь ласка, необхідну дію");
+        } else return List.of(botUserService.getFalseAdminText(message.getChatId()));
     }
 
     public List<BotApiMethod<?>> manage(Message message) {
-        String messageText = message.getText();
-        List<BotApiMethod<?>> methods = new ArrayList<>();
-        switch (messageText){
-            case "Вийти" -> {
-                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
-                methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Приємного користування"));
+        if (botUserService.checkIsSuperAdmin(message.getChatId())) {
+            String messageText = message.getText();
+            List<BotApiMethod<?>> methods = new ArrayList<>();
+            switch (messageText) {
+                case "Вийти" -> {
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                    methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Приємного користування"));
+                }
+                case "Знайти користувача" -> methods.addAll(Controller.getSimpleResponseToRequest(message, "Введіть телефонний номер"));
+                case "Видалити" -> {
+                    botUserService.deleteUser(botUser);
+                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача видалено"));
+                    methods.addAll(getManagementMenu(message));
+                }
+                case "Заблокувати" -> {
+                    botUser.setWarningCount(3);
+                    botUserService.saveBotUser(botUser);
+                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача заблоковано"));
+                    methods.addAll(getManagementMenu(message));
+                }
+                case "Розблокувати" -> {
+                    botUser.setWarningCount(0);
+                    botUserService.saveBotUser(botUser);
+                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача розблоковано"));
+                    methods.addAll(getManagementMenu(message));
+                }
+                case "Передати права" -> {
+                    BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+                    botUser.setRole(Role.SUPER_ADMIN);
+                    superAdmin.setRole(Role.ADMIN);
+                    botUserService.saveBotUser(botUser);
+                    botUserService.saveBotUser(superAdmin);
+                    methods.add(SendMessage.builder()
+                            .chatId(String.valueOf(botUser.getId()))
+                            .text("Ваш рівень доступу змінений на " + botUser.getRole())
+                            .build());
+                    methods.addAll(Controller.getSimpleResponseToRequest(message, "Ваш рівень доступу змінений на " + superAdmin.getRole()));
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                    methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Приємного користування"));
+                }
+                default -> {
+                    if (messageText.startsWith("+")) {
+                        if (botUserService.findByPhone(messageText).isPresent()) {
+                            botUser = botUserService.findByPhone(messageText).get();
+                            List<String> namesOfButtons = List.of("Видалити", "Заблокувати", "Розблокувати", "Передати права", "Вийти");
+                            methods.addAll(Controller.getSimpleResponseToRequest(message, String.valueOf(botUser)));
+                            methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
+                                    "Виберіть, будь ласка, необхідну дію"));
+                        } else
+                            methods.addAll(Controller.getSimpleResponseToRequest(message, "Такого користувача не існує"));
+                    } else
+                        methods.addAll(Controller.getSimpleResponseToRequest(message, "Fail telephone number format"));
+                }
             }
-            case "Знайти користувача" -> methods.addAll(Controller.getSimpleResponseToRequest(message, "Введіть телефонний номер"));
-            case "Видалити" -> {
-                botUserService.deleteUser(botUser);
-                methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача видалено"));
-                methods.addAll(getManagementMenu(message));
-            }
-            case "Заблокувати" ->{
-                botUser.setWarningCount(3);
-                botUserService.saveBotUser(botUser);
-                methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача заблоковано"));
-                methods.addAll(getManagementMenu(message));
-            }
-            case "Розблокувати" -> {
-                botUser.setWarningCount(0);
-                botUserService.saveBotUser(botUser);
-                methods.addAll(Controller.getSimpleResponseToRequest(message, "Користувача розблоковано"));
-                methods.addAll(getManagementMenu(message));
-            }
-            case "Передати права" -> {
-                BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
-                botUser.setRole(Role.SUPER_ADMIN);
-                superAdmin.setRole(Role.ADMIN);
-                botUserService.saveBotUser(botUser);
-                botUserService.saveBotUser(superAdmin);
-                methods.addAll(Controller.getSimpleResponseToRequest(message, "Ваш рівень доступу змінений на " + superAdmin.getRole()));
-
-            }
-            default -> {
-                if (messageText.startsWith("+")){
-                    if (botUserService.findByPhone(messageText).isPresent()) {
-                        botUser = botUserService.findByPhone(messageText).get();
-                        List<String> namesOfButtons = List.of("Видалити","Заблокувати", "Розблокувати", "Передати права", "Вийти");
-                        methods.addAll(Controller.getSimpleResponseToRequest(message, String.valueOf(botUser)));
-                        methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
-                                "Виберіть, будь ласка, необхідну дію"));
-                    } else methods.addAll(Controller.getSimpleResponseToRequest(message, "Такого користувача не існує"));
-                } else methods.addAll(Controller.getSimpleResponseToRequest(message, "Fail telephone number format"));
-            }
-        }
-        return methods;
+            return methods;
+        } else return List.of(botUserService.getFalseAdminText(message.getChatId()));
     }
 }

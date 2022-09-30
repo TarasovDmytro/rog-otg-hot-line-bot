@@ -22,6 +22,7 @@ public interface BotUserService {
 
     Optional<BotUser> findByPhone(String userPhone);
     boolean checkIsAdmin(@NotNull Long userId);
+    boolean checkIsSuperAdmin(Long userId);
     SendMessage getFalseAdminText(@NotNull Long userId);
 
     void deleteUser(BotUser botUser);
