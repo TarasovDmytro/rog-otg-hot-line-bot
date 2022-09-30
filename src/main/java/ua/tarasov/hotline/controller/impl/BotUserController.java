@@ -11,10 +11,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import ua.tarasov.hotline.controller.Controller;
 import ua.tarasov.hotline.entities.BotUser;
 import ua.tarasov.hotline.entities.UserRequest;
+import ua.tarasov.hotline.handlers.RequestHandler;
 import ua.tarasov.hotline.models.Department;
 import ua.tarasov.hotline.models.Role;
 import ua.tarasov.hotline.models.StateOfRequest;
@@ -31,11 +33,15 @@ import static ua.tarasov.hotline.handlers.RequestHandler.START_TEXT;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BotUserController implements Controller {
+    final DepartmentController departmentController;
     final BotUserService botUserService;
     final KeyboardService keyboardService;
     BotUser botUser = new BotUser();
+    List<Department> departments = new ArrayList<>();
 
-    public BotUserController(BotUserServiceImpl botUserService, KeyboardServiceImpl keyboardService) {
+    public BotUserController(DepartmentController departmentController, BotUserServiceImpl botUserService,
+                             KeyboardServiceImpl keyboardService) {
+        this.departmentController = departmentController;
         this.botUserService = botUserService;
         this.keyboardService = keyboardService;
     }
@@ -139,5 +145,109 @@ public class BotUserController implements Controller {
                         .chatId(String.valueOf(superAdmin.getId()))
                         .text("Права доступу адміністратора\n" + botUser.getFullName() + "\n" + builder)
                         .build());
+    }
+
+    public List<BotApiMethod<?>> changeBotUserRole(@NotNull Message message) {
+        if (botUserService.checkIsAdmin(message.getChatId())) {
+            if (message.getText().equals("❌ Скасувати заявку")) {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                return keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано");
+            }
+            switch (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId())) {
+                case SET_ROLES -> {
+                    return setDepartmentsOfAdmin(message);
+                }
+                case WAIT_PHONE -> {
+                    chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_PHONE);
+                    return keyboardService.setMenuReplyKeyboard(message.getChatId(),
+                            List.of("❌ Скасувати заявку"),
+                            "Введіть номер телефону адміністратора у форматі '+123456789098'");
+                }
+                case SET_PHONE -> {
+                    return setPhoneOfAdmin(message);
+                }
+            }
+            return keyboardService.setMenuReplyKeyboard(message.getChatId(),
+                    List.of("❌ Скасувати заявку"),
+                    RequestHandler.WRONG_ACTION_TEXT);
+        } else {
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+            return Collections.singletonList(botUserService.getFalseAdminText(message.getChatId()));
+        }
+    }
+
+    @NotNull
+    private List<BotApiMethod<?>> setPhoneOfAdmin(@NotNull Message message) {
+        String phoneNumber = message.getText();
+        if (message.getText().startsWith("+") && botUserService.findByPhone(phoneNumber).isPresent()) {
+            botUser = botUserService.findByPhone(phoneNumber).get();
+            chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.SET_ROLES);
+            return setDepartmentsOfAdmin(message);
+        } else {
+            return keyboardService.setMenuReplyKeyboard(message.getChatId(),
+                    List.of("❌ Скасувати заявку"),
+                    "Невірний формат телефонного номеру,\nабо такий номер не зареєстрований.\nСпробуйте ще раз");
+        }
+    }
+
+    @NotNull
+    private List<BotApiMethod<?>> setDepartmentsOfAdmin(@NotNull Message message) {
+        log.info("PHONE = {}", botUser.getPhone());
+        List<BotApiMethod<?>> methods = new ArrayList<>();
+        switch (message.getText()) {
+            case "\uD83E\uDDF9 Очистити" -> {
+                departments.clear();
+                methods.addAll(Controller.getSimpleResponseToRequest(message, """
+                        Дякую,
+                        відправлено запит на видалення
+                        всіх прав адміністратора"""));
+                methods.addAll(requestRole(message, departments));
+            }
+            case "❌ Скасувати заявку" -> {
+                chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+                methods.addAll(keyboardService.setReplyKeyboardOfUser(message.getChatId(), "Заявку скасовано"));
+            }
+            case "\uD83D\uDCE8 Відправити заявку" -> methods.addAll(requestRole(message, departments));
+            default -> {
+                List<String> namesOfButtons = List.of("➕ Додати", "\uD83E\uDDF9 Очистити", "\uD83D\uDCE8 Відправити заявку",
+                        "❌ Скасувати заявку");
+                methods.addAll(departmentController.getMenuOfDepartments(message));
+                methods.addAll(keyboardService.setMenuReplyKeyboard(message.getChatId(), namesOfButtons,
+                        "Ви можете додавати Департаменти, поки не натиснуте кнопку 'Відправити заявку'"));
+                if (message.getText().equals("➕ Додати")) {
+                    departments.add(chatPropertyModeService.getCurrentDepartment(message.getChatId()));
+                }
+            }
+        }
+        return methods;
+    }
+
+    private @NotNull List<BotApiMethod<?>> requestRole(@NotNull Message message, List<Department> departments) {
+        BotUser admin = new BotUser();
+        if (botUserService.findById(message.getChatId()).isPresent()) {
+            admin = botUserService.findById(message.getChatId()).get();
+        }
+        List<String> depText = new ArrayList<>();
+        depText.add(botUser.getId().toString());
+        departments.forEach(department -> depText.add(String.valueOf((department.ordinal()))));
+        String dataStartText = "department" + jsonConverter.toJson(depText);
+        BotUser superAdmin = botUserService.findByRole(Role.SUPER_ADMIN);
+        chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.REQUEST_CREATED);
+        List<BotApiMethod<?>> methods = new ArrayList<>(keyboardService.setReplyKeyboardOfUser(message.getChatId(),
+                "✅  Заявку прийнято"));
+        methods.add(SendMessage.builder()
+                .chatId(String.valueOf(superAdmin.getId()))
+                .text("<b>Отримана заявка від </b>" + admin.getFullName() + "\n<b>тел.</b>" + admin.getPhone()
+                        + "\n<b>ID:</b>" + admin.getId() + "\nна встановлення зв'язку адмін-департамент\nміж користувачем\n"
+                        + botUser.getFullName() + "\n<b>тел.</b>" + botUser.getPhone()
+                        + "\n<b>ID:</b>" + botUser.getId() +
+                        "\nта департаментами:\n" + departments + "\nВстановити зв'язок?")
+                .parseMode("HTML")
+                .replyMarkup(InlineKeyboardMarkup.builder()
+                        .keyboard(keyboardService.getAgreeButtons(dataStartText))
+                        .build())
+                .build());
+        this.departments = new ArrayList<>();
+        return methods;
     }
 }

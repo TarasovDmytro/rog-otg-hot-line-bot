@@ -67,7 +67,7 @@ public class MessageHandler implements RequestHandler {
                     }
                     case "/change_admin" -> {
                         chatPropertyModeService.setCurrentStateOfRequest(message.getChatId(), StateOfRequest.WAIT_PHONE);
-                        return superAdminController.changeBotUserRole(message);
+                        return botUserController.changeBotUserRole(message);
                     }
                     case "/members" -> {
                         return superAdminController.getMembers(message);
@@ -83,7 +83,7 @@ public class MessageHandler implements RequestHandler {
             }
             if (chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_ROLES) ||
                     chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.SET_PHONE)) {
-                return superAdminController.changeBotUserRole(message);
+                return botUserController.changeBotUserRole(message);
             }
             if (!chatPropertyModeService.getCurrentStateOfRequest(message.getChatId()).equals(StateOfRequest.REQUEST_CREATED)) {
                 return userRequestController.createRequest(message);
