@@ -50,6 +50,6 @@ public class BotUser {
                 "\nІм'я: " + fullName +
                 "\nНік: " + username +
                 "\nРівень доступу: " + role +
-                "\nДепартаменти:\n" + departments;
+                "\nДепартаменти:\n" + departments.stream().sorted().sequential();
     }
 }
